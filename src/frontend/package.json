@@ -20,10 +20,19 @@
     "storybook:build": "storybook build"
   },
   "dependencies": {
+    "@mantine/carousel": "^7.14.3",
     "@mantine/core": "7.14.2",
     "@mantine/hooks": "7.14.2",
+    "@mantinex/mantine-logo": "^1.0.1",
+    "@mui/icons-material": "^6.1.9",
+    "@tabler/icons": "^3.24.0",
+    "@tabler/icons-react": "^3.24.0",
+    "embla-carousel-autoplay": "^7.1.0",
+    "embla-carousel-react": "^8.5.1",
+    "leaflet": "^1.9.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-leaflet": "^4.2.1",
     "react-router-dom": "^6.27.0"
   },
   "devDependencies": {
@@ -35,6 +44,7 @@
     "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/react": "^16.0.1",
     "@testing-library/user-event": "^14.5.2",
+    "@types/leaflet": "^1.9.14",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.2",
