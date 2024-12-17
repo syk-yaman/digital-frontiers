@@ -38,7 +38,7 @@ function DeckGLOverlay(props: DeckProps) {
 }
 
 
-export function HomePage() {
+export function Datamenu() {
   // const layers = [
 
   //   new Map({
@@ -65,20 +65,6 @@ export function HomePage() {
 
   return (
     <>
-      <Carousel withIndicators height={500}>
-        <Carousel.Slide>
-          <Image
-            src="https://placehold.co/1600x500/d0d0d0/FFF?text=Placeholder"
-          />
-        </Carousel.Slide>
-        <Carousel.Slide><Image
-          src="https://placehold.co/1600x500/d0d0d0/FFF?text=Placeholder"
-        /></Carousel.Slide>
-        <Carousel.Slide><Image
-          src="https://placehold.co/1600x500/d0d0d0/FFF?text=Placeholder"
-        /></Carousel.Slide>
-        {/* ...other slides */}
-      </Carousel>
       <FeaturesGrid />
       <div
         style={{
@@ -102,7 +88,6 @@ export function HomePage() {
 
       </div>
 
-      <ColorSchemeToggle />
 
     </>
   );
