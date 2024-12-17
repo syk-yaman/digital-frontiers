@@ -84,7 +84,7 @@ export function HomePage() {
       <div
         style={{
           height: '500px', // Set height
-          width: '800px',  // Set width
+          width: '90%',  // Set width
           border: '1px solid black',
           margin: '20px auto', // Center the div
           position: 'relative',
