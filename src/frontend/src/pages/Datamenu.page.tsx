@@ -4,7 +4,7 @@ import { Welcome } from '../components/Welcome/Welcome';
 import { FooterLinks } from '@/components/Footer/FooterLinks';
 import { Carousel } from '@mantine/carousel';
 import '@mantine/carousel/styles.css';
-import { Image } from '@mantine/core';
+import { Text, Anchor, Breadcrumbs, Image, Center, rem, SegmentedControl } from '@mantine/core';
 
 import React from 'react';
 import DeckGL from '@deck.gl/react';
@@ -16,9 +16,13 @@ import { Map, useControl } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 import '../style.css'
+import './Datamenu.page.css';
+
 // ✅ Types are available here
 import { FeaturesGrid } from '@/components/FeaturesGrid/FeaturesGrid';
 import { MapboxOverlay } from '@deck.gl/mapbox';
+import { Link } from 'react-router-dom';
+import { IconEye, IconCode, IconExternalLink, IconMap, IconList } from '@tabler/icons-react';
 
 const INITIAL_VIEW_STATE: MapViewState = {
   longitude: -122.41669,
@@ -37,18 +41,22 @@ function DeckGLOverlay(props: DeckProps) {
   return null;
 }
 
+const breadcrumbs = [
+  { label: 'Home', path: '/' },
+  { label: 'Data Menu', path: '/data-menu' },
+];
+
+const items = [
+  { title: 'Mantine', href: '#' },
+  { title: 'Mantine hooks', href: '#' },
+  { title: 'use-id', href: '#' },
+].map((item, index) => (
+  <Anchor href={item.href} key={index}>
+    {item.title}
+  </Anchor>
+));
 
 export function Datamenu() {
-  // const layers = [
-
-  //   new Map({
-  //     container: 'map',
-  //     style: BASEMAP.POSITRON,
-  //     interactive: true,
-  //     center:[-0.12262486445294093,51.50756471490389],
-  //     zoom: 12
-  //   })
-  // ];
 
   const layers = [
     new ScatterplotLayer({
@@ -65,13 +73,49 @@ export function Datamenu() {
 
   return (
     <>
-      <FeaturesGrid />
+      <div style={{ padding: '16px' }}>
+        <Breadcrumbs separator=">">
+          {breadcrumbs.map((crumb) => (
+            <Link to={crumb.path} key={crumb.path} className="breadcrumb-link">
+              {crumb.label}
+            </Link>
+          ))}
+        </Breadcrumbs>
+      </div>
+      <Text ta="center" size="xl" c="blue" >Data Menu</Text>
+      <br />
+      <Text ta="center" size="s" c="white" >Browse the data menu below using an interactive map. You can switch to traditional list view. </Text>
+      <Center h={100}>
+
+        <SegmentedControl color="blue"
+          data={[
+            {
+              value: 'map',
+              label: (
+                <Center style={{ gap: 10 }}>
+                  <IconMap style={{ width: rem(16), height: rem(16) }} />
+                  <span>Map view</span>
+                </Center>
+              ),
+            },
+            {
+              value: 'list',
+              label: (
+                <Center style={{ gap: 10 }}>
+                  <IconList style={{ width: rem(16), height: rem(16) }} />
+                  <span>List view</span>
+                </Center>
+              ),
+            },
+          ]}
+        />
+      </Center>
       <div
         style={{
-          height: '500px', // Set height
+          height: '900px', // Set height
           width: '90%',  // Set width
-          border: '1px solid black',
-          margin: '20px auto', // Center the div
+          border: '0px solid black',
+          margin: '40px auto', // Center the div
           position: 'relative',
         }}
       >

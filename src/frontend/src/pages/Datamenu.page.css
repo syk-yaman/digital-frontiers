@@ -1,0 +1,11 @@
+.breadcrumb-link {
+    color: #6bb8ff !important;
+    /* Forces the color to blue */
+    text-decoration: none;
+    /* Removes underlines */
+}
+
+.breadcrumb-link:hover {
+    text-decoration: underline;
+    /* Optional for hover effect */
+}

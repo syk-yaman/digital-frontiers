@@ -16,6 +16,7 @@ import {
 import {
   Anchor,
   Box,
+  Breadcrumbs,
   Burger,
   Button,
   Center,
@@ -32,7 +33,7 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import classes from './HeaderMegaMenu.module.css';
 
 const mockdata = [
@@ -73,6 +74,8 @@ export function HeaderMegaMenu() {
   const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
   const theme = useMantineTheme();
 
+
+
   const links = mockdata.map((item) => (
     <UnstyledButton className={classes.subLink} key={item.title}>
       <Group wrap="nowrap" align="flex-start">
@@ -92,7 +95,7 @@ export function HeaderMegaMenu() {
   ));
 
   return (
-    <Box pb={120}>
+    <Box pb={30}>
       <header className={classes.header}>
         <Group justify="space-between" h="100%">
           <Text fw={700} size="lg">
@@ -120,9 +123,11 @@ export function HeaderMegaMenu() {
               <HoverCard.Dropdown style={{ overflow: 'hidden' }}>
                 <Group justify="space-between" px="md">
                   <Text fw={500}>Latest added tags</Text>
-                  <Anchor component={NavLink} to="/tags" fz="xs">
-                    View all
-                  </Anchor>
+                  <NavLink to="/data-menu" className={classes.link}>
+                    <Anchor component={NavLink} to="/data-menu" fz="xs">
+                      View all
+                    </Anchor>
+                  </NavLink>
                 </Group>
 
                 <Divider my="sm" />
@@ -169,6 +174,8 @@ export function HeaderMegaMenu() {
           <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
         </Group>
       </header>
+
+
 
       {/* Mobile Drawer */}
       <Drawer
