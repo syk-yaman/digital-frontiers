@@ -4,7 +4,7 @@ import { Welcome } from '../components/Welcome/Welcome';
 import { FooterLinks } from '@/components/Footer/FooterLinks';
 import { Carousel } from '@mantine/carousel';
 import '@mantine/carousel/styles.css';
-import { Text, Anchor, Breadcrumbs, Image, Center, rem, SegmentedControl } from '@mantine/core';
+import { Text, Anchor, Breadcrumbs, Image, Center, rem, SegmentedControl, Space } from '@mantine/core';
 
 import React from 'react';
 import DeckGL from '@deck.gl/react';
@@ -73,7 +73,7 @@ export function Datamenu() {
 
   return (
     <>
-      <div style={{ padding: '16px' }}>
+      <div style={{ paddingLeft: '40px' }}>
         <Breadcrumbs separator=">">
           {breadcrumbs.map((crumb) => (
             <Link to={crumb.path} key={crumb.path} className="breadcrumb-link">
@@ -83,7 +83,7 @@ export function Datamenu() {
         </Breadcrumbs>
       </div>
       <Text ta="center" size="xl" c="blue" >Data Menu</Text>
-      <br />
+      <Space h="md" />
       <Text ta="center" size="s" c="white" >Browse the data menu below using an interactive map. You can switch to traditional list view. </Text>
       <Center h={100}>
 
