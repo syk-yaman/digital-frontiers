@@ -34,11 +34,11 @@ type DataType = {
 
 const mockdata = {
   image:
-    'https://images.unsplash.com/photo-1437719417032-8595fd9e9dc6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80',
-  title: 'Verudela Beach',
-  country: 'Updated 1 min ago',
+    '/assets/echobox.jpg',
+  title: 'Park data',
+  country: '1 min ago',
   description:
-    'Completely renovated for the season 2020, Arena Verudela Bech Apartments are fully equipped and modernly furnished 4-star self-service apartments located on the Adriatic coastline by one of the most beautiful beaches in Pula.',
+    'Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets ',
   badges: [
     { emoji: '☀️', label: 'Sunny' },
     { emoji: '🦓', label: 'Onsite zoo' },
@@ -111,7 +111,7 @@ export function HomePage() {
       <Space h="md" />
 
       <Text ta="center" className='title' c="blue">A new way to explore data in the Queen Elizabeth Olympic Park</Text>
-      <Text ta="center" size="s" c="white" >Rhoncus morbi et augue nec, in id ullamcorper at sit. Condimentum sit nunc in eros scelerisque sed. Commodo in viverra nunc, ullamcorper ut. Non, amet, aliquet scelerisque nullam sagittis, pulvinar. Fermentum scelerisque sit consectetur hac mi. Mollis leo eleifend ultricies purus iaculis.</Text>
+      <Text ta="center" size="s" c="white" style={{ "marginLeft": "50px", "marginRight": "50px" }} >Rhoncus morbi et augue nec, in id ullamcorper at sit. Condimentum sit nunc in eros scelerisque sed. Commodo in viverra nunc, ullamcorper ut. Non, amet, aliquet scelerisque nullam sagittis, pulvinar. Fermentum scelerisque sit consectetur hac mi. Mollis leo eleifend ultricies purus iaculis.</Text>
       <Space h="xl" />
 
 
@@ -130,7 +130,66 @@ export function HomePage() {
         >
           <Card withBorder radius="md" p="md" className='card' style={{ width: '350px' }}>
             <Card.Section>
-              <Image src={image} alt={title} height={180} />
+              <Image src="/assets/echobox.jpg" alt={title} height={180} />
+            </Card.Section>
+
+            <Card.Section className='section' mt="md">
+              <Group justify="apart">
+                <Text fz="lg" fw={500}>
+                  Bats activity in the QEOP
+                </Text>
+                <Badge size="sm" variant="light" style={{ marginLeft: 'auto' }} >
+                  {country}
+                </Badge>
+              </Group>
+              <Group mt="xs" justify="apart">
+                <Center>
+                  <Avatar
+                    src="https://avatars.githubusercontent.com/u/145232?s=96&v=4"
+                    size={35}
+                    radius="xl"
+                    mr="xs"
+                  />
+                  <Text fz="m" inline>
+                    Duncan Wilson
+                  </Text>
+                </Center>
+              </Group>
+
+              <Text fz="sm" mt="lg">
+                In this project we are exploring bat activity in one of the most iconic and high profile of London’s regeneration areas, the Queen Elizabeth Olympic Park. We have developed a network of 15 smart bat monitors and installed them across the park in different habitats
+              </Text>
+            </Card.Section>
+
+            <Card.Section className='section'>
+              <Text mt="md" className='label' c="dimmed">
+                Related tags
+              </Text>
+              <Group gap={7} mt={5}>
+                <Badge variant="light" key="" leftSection="🌱">
+                  Nature
+                </Badge>
+                <Badge variant="light" key="" leftSection="🏢">
+                  Built enviroment
+                </Badge>
+                <Badge variant="light" key="" leftSection="🦇">
+                  Bats
+                </Badge>
+              </Group>
+            </Card.Section>
+
+            <Group mt="xs">
+              <Button radius="md" style={{ flex: 1 }}>
+                Show details
+              </Button>
+              <ActionIcon variant="default" radius="md" size={36}>
+                <IconHeart className='like' stroke={1.5} />
+              </ActionIcon>
+            </Group>
+          </Card>
+          <Card withBorder radius="md" p="md" className='card' style={{ width: '350px' }}>
+            <Card.Section>
+              <Image src="https://connected-environments.org/wp-content/uploads/2019/11/Screenshot-2019-11-15-at-14.57.39.png" alt={title} height={180} />
             </Card.Section>
 
             <Card.Section className='section' mt="md">
@@ -145,7 +204,7 @@ export function HomePage() {
               <Group mt="xs" justify="apart">
                 <Center>
                   <Avatar
-                    src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-1.png"
+                    src="https://connected-environments.org/wp-content/uploads/2019/11/Screenshot-2019-11-15-at-14.57.39.png"
                     size={24}
                     radius="xl"
                     mr="xs"
@@ -181,7 +240,7 @@ export function HomePage() {
           </Card>
           <Card withBorder radius="md" p="md" className='card' style={{ width: '350px' }}>
             <Card.Section>
-              <Image src={image} alt={title} height={180} />
+              <Image src="https://connected-environments.org/wp-content/uploads/2019/11/IMG_1829.jpeg" alt={title} height={180} />
             </Card.Section>
 
             <Card.Section className='section' mt="md">
@@ -196,7 +255,7 @@ export function HomePage() {
               <Group mt="xs" justify="apart">
                 <Center>
                   <Avatar
-                    src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-1.png"
+                    src="https://connected-environments.org/wp-content/uploads/2019/11/IMG_1829.jpeg"
                     size={24}
                     radius="xl"
                     mr="xs"
@@ -232,58 +291,7 @@ export function HomePage() {
           </Card>
           <Card withBorder radius="md" p="md" className='card' style={{ width: '350px' }}>
             <Card.Section>
-              <Image src={image} alt={title} height={180} />
-            </Card.Section>
-
-            <Card.Section className='section' mt="md">
-              <Group justify="apart">
-                <Text fz="lg" fw={500}>
-                  {title}
-                </Text>
-                <Badge size="sm" variant="light" style={{ marginLeft: 'auto' }} >
-                  {country}
-                </Badge>
-              </Group>
-              <Group mt="xs" justify="apart">
-                <Center>
-                  <Avatar
-                    src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-1.png"
-                    size={24}
-                    radius="xl"
-                    mr="xs"
-                  />
-                  <Text fz="sm" inline>
-                    Bill Wormeater
-                  </Text>
-                </Center>
-              </Group>
-
-              <Text fz="sm" mt="lg">
-                {description}
-              </Text>
-            </Card.Section>
-
-            <Card.Section className='section'>
-              <Text mt="md" className='label' c="dimmed">
-                Related tags
-              </Text>
-              <Group gap={7} mt={5}>
-                {features}
-              </Group>
-            </Card.Section>
-
-            <Group mt="xs">
-              <Button radius="md" style={{ flex: 1 }}>
-                Show details
-              </Button>
-              <ActionIcon variant="default" radius="md" size={36}>
-                <IconHeart className='like' stroke={1.5} />
-              </ActionIcon>
-            </Group>
-          </Card>
-          <Card withBorder radius="md" p="md" className='card' style={{ width: '350px' }}>
-            <Card.Section>
-              <Image src={image} alt={title} height={180} />
+              <Image src="https://www.ucl.ac.uk/accommodation/sites/accommodation/files/styles/owl_carousel/public/_dsf2453_copyrightpaulriddle_0.jpg?itok=LMRxE0Lx" alt={title} height={180} />
             </Card.Section>
 
             <Card.Section className='section' mt="md">
@@ -548,37 +556,23 @@ export function HomePage() {
         <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
           <Card p="md" radius="md" component="a" href="#" className=".card">
             <AspectRatio ratio={1920 / 1080}>
-              <Image src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80" />
+              <Image src="https://connected-environments.org/wp-content/uploads/2019/11/2017-11-20-11_33_05-ViLoVive.png" />
             </AspectRatio>
             <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
               September 9, 2022
             </Text>
             <Text className=".title2" mt={5}>
-              Hawaii beaches review: better than you think
+              Lorem Ipsum has been the industrys standard dummy text ever since the 1500s
             </Text>
             <Text className=".title" mt={5}>
-              Hawaii beaches review: better than you think
-              Hawaii beaches review: better than you think
-              Hawaii beaches review: better than you think
-              Hawaii beaches review: better than you think
-              Hawaii beaches review: better than you think
-              Hawaii beaches review: better than you think
-              Hawaii beaches review: better than you think
-              Hawaii beaches review: better than you think
-              Hawaii beaches review: better than you think
-              Hawaii beaches review: better than you think
-              Hawaii beaches review: better than you think
-              Hawaii beaches review: better than you think
-              Hawaii beaches review: better than you think
-              Hawaii beaches review: better than you think
-              Hawaii beaches review: better than you think
+              Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheetsLorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets
             </Text>
           </Card>
           <Grid gutter="md">
             <Grid.Col>
               <Card p="md" radius="md" component="a" href="#" className=".card">
                 <AspectRatio ratio={1920 / 1080}>
-                  <Image src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80" />
+                  <Image src="https://connected-environments.org/wp-content/uploads/2019/11/2017-11-20-11_33_05-ViLoVive.png" />
                 </AspectRatio>
                 <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
                   September 9, 2022
@@ -591,26 +585,26 @@ export function HomePage() {
             <Grid.Col span={6}>
               <Card p="md" radius="md" component="a" href="#" className=".card">
                 <AspectRatio ratio={1920 / 1080}>
-                  <Image src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80" />
+                  <Image src="https://connected-environments.org/wp-content/uploads/2019/11/2017-11-20-11_33_05-ViLoVive.png" />
                 </AspectRatio>
                 <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
                   September 9, 2022
                 </Text>
                 <Text className=".title" mt={5}>
-                  Hawaii beaches review: better than you think
+                  Lorem Ipsum has been the industrys standard dummy text ever since the 1500s
                 </Text>
               </Card>
             </Grid.Col>
             <Grid.Col span={6}>
               <Card p="md" radius="md" component="a" href="#" className=".card">
                 <AspectRatio ratio={1920 / 1080}>
-                  <Image src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80" />
+                  <Image src="https://connected-environments.org/wp-content/uploads/2019/11/2017-11-20-11_33_05-ViLoVive.png" />
                 </AspectRatio>
                 <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
                   September 9, 2022
                 </Text>
                 <Text className=".title" mt={5}>
-                  Hawaii beaches review: better than you think
+                  Lorem Ipsum has been the industrys standard dummy text ever since the 1500s
                 </Text>
               </Card>
             </Grid.Col>
@@ -627,7 +621,19 @@ export function HomePage() {
         <SimpleGrid cols={{ base: 1, sm: 4 }}>
           <Card key={"article.title"} p="md" radius="md" component="a" href="#" className={".card"}>
             <AspectRatio ratio={1920 / 1080}>
-              <Image src={"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80"} />
+              <Image src={"https://www.ucl.ac.uk/brand/sites/brand/files/styles/small_image/public/ucl-logo-black-on-grey.jpg?itok=ooOI6Tcx"} />
+            </AspectRatio>
+            <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
+              {"UCL"}
+            </Text>
+            <Text className={".title"} mt={5}>
+              {"Uninersity College London"}
+            </Text>
+          </Card>
+
+          <Card key={"article.title"} p="md" radius="md" component="a" href="#" className={".card"}>
+            <AspectRatio ratio={1920 / 1080}>
+              <Image src={"https://www.stratfordcross.co.uk/globalassets/uk/stratford-cross/eat-drink-shop-play/logos/amenity_logos_queen-elizabeth.jpg?width=300&height=400&upscale=false&mode=max&quality=80"} />
             </AspectRatio>
             <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
               {"article.date"}
@@ -639,7 +645,7 @@ export function HomePage() {
 
           <Card key={"article.title"} p="md" radius="md" component="a" href="#" className={".card"}>
             <AspectRatio ratio={1920 / 1080}>
-              <Image src={"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80"} />
+              <Image src={"https://www.stratfordcross.co.uk/globalassets/uk/stratford-cross/eat-drink-shop-play/logos/amenity_logos_queen-elizabeth.jpg?width=300&height=400&upscale=false&mode=max&quality=80"} />
             </AspectRatio>
             <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
               {"article.date"}
@@ -651,19 +657,7 @@ export function HomePage() {
 
           <Card key={"article.title"} p="md" radius="md" component="a" href="#" className={".card"}>
             <AspectRatio ratio={1920 / 1080}>
-              <Image src={"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80"} />
-            </AspectRatio>
-            <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
-              {"article.date"}
-            </Text>
-            <Text className={".title"} mt={5}>
-              {"article.title"}
-            </Text>
-          </Card>
-
-          <Card key={"article.title"} p="md" radius="md" component="a" href="#" className={".card"}>
-            <AspectRatio ratio={1920 / 1080}>
-              <Image src={"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80"} />
+              <Image src={"https://www.stratfordcross.co.uk/globalassets/uk/stratford-cross/eat-drink-shop-play/logos/amenity_logos_queen-elizabeth.jpg?width=300&height=400&upscale=false&mode=max&quality=80"} />
             </AspectRatio>
             <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
               {"article.date"}

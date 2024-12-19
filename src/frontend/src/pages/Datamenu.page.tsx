@@ -34,29 +34,29 @@ const data = [
   {
     id: 1,
     position: [-0.0167, 51.5447], // Olympic Park Center
-    title: 'London Olympic Stadium',
+    title: 'London Olympic Stadium visitors data',
     image: 'https://via.placeholder.com/150',
     owner: 'London 2012 Organizing Committee',
-    description: 'The stadium built for the 2012 Summer Olympics.',
-    tags: ['Stadium', 'Olympics'],
+    description: 'Data for vistors count in the stadium for 2012 Summer Olympics.',
+    tags: ['Stadium', 'Visitors'],
   },
   {
     id: 2,
     position: [-0.017, 51.545], // A nearby location around the park
-    title: 'The Orbit',
+    title: 'LoRa packets in The Orbit',
     image: 'https://via.placeholder.com/150',
     owner: 'ArcelorMittal',
-    description: 'A landmark observation tower in Olympic Park.',
-    tags: ['Art', 'Landmark'],
+    description: 'LoRa signal A landmark observation tower in Olympic Park.',
+    tags: ['Signal', 'LoRa'],
   },
   {
     id: 3,
     position: [-0.018, 51.546], // Another nearby location
-    title: 'Queen Elizabeth Olympic Park',
+    title: 'Queen Elizabeth Olympic Park visitors',
     image: 'https://via.placeholder.com/150',
     owner: 'Greater London Authority',
     description: 'A park built after the London 2012 Olympics.',
-    tags: ['Park', 'Recreation'],
+    tags: ['Park', 'Visitors'],
   },
 ];
 
