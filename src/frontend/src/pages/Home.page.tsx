@@ -46,11 +46,11 @@ const mockdata = {
   ],
 };
 
-function DeckGLOverlay(props: DeckProps) {
-  const overlay = useControl<MapboxOverlay>(() => new MapboxOverlay(props));
-  overlay.setProps(props);
-  return null;
-}
+// function DeckGLOverlay(props: DeckProps) {
+//   const overlay = useControl<MapboxOverlay>(() => new MapboxOverlay(props));
+//   overlay.setProps(props);
+//   return null;
+// }
 
 const mockdata2 = [
   {

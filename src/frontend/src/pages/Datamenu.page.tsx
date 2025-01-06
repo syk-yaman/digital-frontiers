@@ -65,11 +65,11 @@ type DataType = {
   to: [longitude: number, latitude: number];
 };
 
-function DeckGLOverlay(props: DeckProps) {
-  const overlay = useControl<MapboxOverlay>(() => new MapboxOverlay(props));
-  overlay.setProps(props);
-  return null;
-}
+// function DeckGLOverlay(props: DeckProps) {
+//   const overlay = useControl<MapboxOverlay>(() => new MapboxOverlay(props));
+//   overlay.setProps(props);
+//   return null;
+// }
 
 const breadcrumbs = [
   { label: 'Home', path: '/' },
@@ -86,8 +86,17 @@ const items = [
   </Anchor>
 ));
 
+interface PopupInfo {
+  position: [number, number];
+  image: string;
+  title: string;
+  owner: string;
+  description: string;
+  tags: string[];
+}
+
 export function Datamenu() {
-  const [popupInfo, setPopupInfo] = useState(null);
+  const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
 
   const layers = [
     new ScatterplotLayer({
@@ -175,7 +184,7 @@ export function Datamenu() {
               anchor="top"
               onClose={() => setPopupInfo(null)}
             >
-              <Group spacing="sm" mb="sm">
+              <Group gap="sm" mb="sm">
                 <Avatar src={popupInfo.image} size={40} />
                 <div>
                   <Text fw={500}>{popupInfo.title}</Text>
@@ -185,7 +194,7 @@ export function Datamenu() {
                 </div>
               </Group>
               <Text>{popupInfo.description}</Text>
-              <Group spacing="xs" mt="sm">
+              <Group gap="xs" mt="sm">
                 {popupInfo.tags.map((tag, index) => (
                   <Badge key={index} size="sm">
                     {tag}
