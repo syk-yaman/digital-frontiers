@@ -12,7 +12,8 @@ import { HomePage } from './pages/Home.page';
 
 export default function App() {
   return (
-    <MantineProvider theme={theme}>
+
+    <MantineProvider theme={theme} defaultColorScheme="dark">
       <BrowserRouter>
         <HeaderMegaMenu />
         <Routes>
