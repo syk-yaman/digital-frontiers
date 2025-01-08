@@ -96,7 +96,7 @@ export function HomePage() {
       <Carousel withIndicators>
         <Carousel.Slide>
           <Image
-            src="assets/qeop4.jpg"
+            src="https://raw.githubusercontent.com/syk-yaman/shift-digital-frontiers/refs/heads/main/src/frontend/assets/qeop4.jpg"
           />
         </Carousel.Slide>
         <Carousel.Slide><Image
