@@ -96,7 +96,7 @@ export function HomePage() {
       <Carousel withIndicators>
         <Carousel.Slide>
           <Image
-            src="https://placehold.co/1600x700/748fac/CCC?text=Placeholder"
+            src="assets/qeop4.jpg"
           />
         </Carousel.Slide>
         <Carousel.Slide><Image
