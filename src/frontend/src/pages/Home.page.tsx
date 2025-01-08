@@ -34,7 +34,7 @@ type DataType = {
 
 const mockdata = {
   image:
-    '/assets/echobox.jpg',
+    'https://raw.githubusercontent.com/syk-yaman/shift-digital-frontiers/refs/heads/main/src/frontend/assets/echobox.jpg',
   title: 'Park data',
   country: '1 min ago',
   description:
@@ -130,7 +130,7 @@ export function HomePage() {
         >
           <Card withBorder radius="md" p="md" className='card' style={{ width: '350px' }}>
             <Card.Section>
-              <Image src="/assets/echobox.jpg" alt={title} height={180} />
+              <Image src="https://raw.githubusercontent.com/syk-yaman/shift-digital-frontiers/refs/heads/main/src/frontend/assets/echobox.jpg" alt={title} height={180} />
             </Card.Section>
 
             <Card.Section className='section' mt="md">
