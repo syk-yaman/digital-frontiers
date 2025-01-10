@@ -34,7 +34,7 @@ type DataType = {
 
 const mockdata = {
   image:
-    'https://raw.githubusercontent.com/syk-yaman/shift-digital-frontiers/refs/heads/main/src/frontend/assets/echobox.jpg',
+    '/imgs/echobox.jpg',
   title: 'Park data',
   country: '1 min ago',
   description:
@@ -192,7 +192,7 @@ export function HomePage() {
               <Card.Section style={{ position: 'relative' }}>
                 {/* Image */}
                 <Image
-                  src="https://raw.githubusercontent.com/syk-yaman/shift-digital-frontiers/refs/heads/main/src/frontend/assets/echobox.jpg"
+                  src="/imgs/echobox.jpg"
                   alt="Bats activity in the QEOP"
                   height={180}
                 />
@@ -260,7 +260,7 @@ export function HomePage() {
               <Card.Section style={{ position: 'relative' }}>
                 {/* Image */}
                 <Image
-                  src="https://raw.githubusercontent.com/syk-yaman/shift-digital-frontiers/refs/heads/main/src/frontend/assets/echobox.jpg"
+                  src="/imgs/echobox.jpg"
                   alt="Bats activity in the QEOP"
                   height={180}
                 />
@@ -328,7 +328,7 @@ export function HomePage() {
               <Card.Section style={{ position: 'relative' }}>
                 {/* Image */}
                 <Image
-                  src="https://raw.githubusercontent.com/syk-yaman/shift-digital-frontiers/refs/heads/main/src/frontend/assets/echobox.jpg"
+                  src="/imgs/echobox.jpg"
                   alt="Bats activity in the QEOP"
                   height={180}
                 />
@@ -396,7 +396,7 @@ export function HomePage() {
               <Card.Section style={{ position: 'relative' }}>
                 {/* Image */}
                 <Image
-                  src="https://raw.githubusercontent.com/syk-yaman/shift-digital-frontiers/refs/heads/main/src/frontend/assets/echobox.jpg"
+                  src="/imgs/echobox.jpg"
                   alt="Bats activity in the QEOP"
                   height={180}
                 />
@@ -464,7 +464,7 @@ export function HomePage() {
               <Card.Section style={{ position: 'relative' }}>
                 {/* Image */}
                 <Image
-                  src="https://raw.githubusercontent.com/syk-yaman/shift-digital-frontiers/refs/heads/main/src/frontend/assets/echobox.jpg"
+                  src="/imgs/echobox.jpg"
                   alt="Bats activity in the QEOP"
                   height={180}
                 />
@@ -532,7 +532,7 @@ export function HomePage() {
               <Card.Section style={{ position: 'relative' }}>
                 {/* Image */}
                 <Image
-                  src="https://raw.githubusercontent.com/syk-yaman/shift-digital-frontiers/refs/heads/main/src/frontend/assets/echobox.jpg"
+                  src="/imgs/echobox.jpg"
                   alt="Bats activity in the QEOP"
                   height={180}
                 />
@@ -600,7 +600,7 @@ export function HomePage() {
               <Card.Section style={{ position: 'relative' }}>
                 {/* Image */}
                 <Image
-                  src="https://raw.githubusercontent.com/syk-yaman/shift-digital-frontiers/refs/heads/main/src/frontend/assets/echobox.jpg"
+                  src="/imgs/echobox.jpg"
                   alt="Bats activity in the QEOP"
                   height={180}
                 />
@@ -668,7 +668,7 @@ export function HomePage() {
               <Card.Section style={{ position: 'relative' }}>
                 {/* Image */}
                 <Image
-                  src="https://raw.githubusercontent.com/syk-yaman/shift-digital-frontiers/refs/heads/main/src/frontend/assets/echobox.jpg"
+                  src="/imgs/echobox.jpg"
                   alt="Bats activity in the QEOP"
                   height={180}
                 />
