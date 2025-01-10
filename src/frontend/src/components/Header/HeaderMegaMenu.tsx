@@ -74,6 +74,10 @@ export function HeaderMegaMenu() {
   const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
   const theme = useMantineTheme();
 
+  // Detect current route
+  const location = useLocation();
+  const isHome = location.pathname === '/';
+
   const links = mockdata.map((item) => (
     <UnstyledButton className={classes.subLink} key={item.title}>
       <Group wrap="nowrap" align="flex-start">
@@ -100,9 +104,11 @@ export function HeaderMegaMenu() {
       <header className={classes.header}
         //style={{ borderBottom: '#173B3B' }}
         style={{
-          borderBottom: 'none',
-          backgroundColor: 'transparent',
-          position: 'absolute', // Ensure the header stays on top of the background image
+          // borderBottom: 'none',
+          // backgroundColor: 'transparent',
+          borderBottom: isHome ? 'none' : `none`,
+          backgroundColor: isHome ? 'transparent' : '#1F5754',
+          position: isHome ? 'absolute' : 'relative', // Ensure the header stays on top of the background image
           width: '100%',
           zIndex: 1000,
         }}
