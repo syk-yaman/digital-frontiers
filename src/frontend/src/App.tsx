@@ -13,7 +13,9 @@ import { HomePage } from './pages/Home.page';
 export default function App() {
   return (
 
-    <MantineProvider theme={theme} defaultColorScheme="dark">
+    <MantineProvider theme={{
+      fontFamily: 'Public Sans, sans-serif',
+    }} defaultColorScheme="dark" >
       <BrowserRouter>
         <HeaderMegaMenu />
         <Routes>
