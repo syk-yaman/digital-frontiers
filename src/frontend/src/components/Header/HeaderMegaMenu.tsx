@@ -74,8 +74,6 @@ export function HeaderMegaMenu() {
   const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
   const theme = useMantineTheme();
 
-
-
   const links = mockdata.map((item) => (
     <UnstyledButton className={classes.subLink} key={item.title}>
       <Group wrap="nowrap" align="flex-start">
@@ -95,15 +93,73 @@ export function HeaderMegaMenu() {
   ));
 
   return (
-    <Box pb={30}>
-      <header className={classes.header}>
+    <Box
+      //style={{ backgroundColor: '#94d1f1' }}
+      style={{ backgroundColor: 'tansparent' }}
+    >
+      <header className={classes.header}
+        //style={{ borderBottom: '#173B3B' }}
+        style={{
+          borderBottom: 'none',
+          backgroundColor: 'transparent',
+          position: 'absolute', // Ensure the header stays on top of the background image
+          width: '100%',
+          zIndex: 1000,
+        }}
+      >
         <Group justify="space-between" h="100%">
-          <Text fw={700} size="lg">
+          <a href="/" className="logo" style={{ display: 'flex', alignItems: 'normal', textDecoration: 'none' }}>
+            <svg
+              aria-label="Shift logo"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 254 65"
+              style={{ fill: '#ffffff', height: '22px', width: 'auto' }} // Adjust styling as needed
+            >
+              <path className="s1" d="M.027 19.254v22.873H18.14V28.401h27.214v-9.147H.027Z"></path>
+              <path className="s2" d="M27.241 55.853H0V65h45.355V42.127h-18.14l.026 13.726Z"></path>
+              <path className="h" d="M97.492 19.254V65H83.885V46.7H65.76V65H52.153V19.254H65.76v18.3h18.141v-18.3h13.591Z"></path>
+              <path
+                className="i1"
+                d="M126.987 38.563c3.779 0 7.473-1.13 10.616-3.248a19.241 19.241 0 0 0 7.04-8.649 19.437 19.437 0 0 0 1.093-11.136 19.344 19.344 0 0 0-5.224-9.873 19.066 19.066 0 0 0-9.78-5.283A18.963 18.963 0 0 0 119.69 1.46a19.147 19.147 0 0 0-8.583 7.09 19.395 19.395 0 0 0-3.235 10.704 19.438 19.438 0 0 0 1.447 7.387 19.299 19.299 0 0 0 4.142 6.265 19.1 19.1 0 0 0 6.205 4.186c2.32.971 4.808 1.47 7.321 1.47Z"
+              ></path>
+              <path className="i2" d="M104.328 46.7V65h45.333V46.7h-45.333Z"></path>
+              <path className="f" d="M201.831 28.401v-9.147h-45.366V65h13.634V46.7h29.478v-9.146h-29.478V28.4h31.732Z"></path>
+              <path className="t" d="M254 19.254h-45.377v9.147h15.834V65h13.607V28.401H254z"></path>
+            </svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 2 22"
+              style={{
+                display: 'inline-block',
+                marginLeft: '10px', /* Adjust spacing between logo and line */
+                height: '22px',
+                width: '2px',
+                fill: '#ffffff',
+                marginTop: '2px',
+                backgroundColor: '#ffffff', /* Matches logo's color */
+              }}
+            >
+              <rect width="2" height="22" />
+            </svg>
+            <span
+              style={{
+                marginLeft: '10px', // Adjust spacing between line and text
+                color: '#ffffff', // Text color
+                fontSize: '17px', // Adjust text size
+                fontWeight: 'normal', // Make the text bold
+                textDecoration: 'none', // Remove underline
+              }}
+
+            >
+              Digital Frontiers
+            </span>
+          </a>
+
+          {/* <Text fw={700} size="lg">
             Digital Frontiers
-          </Text>
+          </Text> */}
 
           <Group h="100%" gap={0} visibleFrom="sm">
-            {/* Use NavLink instead of <a> */}
             <NavLink to="/" className={classes.link}>
               Home
             </NavLink>
@@ -163,10 +219,29 @@ export function HeaderMegaMenu() {
           </Group>
 
           <Group visibleFrom="sm">
-            <Button variant="default" component={NavLink} to="/login">
+            <Button
+              variant="outline"
+              style={{
+                color: '#ffffff', // White text
+                backgroundColor: 'transparent', // Transparent background
+                border: '1px solid #ffffff', // White border
+                fontWeight: 'normal', // Optional: Adjust font weight for visibility
+                padding: '8px 16px', // Optional: Adjust padding
+                transition: 'all 0.3s ease', // Optional: Smooth hover transition
+              }}
+              component={NavLink} to="/login">
               Log in
             </Button>
-            <Button component={NavLink} to="/signup">
+            <Button variant="outline"
+              style={{
+                color: '#ffffff', // White text
+                backgroundColor: 'transparent', // Transparent background
+                border: '1px solid #ffffff', // White border
+                fontWeight: 'normal', // Optional: Adjust font weight for visibility
+                padding: '8px 16px', // Optional: Adjust padding
+                transition: 'all 0.3s ease', // Optional: Smooth hover transition
+              }}
+              component={NavLink} to="/signup">
               Sign up
             </Button>
           </Group>
@@ -175,9 +250,6 @@ export function HeaderMegaMenu() {
         </Group>
       </header>
 
-
-
-      {/* Mobile Drawer */}
       <Drawer
         opened={drawerOpened}
         onClose={closeDrawer}
