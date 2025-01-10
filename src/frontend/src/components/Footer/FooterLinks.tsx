@@ -48,7 +48,7 @@ export function FooterLinks() {
     ));
 
     return (
-      <div className={classes.wrapper} key={group.title}>
+      <div style={{ backgroundColor: '#173B3B' }} className={classes.wrapper} key={group.title}>
         <Text className={classes.title}>{group.title}</Text>
         {links}
       </div>
@@ -56,10 +56,10 @@ export function FooterLinks() {
   });
 
   return (
-    <footer className={classes.footer}>
+    <footer style={{ backgroundColor: '#173B3B' }} className={classes.footer}>
       <Container className={classes.inner}>
         <div className={classes.logo}>
-        <Text fw={700} size="lg">Digital Frontiers</Text>
+          <Text fw={700} size="lg">Digital Frontiers</Text>
 
           <Text size="xs" c="dimmed" className={classes.description}>
             A DaaS platform for the Olympic Park
