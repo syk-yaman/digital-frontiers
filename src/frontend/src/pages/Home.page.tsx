@@ -125,7 +125,7 @@ export function HomePage() {
               height: '100%',
               objectFit: 'cover',
               opacity: isFading ? 0 : 1, // Fade effect
-              transition: 'opacity 0.8s linear', // Smooth transition
+              transition: 'opacity 0.7s linear', // Smooth transition
             }}
           />
 
@@ -156,16 +156,22 @@ export function HomePage() {
             }}
           />
         </Box>
-        <Space h="md" />
+        <Space h="xl" />
+        <Space h="xl" />
 
-        <Text ta="center" className='title' c="blue">A new way to explore data in the Queen Elizabeth Olympic Park</Text>
-        <Text ta="center" size="s" c="white" style={{ "marginLeft": "50px", "marginRight": "50px" }} >Rhoncus morbi et augue nec, in id ullamcorper at sit. Condimentum sit nunc in eros scelerisque sed. Commodo in viverra nunc, ullamcorper ut. Non, amet, aliquet scelerisque nullam sagittis, pulvinar. Fermentum scelerisque sit consectetur hac mi. Mollis leo eleifend ultricies purus iaculis.</Text>
+        <Text ta="center" className='title' c="white" fw={500} >A new way for data collaboration in the Queen Elizabeth Olympic Park</Text>
+        <Text ta="center" size="lg" c="white" style={{ "marginLeft": "50px", "marginRight": "50px" }} >
+          This platform unifies all the data in and around the park in one place. Everyone can access live data and use it, contribute data to be used, and share success stories about how they used the data—a platform to innovate, collaborate and push the digital frontiers further.
+        </Text>
+        <Space h="xl" />
+        <Space h="xl" />
+        <Space h="xl" />
         <Space h="xl" />
 
 
-        <Text ta="center" className='title' c="white" >Data menu featured items</Text>
-        <Space h="md" />
-        <Text ta="center" size="s" c="white" >Browse the data menu below using an interactive map. You can switch to traditional list view. </Text>
+        <Text ta="center" className='title' fw={500} c="white" >Featured data items</Text>
+        <Text ta="center" size="s" c="white" >Browse the featured data items below. You can go to the data menu section and
+          use an interactive map to explore the data. </Text>
         <Space h="md" />
 
         <section style={{ textAlign: 'center', padding: '2rem 0' }}>
@@ -176,19 +182,42 @@ export function HomePage() {
             style={{ maxWidth: '1600px', margin: '0 auto' }}
             wrap="wrap"
           >
-            <Card withBorder radius="md" p="md" className='card' style={{ width: '350px' }}>
-              <Card.Section>
-                <Image src="https://raw.githubusercontent.com/syk-yaman/shift-digital-frontiers/refs/heads/main/src/frontend/assets/echobox.jpg" alt={title} height={180} />
+            <Card
+              withBorder
+              radius="md"
+              p="md"
+              className="card"
+              style={{ border: 'none', backgroundColor: '#1F5754', width: '350px' }}
+            >
+              <Card.Section style={{ position: 'relative' }}>
+                {/* Image */}
+                <Image
+                  src="https://raw.githubusercontent.com/syk-yaman/shift-digital-frontiers/refs/heads/main/src/frontend/assets/echobox.jpg"
+                  alt="Bats activity in the QEOP"
+                  height={180}
+                />
+
+                {/* Badge positioned at the bottom-left of the image */}
+                <Badge
+                  size="sm"
+                  variant="light"
+                  style={{
+                    position: 'absolute',
+                    bottom: 10,
+                    left: 10,
+                    backgroundColor: 'rgba(154, 255, 134, 0.8)', // Slightly transparent for aesthetics
+                    color: '#000',
+                  }}
+                >
+                  Last reading: 21 min
+                </Badge>
               </Card.Section>
 
-              <Card.Section className='section' mt="md">
+              <Card.Section className="section" mt="md">
                 <Group justify="apart">
-                  <Text fz="lg" fw={500}>
+                  <Text c="white" fz="lg" fw={500}>
                     Bats activity in the QEOP
                   </Text>
-                  <Badge size="sm" variant="light" style={{ marginLeft: 'auto' }} >
-                    {country}
-                  </Badge>
                 </Group>
                 <Group mt="xs" justify="apart">
                   <Center>
@@ -198,398 +227,503 @@ export function HomePage() {
                       radius="xl"
                       mr="xs"
                     />
-                    <Text fz="m" inline>
+                    <Text c="white" fz="m" inline>
                       Duncan Wilson
                     </Text>
                   </Center>
                 </Group>
 
-                <Text fz="sm" mt="lg">
-                  In this project we are exploring bat activity in one of the most iconic and high profile of London’s regeneration areas, the Queen Elizabeth Olympic Park. We have developed a network of 15 smart bat monitors and installed them across the park in different habitats
+                <Text c="white" fz="sm" mt="xs">
+                  15 smart bat sensors to monitor bat activity and their species in the park, using ultrasonic microphones and edge AI for classification.
                 </Text>
               </Card.Section>
 
-              <Card.Section className='section'>
-                <Text mt="md" className='label' c="dimmed">
-                  Related tags
-                </Text>
-                <Group gap={7} mt={5}>
-                  <Badge variant="light" key="" leftSection="🌱">
-                    Nature
-                  </Badge>
-                  <Badge variant="light" key="" leftSection="🏢">
-                    Built enviroment
-                  </Badge>
-                  <Badge variant="light" key="" leftSection="🦇">
-                    Bats
-                  </Badge>
-                </Group>
-              </Card.Section>
-
-              <Group mt="xs">
-                <Button radius="md" style={{ flex: 1 }}>
-                  Show details
-                </Button>
-                <ActionIcon variant="default" radius="md" size={36}>
-                  <IconHeart className='like' stroke={1.5} />
-                </ActionIcon>
+              <Group gap={7} mt={5}>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🌱">
+                  Nature
+                </Badge>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🏢">
+                  Built enviroment
+                </Badge>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🦇">
+                  Bats
+                </Badge>
               </Group>
             </Card>
-            <Card withBorder radius="md" p="md" className='card' style={{ width: '350px' }}>
-              <Card.Section>
-                <Image src="https://connected-environments.org/wp-content/uploads/2019/11/Screenshot-2019-11-15-at-14.57.39.png" alt={title} height={180} />
+            <Card
+              withBorder
+              radius="md"
+              p="md"
+              className="card"
+              style={{ border: 'none', backgroundColor: '#1F5754', width: '350px' }}
+            >
+              <Card.Section style={{ position: 'relative' }}>
+                {/* Image */}
+                <Image
+                  src="https://raw.githubusercontent.com/syk-yaman/shift-digital-frontiers/refs/heads/main/src/frontend/assets/echobox.jpg"
+                  alt="Bats activity in the QEOP"
+                  height={180}
+                />
+
+                {/* Badge positioned at the bottom-left of the image */}
+                <Badge
+                  size="sm"
+                  variant="light"
+                  style={{
+                    position: 'absolute',
+                    bottom: 10,
+                    left: 10,
+                    backgroundColor: 'rgba(154, 255, 134, 0.8)', // Slightly transparent for aesthetics
+                    color: '#000',
+                  }}
+                >
+                  Last reading: 21 min
+                </Badge>
               </Card.Section>
 
-              <Card.Section className='section' mt="md">
+              <Card.Section className="section" mt="md">
                 <Group justify="apart">
-                  <Text fz="lg" fw={500}>
-                    {title}
+                  <Text c="white" fz="lg" fw={500}>
+                    Bats activity in the QEOP
                   </Text>
-                  <Badge size="sm" variant="light" style={{ marginLeft: 'auto' }} >
-                    {country}
-                  </Badge>
                 </Group>
                 <Group mt="xs" justify="apart">
                   <Center>
                     <Avatar
-                      src="https://connected-environments.org/wp-content/uploads/2019/11/Screenshot-2019-11-15-at-14.57.39.png"
-                      size={24}
+                      src="https://avatars.githubusercontent.com/u/145232?s=96&v=4"
+                      size={35}
                       radius="xl"
                       mr="xs"
                     />
-                    <Text fz="sm" inline>
-                      Bill Wormeater
+                    <Text c="white" fz="m" inline>
+                      Duncan Wilson
                     </Text>
                   </Center>
                 </Group>
 
-                <Text fz="sm" mt="lg">
-                  {description}
+                <Text c="white" fz="sm" mt="xs">
+                  15 smart bat sensors to monitor bat activity and their species in the park, using ultrasonic microphones and edge AI for classification.
                 </Text>
               </Card.Section>
 
-              <Card.Section className='section'>
-                <Text mt="md" className='label' c="dimmed">
-                  Related tags
-                </Text>
-                <Group gap={7} mt={5}>
-                  {features}
-                </Group>
-              </Card.Section>
-
-              <Group mt="xs">
-                <Button radius="md" style={{ flex: 1 }}>
-                  Show details
-                </Button>
-                <ActionIcon variant="default" radius="md" size={36}>
-                  <IconHeart className='like' stroke={1.5} />
-                </ActionIcon>
+              <Group gap={7} mt={5}>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🌱">
+                  Nature
+                </Badge>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🏢">
+                  Built enviroment
+                </Badge>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🦇">
+                  Bats
+                </Badge>
               </Group>
             </Card>
-            <Card withBorder radius="md" p="md" className='card' style={{ width: '350px' }}>
-              <Card.Section>
-                <Image src="https://connected-environments.org/wp-content/uploads/2019/11/IMG_1829.jpeg" alt={title} height={180} />
+            <Card
+              withBorder
+              radius="md"
+              p="md"
+              className="card"
+              style={{ border: 'none', backgroundColor: '#1F5754', width: '350px' }}
+            >
+              <Card.Section style={{ position: 'relative' }}>
+                {/* Image */}
+                <Image
+                  src="https://raw.githubusercontent.com/syk-yaman/shift-digital-frontiers/refs/heads/main/src/frontend/assets/echobox.jpg"
+                  alt="Bats activity in the QEOP"
+                  height={180}
+                />
+
+                {/* Badge positioned at the bottom-left of the image */}
+                <Badge
+                  size="sm"
+                  variant="light"
+                  style={{
+                    position: 'absolute',
+                    bottom: 10,
+                    left: 10,
+                    backgroundColor: 'rgba(154, 255, 134, 0.8)', // Slightly transparent for aesthetics
+                    color: '#000',
+                  }}
+                >
+                  Last reading: 21 min
+                </Badge>
               </Card.Section>
 
-              <Card.Section className='section' mt="md">
+              <Card.Section className="section" mt="md">
                 <Group justify="apart">
-                  <Text fz="lg" fw={500}>
-                    {title}
+                  <Text c="white" fz="lg" fw={500}>
+                    Bats activity in the QEOP
                   </Text>
-                  <Badge size="sm" variant="light" style={{ marginLeft: 'auto' }} >
-                    {country}
-                  </Badge>
                 </Group>
                 <Group mt="xs" justify="apart">
                   <Center>
                     <Avatar
-                      src="https://connected-environments.org/wp-content/uploads/2019/11/IMG_1829.jpeg"
-                      size={24}
+                      src="https://avatars.githubusercontent.com/u/145232?s=96&v=4"
+                      size={35}
                       radius="xl"
                       mr="xs"
                     />
-                    <Text fz="sm" inline>
-                      Bill Wormeater
+                    <Text c="white" fz="m" inline>
+                      Duncan Wilson
                     </Text>
                   </Center>
                 </Group>
 
-                <Text fz="sm" mt="lg">
-                  {description}
+                <Text c="white" fz="sm" mt="xs">
+                  15 smart bat sensors to monitor bat activity and their species in the park, using ultrasonic microphones and edge AI for classification.
                 </Text>
               </Card.Section>
 
-              <Card.Section className='section'>
-                <Text mt="md" className='label' c="dimmed">
-                  Related tags
-                </Text>
-                <Group gap={7} mt={5}>
-                  {features}
-                </Group>
-              </Card.Section>
-
-              <Group mt="xs">
-                <Button radius="md" style={{ flex: 1 }}>
-                  Show details
-                </Button>
-                <ActionIcon variant="default" radius="md" size={36}>
-                  <IconHeart className='like' stroke={1.5} />
-                </ActionIcon>
+              <Group gap={7} mt={5}>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🌱">
+                  Nature
+                </Badge>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🏢">
+                  Built enviroment
+                </Badge>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🦇">
+                  Bats
+                </Badge>
               </Group>
             </Card>
-            <Card withBorder radius="md" p="md" className='card' style={{ width: '350px' }}>
-              <Card.Section>
-                <Image src="https://www.ucl.ac.uk/accommodation/sites/accommodation/files/styles/owl_carousel/public/_dsf2453_copyrightpaulriddle_0.jpg?itok=LMRxE0Lx" alt={title} height={180} />
+            <Card
+              withBorder
+              radius="md"
+              p="md"
+              className="card"
+              style={{ border: 'none', backgroundColor: '#1F5754', width: '350px' }}
+            >
+              <Card.Section style={{ position: 'relative' }}>
+                {/* Image */}
+                <Image
+                  src="https://raw.githubusercontent.com/syk-yaman/shift-digital-frontiers/refs/heads/main/src/frontend/assets/echobox.jpg"
+                  alt="Bats activity in the QEOP"
+                  height={180}
+                />
+
+                {/* Badge positioned at the bottom-left of the image */}
+                <Badge
+                  size="sm"
+                  variant="light"
+                  style={{
+                    position: 'absolute',
+                    bottom: 10,
+                    left: 10,
+                    backgroundColor: 'rgba(154, 255, 134, 0.8)', // Slightly transparent for aesthetics
+                    color: '#000',
+                  }}
+                >
+                  Last reading: 21 min
+                </Badge>
               </Card.Section>
 
-              <Card.Section className='section' mt="md">
+              <Card.Section className="section" mt="md">
                 <Group justify="apart">
-                  <Text fz="lg" fw={500}>
-                    {title}
+                  <Text c="white" fz="lg" fw={500}>
+                    Bats activity in the QEOP
                   </Text>
-                  <Badge size="sm" variant="light" style={{ marginLeft: 'auto' }} >
-                    {country}
-                  </Badge>
                 </Group>
                 <Group mt="xs" justify="apart">
                   <Center>
                     <Avatar
-                      src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-1.png"
-                      size={24}
+                      src="https://avatars.githubusercontent.com/u/145232?s=96&v=4"
+                      size={35}
                       radius="xl"
                       mr="xs"
                     />
-                    <Text fz="sm" inline>
-                      Bill Wormeater
+                    <Text c="white" fz="m" inline>
+                      Duncan Wilson
                     </Text>
                   </Center>
                 </Group>
 
-                <Text fz="sm" mt="lg">
-                  {description}
+                <Text c="white" fz="sm" mt="xs">
+                  15 smart bat sensors to monitor bat activity and their species in the park, using ultrasonic microphones and edge AI for classification.
                 </Text>
               </Card.Section>
 
-              <Card.Section className='section'>
-                <Text mt="md" className='label' c="dimmed">
-                  Related tags
-                </Text>
-                <Group gap={7} mt={5}>
-                  {features}
-                </Group>
-              </Card.Section>
-
-              <Group mt="xs">
-                <Button radius="md" style={{ flex: 1 }}>
-                  Show details
-                </Button>
-                <ActionIcon variant="default" radius="md" size={36}>
-                  <IconHeart className='like' stroke={1.5} />
-                </ActionIcon>
+              <Group gap={7} mt={5}>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🌱">
+                  Nature
+                </Badge>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🏢">
+                  Built enviroment
+                </Badge>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🦇">
+                  Bats
+                </Badge>
               </Group>
             </Card>
-            <Card withBorder radius="md" p="md" className='card' style={{ width: '350px' }}>
-              <Card.Section>
-                <Image src={image} alt={title} height={180} />
+            <Card
+              withBorder
+              radius="md"
+              p="md"
+              className="card"
+              style={{ border: 'none', backgroundColor: '#1F5754', width: '350px' }}
+            >
+              <Card.Section style={{ position: 'relative' }}>
+                {/* Image */}
+                <Image
+                  src="https://raw.githubusercontent.com/syk-yaman/shift-digital-frontiers/refs/heads/main/src/frontend/assets/echobox.jpg"
+                  alt="Bats activity in the QEOP"
+                  height={180}
+                />
+
+                {/* Badge positioned at the bottom-left of the image */}
+                <Badge
+                  size="sm"
+                  variant="light"
+                  style={{
+                    position: 'absolute',
+                    bottom: 10,
+                    left: 10,
+                    backgroundColor: 'rgba(154, 255, 134, 0.8)', // Slightly transparent for aesthetics
+                    color: '#000',
+                  }}
+                >
+                  Last reading: 21 min
+                </Badge>
               </Card.Section>
 
-              <Card.Section className='section' mt="md">
+              <Card.Section className="section" mt="md">
                 <Group justify="apart">
-                  <Text fz="lg" fw={500}>
-                    {title}
+                  <Text c="white" fz="lg" fw={500}>
+                    Bats activity in the QEOP
                   </Text>
-                  <Badge size="sm" variant="light" style={{ marginLeft: 'auto' }} >
-                    {country}
-                  </Badge>
                 </Group>
                 <Group mt="xs" justify="apart">
                   <Center>
                     <Avatar
-                      src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-1.png"
-                      size={24}
+                      src="https://avatars.githubusercontent.com/u/145232?s=96&v=4"
+                      size={35}
                       radius="xl"
                       mr="xs"
                     />
-                    <Text fz="sm" inline>
-                      Bill Wormeater
+                    <Text c="white" fz="m" inline>
+                      Duncan Wilson
                     </Text>
                   </Center>
                 </Group>
 
-                <Text fz="sm" mt="lg">
-                  {description}
+                <Text c="white" fz="sm" mt="xs">
+                  15 smart bat sensors to monitor bat activity and their species in the park, using ultrasonic microphones and edge AI for classification.
                 </Text>
               </Card.Section>
 
-              <Card.Section className='section'>
-                <Text mt="md" className='label' c="dimmed">
-                  Related tags
-                </Text>
-                <Group gap={7} mt={5}>
-                  {features}
-                </Group>
-              </Card.Section>
-
-              <Group mt="xs">
-                <Button radius="md" style={{ flex: 1 }}>
-                  Show details
-                </Button>
-                <ActionIcon variant="default" radius="md" size={36}>
-                  <IconHeart className='like' stroke={1.5} />
-                </ActionIcon>
+              <Group gap={7} mt={5}>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🌱">
+                  Nature
+                </Badge>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🏢">
+                  Built enviroment
+                </Badge>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🦇">
+                  Bats
+                </Badge>
               </Group>
             </Card>
-            <Card withBorder radius="md" p="md" className='card' style={{ width: '350px' }}>
-              <Card.Section>
-                <Image src={image} alt={title} height={180} />
+            <Card
+              withBorder
+              radius="md"
+              p="md"
+              className="card"
+              style={{ border: 'none', backgroundColor: '#1F5754', width: '350px' }}
+            >
+              <Card.Section style={{ position: 'relative' }}>
+                {/* Image */}
+                <Image
+                  src="https://raw.githubusercontent.com/syk-yaman/shift-digital-frontiers/refs/heads/main/src/frontend/assets/echobox.jpg"
+                  alt="Bats activity in the QEOP"
+                  height={180}
+                />
+
+                {/* Badge positioned at the bottom-left of the image */}
+                <Badge
+                  size="sm"
+                  variant="light"
+                  style={{
+                    position: 'absolute',
+                    bottom: 10,
+                    left: 10,
+                    backgroundColor: 'rgba(154, 255, 134, 0.8)', // Slightly transparent for aesthetics
+                    color: '#000',
+                  }}
+                >
+                  Last reading: 21 min
+                </Badge>
               </Card.Section>
 
-              <Card.Section className='section' mt="md">
+              <Card.Section className="section" mt="md">
                 <Group justify="apart">
-                  <Text fz="lg" fw={500}>
-                    {title}
+                  <Text c="white" fz="lg" fw={500}>
+                    Bats activity in the QEOP
                   </Text>
-                  <Badge size="sm" variant="light" style={{ marginLeft: 'auto' }} >
-                    {country}
-                  </Badge>
                 </Group>
                 <Group mt="xs" justify="apart">
                   <Center>
                     <Avatar
-                      src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-1.png"
-                      size={24}
+                      src="https://avatars.githubusercontent.com/u/145232?s=96&v=4"
+                      size={35}
                       radius="xl"
                       mr="xs"
                     />
-                    <Text fz="sm" inline>
-                      Bill Wormeater
+                    <Text c="white" fz="m" inline>
+                      Duncan Wilson
                     </Text>
                   </Center>
                 </Group>
 
-                <Text fz="sm" mt="lg">
-                  {description}
+                <Text c="white" fz="sm" mt="xs">
+                  15 smart bat sensors to monitor bat activity and their species in the park, using ultrasonic microphones and edge AI for classification.
                 </Text>
               </Card.Section>
 
-              <Card.Section className='section'>
-                <Text mt="md" className='label' c="dimmed">
-                  Related tags
-                </Text>
-                <Group gap={7} mt={5}>
-                  {features}
-                </Group>
-              </Card.Section>
-
-              <Group mt="xs">
-                <Button radius="md" style={{ flex: 1 }}>
-                  Show details
-                </Button>
-                <ActionIcon variant="default" radius="md" size={36}>
-                  <IconHeart className='like' stroke={1.5} />
-                </ActionIcon>
+              <Group gap={7} mt={5}>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🌱">
+                  Nature
+                </Badge>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🏢">
+                  Built enviroment
+                </Badge>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🦇">
+                  Bats
+                </Badge>
               </Group>
             </Card>
-            <Card withBorder radius="md" p="md" className='card' style={{ width: '350px' }}>
-              <Card.Section>
-                <Image src={image} alt={title} height={180} />
+            <Card
+              withBorder
+              radius="md"
+              p="md"
+              className="card"
+              style={{ border: 'none', backgroundColor: '#1F5754', width: '350px' }}
+            >
+              <Card.Section style={{ position: 'relative' }}>
+                {/* Image */}
+                <Image
+                  src="https://raw.githubusercontent.com/syk-yaman/shift-digital-frontiers/refs/heads/main/src/frontend/assets/echobox.jpg"
+                  alt="Bats activity in the QEOP"
+                  height={180}
+                />
+
+                {/* Badge positioned at the bottom-left of the image */}
+                <Badge
+                  size="sm"
+                  variant="light"
+                  style={{
+                    position: 'absolute',
+                    bottom: 10,
+                    left: 10,
+                    backgroundColor: 'rgba(154, 255, 134, 0.8)', // Slightly transparent for aesthetics
+                    color: '#000',
+                  }}
+                >
+                  Last reading: 21 min
+                </Badge>
               </Card.Section>
 
-              <Card.Section className='section' mt="md">
+              <Card.Section className="section" mt="md">
                 <Group justify="apart">
-                  <Text fz="lg" fw={500}>
-                    {title}
+                  <Text c="white" fz="lg" fw={500}>
+                    Bats activity in the QEOP
                   </Text>
-                  <Badge size="sm" variant="light" style={{ marginLeft: 'auto' }} >
-                    {country}
-                  </Badge>
                 </Group>
                 <Group mt="xs" justify="apart">
                   <Center>
                     <Avatar
-                      src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-1.png"
-                      size={24}
+                      src="https://avatars.githubusercontent.com/u/145232?s=96&v=4"
+                      size={35}
                       radius="xl"
                       mr="xs"
                     />
-                    <Text fz="sm" inline>
-                      Bill Wormeater
+                    <Text c="white" fz="m" inline>
+                      Duncan Wilson
                     </Text>
                   </Center>
                 </Group>
 
-                <Text fz="sm" mt="lg">
-                  {description}
+                <Text c="white" fz="sm" mt="xs">
+                  15 smart bat sensors to monitor bat activity and their species in the park, using ultrasonic microphones and edge AI for classification.
                 </Text>
               </Card.Section>
 
-              <Card.Section className='section'>
-                <Text mt="md" className='label' c="dimmed">
-                  Related tags
-                </Text>
-                <Group gap={7} mt={5}>
-                  {features}
-                </Group>
-              </Card.Section>
-
-              <Group mt="xs">
-                <Button radius="md" style={{ flex: 1 }}>
-                  Show details
-                </Button>
-                <ActionIcon variant="default" radius="md" size={36}>
-                  <IconHeart className='like' stroke={1.5} />
-                </ActionIcon>
+              <Group gap={7} mt={5}>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🌱">
+                  Nature
+                </Badge>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🏢">
+                  Built enviroment
+                </Badge>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🦇">
+                  Bats
+                </Badge>
               </Group>
             </Card>
-            <Card withBorder radius="md" p="md" className='card' style={{ width: '350px' }}>
-              <Card.Section>
-                <Image src={image} alt={title} height={180} />
+            <Card
+              withBorder
+              radius="md"
+              p="md"
+              className="card"
+              style={{ border: 'none', backgroundColor: '#1F5754', width: '350px' }}
+            >
+              <Card.Section style={{ position: 'relative' }}>
+                {/* Image */}
+                <Image
+                  src="https://raw.githubusercontent.com/syk-yaman/shift-digital-frontiers/refs/heads/main/src/frontend/assets/echobox.jpg"
+                  alt="Bats activity in the QEOP"
+                  height={180}
+                />
+
+                {/* Badge positioned at the bottom-left of the image */}
+                <Badge
+                  size="sm"
+                  variant="light"
+                  style={{
+                    position: 'absolute',
+                    bottom: 10,
+                    left: 10,
+                    backgroundColor: 'rgba(154, 255, 134, 0.8)', // Slightly transparent for aesthetics
+                    color: '#000',
+                  }}
+                >
+                  Last reading: 21 min
+                </Badge>
               </Card.Section>
 
-              <Card.Section className='section' mt="md">
+              <Card.Section className="section" mt="md">
                 <Group justify="apart">
-                  <Text fz="lg" fw={500}>
-                    {title}
+                  <Text c="white" fz="lg" fw={500}>
+                    Bats activity in the QEOP
                   </Text>
-                  <Badge size="sm" variant="light" style={{ marginLeft: 'auto' }} >
-                    {country}
-                  </Badge>
                 </Group>
                 <Group mt="xs" justify="apart">
                   <Center>
                     <Avatar
-                      src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-1.png"
-                      size={24}
+                      src="https://avatars.githubusercontent.com/u/145232?s=96&v=4"
+                      size={35}
                       radius="xl"
                       mr="xs"
                     />
-                    <Text fz="sm" inline>
-                      Bill Wormeater
+                    <Text c="white" fz="m" inline>
+                      Duncan Wilson
                     </Text>
                   </Center>
                 </Group>
 
-                <Text fz="sm" mt="lg">
-                  {description}
+                <Text c="white" fz="sm" mt="xs">
+                  15 smart bat sensors to monitor bat activity and their species in the park, using ultrasonic microphones and edge AI for classification.
                 </Text>
               </Card.Section>
 
-              <Card.Section className='section'>
-                <Text mt="md" className='label' c="dimmed">
-                  Related tags
-                </Text>
-                <Group gap={7} mt={5}>
-                  {features}
-                </Group>
-              </Card.Section>
-
-              <Group mt="xs">
-                <Button radius="md" style={{ flex: 1 }}>
-                  Show details
-                </Button>
-                <ActionIcon variant="default" radius="md" size={36}>
-                  <IconHeart className='like' stroke={1.5} />
-                </ActionIcon>
+              <Group gap={7} mt={5}>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🌱">
+                  Nature
+                </Badge>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🏢">
+                  Built enviroment
+                </Badge>
+                <Badge variant="outline" color="#00C399" key="" leftSection="🦇">
+                  Bats
+                </Badge>
               </Group>
             </Card>
           </Flex>
@@ -602,7 +736,7 @@ export function HomePage() {
 
         <Container px={0} size="100rem">
           <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
-            <Card p="md" radius="md" component="a" href="#" className=".card">
+            <Card style={{ backgroundColor: '#1F5754' }} p="md" radius="md" component="a" href="#" className=".card">
               <AspectRatio ratio={1920 / 1080}>
                 <Image src="https://connected-environments.org/wp-content/uploads/2019/11/2017-11-20-11_33_05-ViLoVive.png" />
               </AspectRatio>
@@ -618,7 +752,7 @@ export function HomePage() {
             </Card>
             <Grid gutter="md">
               <Grid.Col>
-                <Card p="md" radius="md" component="a" href="#" className=".card">
+                <Card style={{ backgroundColor: '#1F5754' }} p="md" radius="md" component="a" href="#" className=".card">
                   <AspectRatio ratio={1920 / 1080}>
                     <Image src="https://connected-environments.org/wp-content/uploads/2019/11/2017-11-20-11_33_05-ViLoVive.png" />
                   </AspectRatio>
@@ -631,7 +765,7 @@ export function HomePage() {
                 </Card>
               </Grid.Col>
               <Grid.Col span={6}>
-                <Card p="md" radius="md" component="a" href="#" className=".card">
+                <Card style={{ backgroundColor: '#1F5754' }} p="md" radius="md" component="a" href="#" className=".card">
                   <AspectRatio ratio={1920 / 1080}>
                     <Image src="https://connected-environments.org/wp-content/uploads/2019/11/2017-11-20-11_33_05-ViLoVive.png" />
                   </AspectRatio>
@@ -644,7 +778,7 @@ export function HomePage() {
                 </Card>
               </Grid.Col>
               <Grid.Col span={6}>
-                <Card p="md" radius="md" component="a" href="#" className=".card">
+                <Card style={{ backgroundColor: '#1F5754' }} p="md" radius="md" component="a" href="#" className=".card">
                   <AspectRatio ratio={1920 / 1080}>
                     <Image src="https://connected-environments.org/wp-content/uploads/2019/11/2017-11-20-11_33_05-ViLoVive.png" />
                   </AspectRatio>
@@ -667,7 +801,7 @@ export function HomePage() {
 
         <Container py="xl">
           <SimpleGrid cols={{ base: 1, sm: 4 }}>
-            <Card key={"article.title"} p="md" radius="md" component="a" href="#" className={".card"}>
+            <Card style={{ backgroundColor: '#1F5754' }} key={"article.title"} p="md" radius="md" component="a" href="#" className={".card"}>
               <AspectRatio ratio={1920 / 1080}>
                 <Image src={"https://www.ucl.ac.uk/brand/sites/brand/files/styles/small_image/public/ucl-logo-black-on-grey.jpg?itok=ooOI6Tcx"} />
               </AspectRatio>
@@ -679,7 +813,7 @@ export function HomePage() {
               </Text>
             </Card>
 
-            <Card key={"article.title"} p="md" radius="md" component="a" href="#" className={".card"}>
+            <Card style={{ backgroundColor: '#1F5754' }} key={"article.title"} p="md" radius="md" component="a" href="#" className={".card"}>
               <AspectRatio ratio={1920 / 1080}>
                 <Image src={"https://www.stratfordcross.co.uk/globalassets/uk/stratford-cross/eat-drink-shop-play/logos/amenity_logos_queen-elizabeth.jpg?width=300&height=400&upscale=false&mode=max&quality=80"} />
               </AspectRatio>
@@ -691,7 +825,7 @@ export function HomePage() {
               </Text>
             </Card>
 
-            <Card key={"article.title"} p="md" radius="md" component="a" href="#" className={".card"}>
+            <Card style={{ backgroundColor: '#1F5754' }} key={"article.title"} p="md" radius="md" component="a" href="#" className={".card"}>
               <AspectRatio ratio={1920 / 1080}>
                 <Image src={"https://www.stratfordcross.co.uk/globalassets/uk/stratford-cross/eat-drink-shop-play/logos/amenity_logos_queen-elizabeth.jpg?width=300&height=400&upscale=false&mode=max&quality=80"} />
               </AspectRatio>
@@ -703,7 +837,7 @@ export function HomePage() {
               </Text>
             </Card>
 
-            <Card key={"article.title"} p="md" radius="md" component="a" href="#" className={".card"}>
+            <Card style={{ backgroundColor: '#1F5754' }} key={"article.title"} p="md" radius="md" component="a" href="#" className={".card"}>
               <AspectRatio ratio={1920 / 1080}>
                 <Image src={"https://www.stratfordcross.co.uk/globalassets/uk/stratford-cross/eat-drink-shop-play/logos/amenity_logos_queen-elizabeth.jpg?width=300&height=400&upscale=false&mode=max&quality=80"} />
               </AspectRatio>
