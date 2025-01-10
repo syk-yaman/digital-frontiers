@@ -91,14 +91,14 @@ export function HomePage() {
   const PRIMARY_COL_HEIGHT = '600px';
   const SECONDARY_COL_HEIGHT = `calc(${PRIMARY_COL_HEIGHT} / 2 - var(--mantine-spacing-md) / 2)`;
 
-  const [imageSrc, setImageSrc] = useState('/assets/qeop-hero7.jpg'); // Initial image source
+  const [imageSrc, setImageSrc] = useState('/imgs/qeop-hero7.jpg'); // Initial image source
   const [isFading, setIsFading] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsFading(true); // Start fading
       setTimeout(() => {
-        setImageSrc('/assets/qeop-hero8.jpg'); // New image source
+        setImageSrc('/imgs/qeop-hero8.jpg'); // New image source
         setIsFading(false); // Reset fade effect
       }, 500); // Duration of the fade-out effect
     }, 3000); // Delay before image change
