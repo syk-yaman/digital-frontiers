@@ -10,6 +10,8 @@ import { FooterLinks } from './components/Footer/FooterLinks';
 import { BrowserRouter } from 'react-router-dom';
 import { HomePage } from './pages/Home.page';
 import './style.css';
+import { Dataitem } from './pages/Dataitem.page';
+import ScrollToTop from './components/ScrollToTop';
 
 export default function App() {
   return (
@@ -23,10 +25,12 @@ export default function App() {
       }}
       defaultColorScheme="dark" >
       <BrowserRouter>
+        <ScrollToTop />
         <HeaderMegaMenu />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/data-menu" element={<Datamenu />} />
+          <Route path="/data-item/:id" element={<Dataitem />} />
         </Routes>
         <FooterLinks />
       </BrowserRouter>

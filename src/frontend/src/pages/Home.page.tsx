@@ -6,8 +6,9 @@ import React, { useEffect, useState } from 'react';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 import './Home.page.css'
+import { Link } from 'react-router-dom';
 
-const cardData = [
+const dataItems = [
   {
     id: 1,
     image: '/imgs/echobox.jpg',
@@ -179,68 +180,74 @@ export function HomePage() {
               style={{ maxWidth: '1600px', margin: '0 auto' }}
               wrap="wrap"
             >
-              {cardData.map((card) => (
-                <Card
+              {dataItems.map((card) => (
+                <Link
                   key={card.id}
-                  withBorder
-                  radius="md"
-                  p="md"
-                  className="card"
-                  style={{ border: 'none', backgroundColor: '#1F5754', width: '350px' }}
+                  to={`/data-item/${card.id}`}
+                  style={{ textDecoration: 'none', color: 'inherit' }}
                 >
-                  <Card.Section style={{ position: 'relative' }}>
-                    {/* Image */}
-                    <Image src={card.image} alt={card.title} height={180} />
+                  <Card
+                    key={card.id}
+                    withBorder
+                    radius="md"
+                    p="md"
+                    className="card"
+                    style={{ border: 'none', backgroundColor: '#1F5754', width: '350px' }}
+                  >
+                    <Card.Section style={{ position: 'relative' }}>
+                      {/* Image */}
+                      <Image src={card.image} alt={card.title} height={180} />
 
-                    {/* Badge positioned at the bottom-left of the image */}
-                    <Badge
-                      size="sm"
-                      variant="dark"
-                      style={{
-                        position: 'absolute',
-                        bottom: 10,
-                        left: 10,
-                        backgroundColor: '#1f5753d1',
-                        color: '#c9f3f1',
-                      }}
-                    >
-                      Last reading: {card.lastReading}
-                    </Badge>
-                  </Card.Section>
-
-                  <Card.Section className="section" mt="md">
-                    <Group justify="apart">
-                      <Text c="white" fz="lg" fw={500}>
-                        {card.title}
-                      </Text>
-                    </Group>
-                    <Group mt="xs" justify="apart">
-                      <Center>
-                        <Avatar src={card.ownerAvatar} size={30} radius="xl" mr="xs" />
-                        <Text c="white" fz="m" inline>
-                          {card.owner}
-                        </Text>
-                      </Center>
-                    </Group>
-
-                    <Text c="white" fz="sm" mt="xs">
-                      {card.description}
-                    </Text>
-                  </Card.Section>
-
-                  <Group gap={7} mt={5}>
-                    {card.tags.map((tag, index) => (
+                      {/* Badge positioned at the bottom-left of the image */}
                       <Badge
-                        key={index}
-                        variant="outline"
-                        color="#d7bf3c"
-                        leftSection={tag.icon}
+                        size="sm"
+                        variant="dark"
+                        style={{
+                          position: 'absolute',
+                          bottom: 10,
+                          left: 10,
+                          backgroundColor: '#1f5753d1',
+                          color: '#c9f3f1',
+                        }}
                       >
-                        {tag.text}
+                        Last reading: {card.lastReading}
                       </Badge>
-                    ))}
-                  </Group>
-                </Card>
+                    </Card.Section>
+
+                    <Card.Section className="section" mt="md">
+                      <Group justify="apart">
+                        <Text c="white" fz="lg" fw={500}>
+                          {card.title}
+                        </Text>
+                      </Group>
+                      <Group mt="xs" justify="apart">
+                        <Center>
+                          <Avatar src={card.ownerAvatar} size={30} radius="xl" mr="xs" />
+                          <Text c="white" fz="m" inline>
+                            {card.owner}
+                          </Text>
+                        </Center>
+                      </Group>
+
+                      <Text c="white" fz="sm" mt="xs">
+                        {card.description}
+                      </Text>
+                    </Card.Section>
+
+                    <Group gap={7} mt={5}>
+                      {card.tags.map((tag, index) => (
+                        <Badge
+                          key={index}
+                          variant="outline"
+                          color="#d7bf3c"
+                          leftSection={tag.icon}
+                        >
+                          {tag.text}
+                        </Badge>
+                      ))}
+                    </Group>
+                  </Card>
+                </Link>
               ))}
             </Flex>
           </section>
