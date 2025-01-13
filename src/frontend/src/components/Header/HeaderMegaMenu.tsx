@@ -41,18 +41,26 @@ const version = 'v0.1.2'
 const changelog = [
   {
     version: 'v0.1.2',
-    changes: ['Changed bla bla',
-      'Added bla bla feature'],
+    changes: [
+      'Major upgrade for the homepage.',
+      'Update the main theme according to Shift brand guidlines.',
+      'New overlays to the hero image in homepage with new high quality photo.',
+      'Version number is added to the homepage with changelog dialog.',
+      'Homepage has been filled with showable real data.',
+      'Data item page updated with real content (click on "Bats Activity in the QEOP" in homepage)',
+    ],
   },
   {
     version: 'v0.1.1',
-    changes: ['Changed bla bla',
-      'Added bla bla feature'],
+    changes: [
+      'Minor style fixes for the homepage.',
+    ],
   },
   {
     version: 'v0.1.0',
-    changes: ['Changed bla bla',
-      'Added bla bla feature'],
+    changes: [
+      'Initial version.',
+    ],
   },
 ];
 
