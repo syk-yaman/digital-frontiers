@@ -25,6 +25,7 @@ import {
   Drawer,
   Group,
   HoverCard,
+  Modal,
   ScrollArea,
   SimpleGrid,
   Text,
@@ -35,6 +36,25 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { NavLink, useLocation } from 'react-router-dom';
 import classes from './HeaderMegaMenu.module.css';
+
+const version = 'v0.1.2'
+const changelog = [
+  {
+    version: 'v0.1.2',
+    changes: ['Changed bla bla',
+      'Added bla bla feature'],
+  },
+  {
+    version: 'v0.1.1',
+    changes: ['Changed bla bla',
+      'Added bla bla feature'],
+  },
+  {
+    version: 'v0.1.0',
+    changes: ['Changed bla bla',
+      'Added bla bla feature'],
+  },
+];
 
 const mockdata = [
   {
@@ -72,6 +92,8 @@ const mockdata = [
 export function HeaderMegaMenu() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
   const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
+  const [modalOpened, { open: openModal, close: closeModal }] = useDisclosure(false);
+
   const theme = useMantineTheme();
 
   // Detect current route
@@ -228,16 +250,18 @@ export function HeaderMegaMenu() {
             <Button
               variant="outline"
               style={{
-                color: '#ffffff', // White text
+                color: '#ffffffdd', // White text
                 backgroundColor: 'transparent', // Transparent background
-                border: '1px solid #ffffff', // White border
+                border: '1px solid #ffffff00', // White border
                 fontWeight: 'normal', // Optional: Adjust font weight for visibility
-                padding: '8px 16px', // Optional: Adjust padding
+                padding: '2px 0px', // Optional: Adjust padding
                 transition: 'all 0.3s ease', // Optional: Smooth hover transition
+                fontSize: '13px'
               }}
-              component={NavLink} to="/login">
-              Log in
+              onClick={openModal}>
+              {version}
             </Button>
+
             <Button variant="outline"
               style={{
                 color: '#ffffff', // White text
@@ -248,13 +272,30 @@ export function HeaderMegaMenu() {
                 transition: 'all 0.3s ease', // Optional: Smooth hover transition
               }}
               component={NavLink} to="/signup">
-              Sign up
+              Log in
             </Button>
           </Group>
 
           <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
         </Group>
       </header>
+      <Modal opened={modalOpened} onClose={closeModal} c='white' className={classes.modalcustom} // Use the custom class here
+        title="Changelog" size="md" zIndex={999999} centered>
+        {changelog.map((log) => (
+          <Box key={log.version} mb="sm">
+            <Text c='white' fw={700} mb="xs">
+              {log.version}
+            </Text>
+            <ul>
+              {log.changes.map((change, index) => (
+                <li key={index}>
+                  <Text c='white' size="sm">{change}</Text>
+                </li>
+              ))}
+            </ul>
+          </Box>
+        ))}
+      </Modal>
 
       <Drawer
         opened={drawerOpened}

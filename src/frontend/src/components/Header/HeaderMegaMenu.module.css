@@ -113,3 +113,10 @@ button:hover {
   border: 1px solid #ffffff;
   /* Ensure border stays white on hover */
 }
+
+.modalcustom {
+  --mantine-color-body: #1F5754 !important;
+  --mantine-color-text: white;
+  background-color: #173B3B !important;
+  color: white;
+}
