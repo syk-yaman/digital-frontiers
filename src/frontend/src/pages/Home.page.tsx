@@ -11,7 +11,7 @@ const cardData = [
   {
     id: 1,
     image: '/imgs/echobox.jpg',
-    title: 'Bats activity in the QEOP',
+    title: 'Bats Activity in the QEOP',
     lastReading: '21 min',
     owner: 'Duncan Wilson',
     ownerAvatar: 'https://avatars.githubusercontent.com/u/145232?s=96&v=4',
@@ -24,30 +24,29 @@ const cardData = [
   },
   {
     id: 2,
-    image: '/imgs/echobox.jpg',
-    title: 'Bats activity in the QEOP',
-    lastReading: '21 min',
-    owner: 'Duncan Wilson',
-    ownerAvatar: 'https://avatars.githubusercontent.com/u/145232?s=96&v=4',
-    description: '15 smart bat sensors to monitor bat activity and their species in the park, using ultrasonic microphones and edge AI for classification.',
+    image: 'https://connected-environments.org/wp-content/uploads/2019/11/22667474203_4184760ebc_o.jpg',
+    title: 'Weather Data in QEOP',
+    lastReading: '25 sec',
+    owner: 'Andrew Hudson-Smith',
+    ownerAvatar: 'https://avatars.githubusercontent.com/u/50172263?v=4',
+    description: 'The Connected Environments team currently run weather stations at 3 sites with 3 different types of weather station.',
     tags: [
-      { text: 'Nature', icon: '' },
-      { text: 'Built environment', icon: '' },
-      { text: 'Bats', icon: '' },
+      { text: 'Weather', icon: '' },
+      { text: 'Climate', icon: '' },
     ],
   },
   {
     id: 3,
-    image: '/imgs/echobox.jpg',
-    title: 'Bats activity in the QEOP',
-    lastReading: '21 min',
-    owner: 'Duncan Wilson',
-    ownerAvatar: 'https://avatars.githubusercontent.com/u/145232?s=96&v=4',
-    description: '15 smart bat sensors to monitor bat activity and their species in the park, using ultrasonic microphones and edge AI for classification.',
+    image: 'https://images.squarespace-cdn.com/content/v1/60018ed1f8f42f6c20a04b4f/c1adb054-2854-4c50-a4b4-2db06ef7c4d0/solar-panels.png?format=2500w',
+    title: 'PV Energy Generation',
+    lastReading: '2 years ago',
+    owner: 'Nick Turner',
+    ownerAvatar: 'https://media.licdn.com/dms/image/v2/D4E03AQGVUDKdcXFwAg/profile-displayphoto-shrink_100_100/profile-displayphoto-shrink_100_100/0/1689191979062?e=1742428800&v=beta&t=d5QKRQza3KBVOLab0wz6czUWuFW22zxxdcZjMs8U7dQ',
+    description: 'Historical PV energy generation data for the panels atop the car park by Here East, Riverside East bar/cafe next to Marshgate and Timber Lodge.',
     tags: [
-      { text: 'Nature', icon: '' },
-      { text: 'Built environment', icon: '' },
-      { text: 'Bats', icon: '' },
+      { text: 'PV', icon: '' },
+      { text: 'Solar Energy', icon: '' },
+      { text: 'Electrcity', icon: '' },
     ],
   },
 ];
@@ -157,9 +156,9 @@ export function HomePage() {
 
         <div style={{ marginRight: '5%', marginLeft: '5%' }}>
 
-          <Text ta="center" className='title' c="white" fw={500} >A new way for data collaboration in the Queen Elizabeth Olympic Park</Text>
+          <Text ta="center" className='title' c="white" fw={500} >A New Way for <span style={{ color: '#FFC747' }}>Data Collaboration</span> in the Queen Elizabeth Olympic Park</Text>
           <Text ta="center" size="lg" c="white" style={{ "marginLeft": "50px", "marginRight": "50px" }} >
-            This platform unifies all the data in and around the park in one place. Everyone can access live data and use it, contribute data to be used, and share success stories about how they used the data—a platform to innovate, collaborate and push the digital frontiers further.
+            This platform unifies all the data in and around the park in one place. Everyone can access live data and use it, contribute data to be used, and share success stories about how they used the data<span style={{ color: '#FFC747' }}>—</span>a platform to innovate, collaborate and push the digital frontiers further.
           </Text>
           <Space h="xl" />
           <Space h="xl" />
@@ -234,7 +233,7 @@ export function HomePage() {
                       <Badge
                         key={index}
                         variant="outline"
-                        color="#18cca5"
+                        color="#d7bf3c"
                         leftSection={tag.icon}
                       >
                         {tag.text}
@@ -257,53 +256,58 @@ export function HomePage() {
                 <AspectRatio ratio={1920 / 1080}>
                   <Image src="https://custom-images.strikinglycdn.com/res/hrscywv4p/image/upload/c_limit,fl_lossy,h_9000,w_1200,f_auto,q_auto/370342/567505_905654.jpg" />
                 </AspectRatio>
-                <Text c="white" size="xs" tt="uppercase" fw={700} mt="md">
+                <Text c="#d1bd51" size="xs" tt="uppercase" fw={700} mt="md">
                   September 9, 2022
                 </Text>
-                <Text c="white" className=".title2" mt={5}>
-                  Lorem Ipsum has been the industrys standard dummy text ever since the 1500s
+                <Text c="white" size="xl" mt={5}>
+                  Mosa, a QEOP-based Startup to Enhance Bike Parking Security with Intelligent Solution
                 </Text>
-                <Text c="white" className=".title" mt={5}>
-                  Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheetsLorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets
+                <Text c="#dedede" mt={5}>
+                  As urban environments strive for sustainability, traditional bike racks and CCTV cameras often fall short in truly promoting cycling.
+                  But you see the bigger picture. Whether you’re a property manager, transport planner, or landlord, you understand the transformative
+                  potential of cycling and are eager to overcome the challenges that discourage two-wheeled transportation.
+                  Mosa shares your commitment to innovation and creating greener, more sustainable urban spaces.
+                  By integrating our intelligent, retrofit solutions, you can enhance bike parking security, encourage cycling,
+                  and make a meaningful impact on your community’s future.
                 </Text>
               </Card>
               <Grid gutter="md">
                 <Grid.Col>
                   <Card style={{ backgroundColor: '#1F5754' }} p="md" radius="md" component="a" href="#" className=".card">
                     <AspectRatio ratio={1920 / 1080}>
-                      <Image src="https://connected-environments.org/wp-content/uploads/2019/11/2017-11-20-11_33_05-ViLoVive.png" />
+                      <Image src="https://www.queenelizabetholympicpark.co.uk/sites/default/files/styles/banner_image_contained/public/banner-slide-image/school-streets_summer-2023_sensors%20%281%29.jpg?itok=HRGamTq4" />
                     </AspectRatio>
-                    <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
-                      September 9, 2022
+                    <Text c="#d1bd51" size="xs" tt="uppercase" fw={700} mt="md">
+                      October 17, 2023
                     </Text>
-                    <Text className=".title" mt={5}>
-                      Hawaii beaches review: better than you think
+                    <Text c="white" size="l" mt={5}>
+                      Air Quality improves at Hackney School after School Streets Initiative Introduced
                     </Text>
                   </Card>
                 </Grid.Col>
                 <Grid.Col span={6}>
                   <Card style={{ backgroundColor: '#1F5754' }} p="md" radius="md" component="a" href="#" className=".card">
                     <AspectRatio ratio={1920 / 1080}>
-                      <Image src="https://connected-environments.org/wp-content/uploads/2019/11/2017-11-20-11_33_05-ViLoVive.png" />
+                      <Image src="https://cdn.prod.website-files.com/65d39eed3647e480025d413a/66d5a623c612ae2b74e5088d_product-screenshot-energy-report.png" />
                     </AspectRatio>
-                    <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
+                    <Text c="#d1bd51" size="xs" tt="uppercase" fw={700} mt="md">
                       September 9, 2022
                     </Text>
-                    <Text className=".title" mt={5}>
-                      Lorem Ipsum has been the industrys standard dummy text ever since the 1500s
+                    <Text c="white" size="m" mt={5}>
+                      MapMortar, Plan, track and scale your path to Net Zero
                     </Text>
                   </Card>
                 </Grid.Col>
                 <Grid.Col span={6}>
                   <Card style={{ backgroundColor: '#1F5754' }} p="md" radius="md" component="a" href="#" className=".card">
                     <AspectRatio ratio={1920 / 1080}>
-                      <Image src="https://connected-environments.org/wp-content/uploads/2019/11/2017-11-20-11_33_05-ViLoVive.png" />
+                      <Image src="https://connected-environments.org/wp-content/uploads/2019/11/echobox.jpg" />
                     </AspectRatio>
-                    <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
-                      September 9, 2022
+                    <Text c="#d1bd51" size="xs" tt="uppercase" fw={700} mt="md">
+                      November 5, 2019
                     </Text>
-                    <Text className=".title" mt={5}>
-                      Lorem Ipsum has been the industrys standard dummy text ever since the 1500s
+                    <Text c="white" size="m" mt={5}>
+                      Shazam for bats: Internet of Things for biodiversity monitoring
                     </Text>
                   </Card>
                 </Grid.Col>
