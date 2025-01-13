@@ -1,1 +1,11 @@
-/* to be used */
+:root {
+    /*--mantine-color-body: #173B3B !important;*/
+    /* Set your desired background color */
+    --mantine-color-text: white;
+}
+
+body {
+    background-color: var(--mantine-color-body);
+    color: var(--mantine-color-text);
+    /* Apply text color */
+}

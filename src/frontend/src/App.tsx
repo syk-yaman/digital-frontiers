@@ -9,13 +9,19 @@ import { Datamenu } from './pages/Datamenu.page';
 import { FooterLinks } from './components/Footer/FooterLinks';
 import { BrowserRouter } from 'react-router-dom';
 import { HomePage } from './pages/Home.page';
+import './style.css';
 
 export default function App() {
   return (
 
-    <MantineProvider theme={{
-      fontFamily: 'Public Sans, sans-serif',
-    }} defaultColorScheme="dark" >
+    <MantineProvider
+      theme=
+      {{
+        fontFamily: 'Public Sans, sans-serif',
+        colors: {
+        },
+      }}
+      defaultColorScheme="dark" >
       <BrowserRouter>
         <HeaderMegaMenu />
         <Routes>
