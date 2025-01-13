@@ -104,7 +104,7 @@ export function HeaderMegaMenu() {
     <UnstyledButton className={classes.subLink} key={item.title}>
       <Group wrap="nowrap" align="flex-start">
         <ThemeIcon size={34} variant="default" radius="md">
-          <item.icon size={22} color={theme.colors.blue[6]} />
+          <item.icon size={22} color={'#FFC747'} />
         </ThemeIcon>
         <div>
           <Text size="sm" fw={500}>
@@ -167,7 +167,7 @@ export function HeaderMegaMenu() {
                 backgroundColor: '#ffffff', /* Matches logo's color */
               }}
             >
-              <rect width="2" height="22" />
+              <rect width="2" height="22" fill='#FFC747' />
             </svg>
             <span
               style={{
@@ -199,7 +199,7 @@ export function HeaderMegaMenu() {
                     <Box component="span" mr={5}>
                       Data menu
                     </Box>
-                    <IconChevronDown size={16} color={theme.colors.blue[6]} />
+                    <IconChevronDown size={16} color={'#FFC747'} />
                   </Center>
                 </NavLink>
               </HoverCard.Target>
@@ -208,7 +208,7 @@ export function HeaderMegaMenu() {
                 <Group justify="space-between" px="md">
                   <Text fw={500}>Latest added tags</Text>
                   <NavLink to="/data-menu" className={classes.link}>
-                    <Anchor component={NavLink} to="/data-menu" fz="xs">
+                    <Anchor c='#FFC747' component={NavLink} to="/data-menu" fz="xs">
                       View all
                     </Anchor>
                   </NavLink>
@@ -266,7 +266,7 @@ export function HeaderMegaMenu() {
               style={{
                 color: '#ffffff', // White text
                 backgroundColor: 'transparent', // Transparent background
-                border: '1px solid #ffffff', // White border
+                border: '1px solid #fff', // White border
                 fontWeight: 'normal', // Optional: Adjust font weight for visibility
                 padding: '8px 16px', // Optional: Adjust padding
                 transition: 'all 0.3s ease', // Optional: Smooth hover transition
@@ -279,7 +279,7 @@ export function HeaderMegaMenu() {
           <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
         </Group>
       </header>
-      <Modal opened={modalOpened} onClose={closeModal} c='white' className={classes.modalcustom} // Use the custom class here
+      <Modal opened={modalOpened} onClose={closeModal} c='#FFC747' className={classes.modalcustom} // Use the custom class here
         title="Changelog" size="md" zIndex={999999} centered>
         {changelog.map((log) => (
           <Box key={log.version} mb="sm">

@@ -70,17 +70,17 @@ export function FooterLinks() {
       </Container>
       <Container className={classes.afterFooter}>
         <Text c="white" size="sm">
-          © 2025 Shift.  All rights reserved.
+          <span style={{ color: '#FFC747' }}>©</span> 2025 Shift.  All rights reserved.
         </Text>
 
         <Group gap={0} className={classes.social} justify="flex-end" wrap="nowrap">
-          <ActionIcon size="lg" color="white" variant="subtle">
+          <ActionIcon size="lg" color="#FFC747" variant="subtle">
             <IconBrandTwitter size={18} stroke={1.5} />
           </ActionIcon>
-          <ActionIcon size="lg" color="white" variant="subtle">
+          <ActionIcon size="lg" color="#FFC747" variant="subtle">
             <IconBrandYoutube size={18} stroke={1.5} />
           </ActionIcon>
-          <ActionIcon size="lg" color="white" variant="subtle">
+          <ActionIcon size="lg" color="#FFC747" variant="subtle">
             <IconBrandInstagram size={18} stroke={1.5} />
           </ActionIcon>
         </Group>
