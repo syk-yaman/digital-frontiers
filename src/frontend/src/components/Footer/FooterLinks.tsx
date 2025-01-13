@@ -42,44 +42,45 @@ export function FooterLinks() {
         component="a"
         href={link.link}
         onClick={(event) => event.preventDefault()}
+        c="white"
       >
         {link.label}
       </Text>
     ));
 
     return (
-      <div style={{ backgroundColor: '#173B3B' }} className={classes.wrapper} key={group.title}>
-        <Text className={classes.title}>{group.title}</Text>
+      <div className={classes.wrapper} key={group.title}>
+        <Text className={classes.title} c="white">{group.title}</Text>
         {links}
       </div>
     );
   });
 
   return (
-    <footer style={{ backgroundColor: '#173B3B' }} className={classes.footer}>
+    <footer style={{ backgroundColor: '#1F5754' }} className={classes.footer}>
       <Container className={classes.inner}>
         <div className={classes.logo}>
-          <Text fw={700} size="lg">Digital Frontiers</Text>
+          <Text fw={700} c="white" size="lg">Digital Frontiers</Text>
 
-          <Text size="xs" c="dimmed" className={classes.description}>
+          <Text size="xs" c="white" className={classes.description}>
             A DaaS platform for the Olympic Park
           </Text>
         </div>
         <div className={classes.groups}>{groups}</div>
       </Container>
       <Container className={classes.afterFooter}>
-        <Text c="dimmed" size="sm">
-          © 2024 Digital Frontiers.  All rights reserved.
+        <Text c="white" size="sm">
+          © 2025 Shift.  All rights reserved.
         </Text>
 
         <Group gap={0} className={classes.social} justify="flex-end" wrap="nowrap">
-          <ActionIcon size="lg" color="gray" variant="subtle">
+          <ActionIcon size="lg" color="white" variant="subtle">
             <IconBrandTwitter size={18} stroke={1.5} />
           </ActionIcon>
-          <ActionIcon size="lg" color="gray" variant="subtle">
+          <ActionIcon size="lg" color="white" variant="subtle">
             <IconBrandYoutube size={18} stroke={1.5} />
           </ActionIcon>
-          <ActionIcon size="lg" color="gray" variant="subtle">
+          <ActionIcon size="lg" color="white" variant="subtle">
             <IconBrandInstagram size={18} stroke={1.5} />
           </ActionIcon>
         </Group>
