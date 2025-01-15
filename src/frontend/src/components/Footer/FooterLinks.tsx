@@ -70,7 +70,7 @@ export function FooterLinks() {
       </Container>
       <Container className={classes.afterFooter}>
         <Text c="white" size="sm">
-          <span style={{ color: '#FFC747' }}>©</span> 2025 Shift.  All rights reserved.
+          <span style={{ color: '#FFC747' }}>©</span> 2025 LLDC.  All rights reserved.
         </Text>
 
         <Group gap={0} className={classes.social} justify="flex-end" wrap="nowrap">

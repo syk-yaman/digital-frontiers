@@ -46,7 +46,7 @@ const dataItems = [
     description: 'Historical PV energy generation data for the panels atop the car park by Here East, Riverside East bar/cafe next to Marshgate and Timber Lodge.',
     tags: [
       { text: 'PV', icon: '' },
-      { text: 'Solar Energy', icon: '' },
+      { text: 'Built environment', icon: '' },
       { text: 'Electrcity', icon: '' },
     ],
   },
@@ -157,9 +157,10 @@ export function HomePage() {
 
         <div style={{ marginRight: '5%', marginLeft: '5%' }}>
 
-          <Text ta="center" className='title' c="white" fw={500} >A New Way for <span style={{ color: '#FFC747' }}>Data Collaboration</span> in the Queen Elizabeth Olympic Park</Text>
+          <Text ta="center" className='title' c="white" fw={500} >
+            A <span style={{ color: '#FFC747' }}>Data Platform </span>for Digital Innovators to Collaborate, Test and Showcase</Text>
           <Text ta="center" size="lg" c="white" style={{ "marginLeft": "50px", "marginRight": "50px" }} >
-            This platform unifies all the data in and around the park in one place. Everyone can access live data and use it, contribute data to be used, and share success stories about how they used the data<span style={{ color: '#FFC747' }}>—</span>a platform to innovate, collaborate and push the digital frontiers further.
+            Digital Frontiers provides innovators with a set of curated data streams and product showcasing tools. <br />All data is hyperlocal, co-located in Queen Elizabeth Olympic Park and is ready for plug and play collaboration.
           </Text>
           <Space h="xl" />
           <Space h="xl" />
@@ -210,7 +211,7 @@ export function HomePage() {
                           color: '#c9f3f1',
                         }}
                       >
-                        Last reading: {card.lastReading}
+                        Last updated: {card.lastReading}
                       </Badge>
                     </Card.Section>
 

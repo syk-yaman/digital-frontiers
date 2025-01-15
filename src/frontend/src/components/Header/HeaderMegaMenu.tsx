@@ -67,34 +67,34 @@ const changelog = [
 const mockdata = [
   {
     icon: IconPlane,
-    title: 'Aiccraft',
-    description: 'This Pokémon’s cry is very loud and distracting',
+    title: 'Aircraft',
+    description: 'Explore live data on aircraft activity over Queen Elizabeth Park.',
   },
   {
     icon: IconPlant,
     title: 'Environment & Nature',
-    description: 'The fluid of Smeargle’s tail secretions changes',
+    description: 'Insights into the park’s natural ecosystems, flora, and fauna.',
   },
   {
     icon: IconBuilding,
-    title: 'Built enviroment',
-    description: 'Yanma is capable of seeing 360 degrees without',
+    title: 'Built Environment',
+    description: 'Detailed data on structures and infrastructure within the park.',
   },
   {
     icon: IconCat,
-    title: 'Life',
-    description: 'The shell’s rounded shape and the grooves on its.',
+    title: 'People',
+    description: 'Discover visitor trends and demographic insights in the park.',
   },
   {
     icon: IconChartPie3,
     title: 'Analytics',
-    description: 'This Pokémon uses its flying ability to quickly chase',
+    description: 'Comprehensive analytics and visualizations of park data.',
   },
   {
     icon: IconSunElectricity,
-    title: 'Solar power',
-    description: 'Combusken battles with the intensely hot flames it spews',
-  },
+    title: 'Solar Power',
+    description: 'Monitor solar energy generation and usage in the park.',
+  }
 ];
 
 export function HeaderMegaMenu() {
