@@ -158,7 +158,7 @@ export function HomePage() {
         <div style={{ marginRight: '5%', marginLeft: '5%' }}>
 
           <Text ta="center" className='title' c="white" fw={500} >
-            A <span style={{ color: '#FFC747' }}>Data Platform </span>for Digital Innovators to Collaborate, Test and Showcase</Text>
+            A Data Platform for <span style={{ color: '#FFC747' }}>Digital Innovators</span> to Collaborate, Test and Showcase</Text>
           <Text ta="center" size="lg" c="white" style={{ "marginLeft": "50px", "marginRight": "50px" }} >
             Digital Frontiers provides innovators with a set of curated data streams and product showcasing tools. <br />All data is hyperlocal, co-located in Queen Elizabeth Olympic Park and is ready for plug and play collaboration.
           </Text>
