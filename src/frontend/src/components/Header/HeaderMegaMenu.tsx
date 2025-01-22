@@ -37,8 +37,14 @@ import { useDisclosure } from '@mantine/hooks';
 import { NavLink, useLocation } from 'react-router-dom';
 import classes from './HeaderMegaMenu.module.css';
 
-const version = 'v0.1.3'
+const version = 'v0.1.4'
 const changelog = [
+  {
+    version: 'v0.1.4',
+    changes: [
+
+    ],
+  },
   {
     version: 'v0.1.3',
     changes: [
