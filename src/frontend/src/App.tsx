@@ -12,6 +12,7 @@ import { HomePage } from './pages/Home.page';
 import './style.css';
 import { Dataitem } from './pages/Dataitem.page';
 import ScrollToTop from './components/ScrollToTop';
+import { SigninPage } from './pages/Signin.page';
 
 export default function App() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/data-menu" element={<Datamenu />} />
           <Route path="/data-item/:id" element={<Dataitem />} />
+          <Route path='/signin' element={<SigninPage />} />
         </Routes>
         <FooterLinks />
       </BrowserRouter>

@@ -286,7 +286,7 @@ export function HeaderMegaMenu() {
                 padding: '8px 16px', // Optional: Adjust padding
                 transition: 'all 0.3s ease', // Optional: Smooth hover transition
               }}
-              component={NavLink} to="/signup">
+              component={NavLink} to="/signin">
               Log in
             </Button>
           </Group>
