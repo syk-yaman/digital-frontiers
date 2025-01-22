@@ -4,7 +4,7 @@ import { Welcome } from '../components/Welcome/Welcome';
 import { FooterLinks } from '@/components/Footer/FooterLinks';
 import { Carousel } from '@mantine/carousel';
 import '@mantine/carousel/styles.css';
-import { Text, Anchor, Breadcrumbs, Image, Center, rem, SegmentedControl, Space, Avatar, Badge, Group } from '@mantine/core';
+import { Text, Anchor, Breadcrumbs, Image, Center, rem, SegmentedControl, Space, Avatar, Badge, Group, Card, Flex } from '@mantine/core';
 
 import React, { useState } from 'react';
 import DeckGL from '@deck.gl/react';
@@ -29,6 +29,50 @@ const INITIAL_VIEW_STATE = {
   latitude: 51.5447, // Latitude for Olympic Park
   zoom: 14.5, // Zoom in closer to Olympic Park
 };
+
+const dataItems = [
+  {
+    id: 1,
+    image: '/imgs/echobox.jpg',
+    title: 'Bats Activity in the QEOP',
+    lastReading: '21 min',
+    owner: 'Duncan Wilson',
+    ownerAvatar: 'https://avatars.githubusercontent.com/u/145232?s=96&v=4',
+    description: '15 smart bat sensors to monitor bat activity and their species in the park, using ultrasonic microphones and edge AI for classification.',
+    tags: [
+      { text: 'Nature', icon: '' },
+      { text: 'Built environment', icon: '' },
+      { text: 'Bats', icon: '' },
+    ],
+  },
+  {
+    id: 2,
+    image: 'https://connected-environments.org/wp-content/uploads/2019/11/22667474203_4184760ebc_o.jpg',
+    title: 'Weather Data in QEOP',
+    lastReading: '25 sec',
+    owner: 'Andrew Hudson-Smith',
+    ownerAvatar: 'https://avatars.githubusercontent.com/u/50172263?v=4',
+    description: 'The Connected Environments team currently run weather stations at 3 sites with 3 different types of weather station.',
+    tags: [
+      { text: 'Weather', icon: '' },
+      { text: 'Climate', icon: '' },
+    ],
+  },
+  {
+    id: 3,
+    image: 'https://images.squarespace-cdn.com/content/v1/60018ed1f8f42f6c20a04b4f/c1adb054-2854-4c50-a4b4-2db06ef7c4d0/solar-panels.png?format=2500w',
+    title: 'PV Energy Generation',
+    lastReading: '2 years ago',
+    owner: 'Nick Turner',
+    ownerAvatar: 'https://media.licdn.com/dms/image/v2/D4E03AQGVUDKdcXFwAg/profile-displayphoto-shrink_100_100/profile-displayphoto-shrink_100_100/0/1689191979062?e=1742428800&v=beta&t=d5QKRQza3KBVOLab0wz6czUWuFW22zxxdcZjMs8U7dQ',
+    description: 'Historical PV energy generation data for the panels atop the car park by Here East, Riverside East bar/cafe next to Marshgate and Timber Lodge.',
+    tags: [
+      { text: 'PV', icon: '' },
+      { text: 'Built environment', icon: '' },
+      { text: 'Electrcity', icon: '' },
+    ],
+  },
+];
 
 const data = [
   {
@@ -97,6 +141,7 @@ interface PopupInfo {
 
 export function Datamenu() {
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
+  const [view, setView] = useState('map');
 
   const layers = [
     new ScatterplotLayer({
@@ -129,7 +174,10 @@ export function Datamenu() {
       <Text ta="center" size="s" c="white" >Browse the data menu below using an interactive map. You can switch to traditional list view. </Text>
       <Center h={100}>
 
-        <SegmentedControl color="blue"
+        <SegmentedControl
+          color="blue"
+          value={view}
+          onChange={setView}
           data={[
             {
               value: 'map',
@@ -152,63 +200,145 @@ export function Datamenu() {
           ]}
         />
       </Center>
-      <div
-        style={{
-          height: '900px', // Set height
-          width: '90%',  // Set width
-          border: '0px solid black',
-          margin: '40px auto', // Center the div
-          position: 'relative',
-        }}
-      >
-        <Map
-          initialViewState={INITIAL_VIEW_STATE}
-          mapStyle={BASEMAP.DARK_MATTER}
-
-          onClick={(e) => {
-            // Close popup when clicking on the map
-            if (!e.features) {
-              setPopupInfo(null);
-            }
+      {view === 'map' && (
+        <div
+          style={{
+            height: '900px', // Set height
+            width: '90%',  // Set width
+            border: '0px solid black',
+            margin: '40px auto', // Center the div
+            position: 'relative',
           }}
         >
-          {/* DeckGL layer for interactivity */}
-          <DeckGL
-            layers={layers}
-            viewState={INITIAL_VIEW_STATE}
-          />
+          <Map
+            initialViewState={INITIAL_VIEW_STATE}
+            mapStyle={BASEMAP.DARK_MATTER}
 
-          {popupInfo && (
-            <Popup
-              longitude={popupInfo.position[0]}
-              latitude={popupInfo.position[1]}
-              closeOnClick={true}
-              anchor="top"
-              onClose={() => setPopupInfo(null)}
+            onClick={(e) => {
+              // Close popup when clicking on the map
+              if (!e.features) {
+                setPopupInfo(null);
+              }
+            }}
+          >
+            {/* DeckGL layer for interactivity */}
+            <DeckGL
+              layers={layers}
+              viewState={INITIAL_VIEW_STATE}
+            />
+
+            {popupInfo && (
+              <Popup
+                longitude={popupInfo.position[0]}
+                latitude={popupInfo.position[1]}
+                closeOnClick={true}
+                anchor="top"
+                onClose={() => setPopupInfo(null)}
+              >
+                <Group gap="sm" mb="sm">
+                  <Avatar src={popupInfo.image} size={40} />
+                  <div>
+                    <Text fw={500}>{popupInfo.title}</Text>
+                    <Text fz="sm" c="dimmed">
+                      {popupInfo.owner}
+                    </Text>
+                  </div>
+                </Group>
+                <Text>{popupInfo.description}</Text>
+                <Group gap="xs" mt="sm">
+                  {popupInfo.tags.map((tag, index) => (
+                    <Badge key={index} size="sm">
+                      {tag}
+                    </Badge>
+                  ))}
+                </Group>
+              </Popup>
+            )}
+          </Map>
+
+        </div>
+      )}
+
+      {view === 'list' && (
+        <Flex
+          gap="lg"
+          justify="center"
+          align="center"
+          style={{ maxWidth: '1600px', margin: '0 auto' }}
+          wrap="wrap"
+          mb={'xl'}
+        >
+          {dataItems.map((card) => (
+            <Link
+              key={card.id}
+              to={`/data-item/${card.id}`}
+              style={{ textDecoration: 'none', color: 'inherit' }}
             >
-              <Group gap="sm" mb="sm">
-                <Avatar src={popupInfo.image} size={40} />
-                <div>
-                  <Text fw={500}>{popupInfo.title}</Text>
-                  <Text fz="sm" c="dimmed">
-                    {popupInfo.owner}
-                  </Text>
-                </div>
-              </Group>
-              <Text>{popupInfo.description}</Text>
-              <Group gap="xs" mt="sm">
-                {popupInfo.tags.map((tag, index) => (
-                  <Badge key={index} size="sm">
-                    {tag}
+              <Card
+                key={card.id}
+                withBorder
+                radius="md"
+                p="md"
+                className="card"
+                style={{ border: 'none', backgroundColor: '#1F5754', width: '350px' }}
+              >
+                <Card.Section style={{ position: 'relative' }}>
+                  {/* Image */}
+                  <Image src={card.image} alt={card.title} height={180} />
+
+                  {/* Badge positioned at the bottom-left of the image */}
+                  <Badge
+                    size="sm"
+                    variant="dark"
+                    style={{
+                      position: 'absolute',
+                      bottom: 10,
+                      left: 10,
+                      backgroundColor: '#1f5753d1',
+                      color: '#c9f3f1',
+                    }}
+                  >
+                    Last updated: {card.lastReading}
                   </Badge>
-                ))}
-              </Group>
-            </Popup>
-          )}
-        </Map>
+                </Card.Section>
 
-      </div>
+                <Card.Section className="section" mt="md">
+                  <Group justify="apart">
+                    <Text c="white" fz="lg" fw={500}>
+                      {card.title}
+                    </Text>
+                  </Group>
+                  <Group mt="xs" justify="apart">
+                    <Center>
+                      <Avatar src={card.ownerAvatar} size={30} radius="xl" mr="xs" />
+                      <Text c="white" fz="m" inline>
+                        {card.owner}
+                      </Text>
+                    </Center>
+                  </Group>
 
+                  <Text c="white" fz="sm" mt="xs">
+                    {card.description}
+                  </Text>
+                </Card.Section>
+
+                <Group gap={7} mt={5}>
+                  {card.tags.map((tag, index) => (
+                    <Badge
+                      key={index}
+                      variant="outline"
+                      color="#d7bf3c"
+                      leftSection={tag.icon}
+                    >
+                      {tag.text}
+                    </Badge>
+                  ))}
+                </Group>
+              </Card>
+            </Link>
+          ))}
+        </Flex>
+      )}
 
     </>
   );
