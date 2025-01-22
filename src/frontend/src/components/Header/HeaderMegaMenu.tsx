@@ -42,14 +42,16 @@ const changelog = [
   {
     version: 'v0.1.4',
     changes: [
-
+      'Activated the list view in the data menu.',
+      'Added the login / sign up pages.',
+      'Added the dataset add wizrd.',
+      'Font is set to bold in the navbar.'
     ],
   },
   {
     version: 'v0.1.3',
     changes: [
       'Minor fixes for Homepage after QA.',
-
     ],
   },
   {
