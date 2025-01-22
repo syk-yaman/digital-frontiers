@@ -173,7 +173,7 @@ export function HomePage() {
             use an interactive map to explore the data. </Text>
           <Space h="md" />
 
-          <section style={{ textAlign: 'center', padding: '2rem 0' }}>
+          <section style={{ textAlign: 'left', padding: '2rem 0' }}>
             <Flex
               gap="lg"
               justify="center"
