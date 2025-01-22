@@ -13,7 +13,7 @@ import {
     Space,
     Anchor,
 } from '@mantine/core';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 export function SigninPage() {
     const [view, setView] = useState('sign-in'); // Toggle between 'sign-in' and 'sign-up'
@@ -57,7 +57,8 @@ export function SigninPage() {
                         required
                         mb="md"
                     />
-                    <Button fullWidth variant="filled" color="blue" mt="lg">
+                    <Button fullWidth variant="filled" color="blue" mt="lg"
+                        component={NavLink} to="/add-data-item">
                         Sign In
                     </Button>
                 </form>
