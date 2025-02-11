@@ -37,8 +37,17 @@ import { useDisclosure } from '@mantine/hooks';
 import { NavLink, useLocation } from 'react-router-dom';
 import classes from './HeaderMegaMenu.module.css';
 
-const version = 'v0.1.4'
+const version = 'v0.1.5'
 const changelog = [
+  {
+    version: 'v0.1.5',
+    changes: [
+      'Updated the signup page according to feedback.',
+      'Major update to the dataset-add wizard including feedback implementation',
+      'Activated the QEOP boundary on the map using GIS plugins.',
+      'Minor fixes.'
+    ],
+  },
   {
     version: 'v0.1.4',
     changes: [
