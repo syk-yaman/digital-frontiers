@@ -90,7 +90,7 @@ export function AddDataitemPage() {
 
     useEffect(() => {
         async function loadShapefileFromURL() {
-            const shpUrl = "/dist/maps/MDC_Boundary_2024.shp"; // 🔹 Replace with actual URL
+            const shpUrl = "/maps/MDC_Boundary_2024.shp"; // 🔹 Replace with actual URL
 
             try {
                 console.log("📡 Fetching SHP from:", shpUrl);
