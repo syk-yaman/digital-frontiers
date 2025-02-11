@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { CheckIcon, Combobox, Group, Pill, PillsInput, useCombobox } from '@mantine/core';
+import { Text, CheckIcon, Combobox, Group, Pill, PillsInput, useCombobox } from '@mantine/core';
 
-export function TagsCreatable() {
+export function TagsCreatable({ required = false }) {
     const combobox = useCombobox({
         onDropdownClose: () => combobox.resetSelectedOption(),
         onDropdownOpen: () => combobox.updateSelectedOptionIndex('active'),
@@ -54,9 +54,13 @@ export function TagsCreatable() {
             </Combobox.Option>
         ));
 
+
     return (
         <div>
-            <label style={{ marginBottom: '8px', display: 'block', fontWeight: '500' }}>Tags</label>
+            <Text size="sm" style={{ paddingBottom: '4px' }}>
+                Tags {required && <span style={{ color: 'red' }}>*</span>}
+            </Text>
+
             <Combobox store={combobox} onOptionSubmit={handleValueSelect} withinPortal={false}>
                 <Combobox.DropdownTarget>
                     <PillsInput onClick={() => combobox.openDropdown()}>
