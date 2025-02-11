@@ -83,6 +83,13 @@ export function SigninPage() {
                         required
                         mb="md"
                     />
+                    <TextInput
+                        label="Email"
+                        placeholder="Enter your email"
+                        type="email"
+                        required
+                        mb="md"
+                    />
                     <PasswordInput
                         label="Password"
                         placeholder="Enter your password"
@@ -105,16 +112,26 @@ export function SigninPage() {
                     <Checkbox
                         label={
                             <span>
-                                I accept the{' '}
-                                <Link to="/terms-and-conditions" style={{ color: '#4dabf7', textDecoration: 'underline' }}>
-                                    terms and conditions
-                                </Link>
+                                I accept the following terms: {<br />}
+                                <span> {<br />}
+                                    -  (Nick to send those)
+                                </span>
+                                <span> {<br />}
+                                    -  Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                                </span>
+                                <span> {<br />}
+                                    -  Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                                </span>
+                                <span> {<br />}
+                                    -  Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                                </span>
                             </span>
                         }
                         required
                         mb="md"
                     />
-                    <Button fullWidth variant="filled" color="blue" mt="lg">
+                    <Button fullWidth variant="filled" color="blue" mt="lg"
+                        component={NavLink} to="/add-data-item">
                         Send Verification Email
                     </Button>
                 </form>
