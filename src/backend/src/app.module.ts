@@ -12,7 +12,7 @@ import { UsersModule } from './modules/users/users.module';
     port: Number(5432),
     username: 'postgres',
     password: 'postgres',
-    database: 'demo_db',
+    database: 'DigitalFrontiersDB',
     entities: [User],
     synchronize: true, //to be off in production
   }), UsersModule],
