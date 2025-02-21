@@ -18,7 +18,10 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/jest/bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "ts-node --project tsconfig.json ./node_modules/typeorm/cli.js",
-    "create-migration": "ts-node --project tsconfig.json ./node_modules/typeorm/cli.js migration:generate src/migrations/migrationName -d ./data-source.ts"
+    "create-migration": "ts-node --project tsconfig.json ./node_modules/typeorm/cli.js migration:generate src/migrations/migrationName -d ./data-source.ts",
+    "migration:generate": "ts-node --project tsconfig.json ./node_modules/typeorm/cli.js migration:generate -d ./data-source.ts -n",
+    "migration:run": "ts-node --project tsconfig.json ./node_modules/typeorm/cli.js migration:generate -d ./data-source.ts",
+    "migration:revert": "ts-node --project tsconfig.json ./node_modules/typeorm/cli.js migration:generate -d ./data-source.ts"
   },
   "engines": {
     "npm": ">=10.0.0",
@@ -30,6 +33,7 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/swagger": "^11.0.3",
     "@nestjs/typeorm": "^11.0.0",
+    "bcrypt": "^5.1.1",
     "pg": "^8.13.1",
     "postgresql": "^0.0.1",
     "reflect-metadata": "^0.2.2",
@@ -44,6 +48,7 @@
     "@nestjs/testing": "^11.0.1",
     "@swc/cli": "^0.6.0",
     "@swc/core": "^1.10.8",
+    "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.7",

@@ -1,17 +1,65 @@
+import {
+    Entity,
+    Column,
+    PrimaryGeneratedColumn,
+    CreateDateColumn,
+    UpdateDateColumn,
+    DeleteDateColumn,
+    BeforeInsert,
+} from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+export enum UserType {
+    ACADEMIC = 'academic',
+    BUSINESS_OWNER = 'business_owner',
+    CORPORATE = 'corporate',
+    ENTHUSIAST = 'enthusiast',
+}
 
-@Entity()
+@Entity('users')
 export class User {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id!: string;
+
+    @Column({ unique: true })
+    email!: string;
 
     @Column()
-    firstName: string;
+    firstName!: string;
 
     @Column()
-    lastName: string;
+    lastName!: string;
 
-    @Column({ default: true })
-    isActive: boolean;
+    @Column()
+    company!: string;
+
+    @Column({ select: false })
+    password!: string;
+
+    @Column({ type: 'enum', enum: UserType })
+    type!: UserType;
+
+    @Column({ default: false })
+    isAdmin!: boolean;
+
+    @Column({ default: false })
+    isVerified!: boolean;
+
+    @Column({ nullable: true })
+    emailVerificationToken?: string;
+
+    @CreateDateColumn()
+    createdAt!: Date;
+
+    @UpdateDateColumn()
+    updatedAt!: Date;
+
+    @DeleteDateColumn()
+    deletedAt?: Date;
+
+    @BeforeInsert()
+    async hashPassword() {
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+    }
 }
