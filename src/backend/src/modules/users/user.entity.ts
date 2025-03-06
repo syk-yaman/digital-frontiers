@@ -6,8 +6,10 @@ import {
     UpdateDateColumn,
     DeleteDateColumn,
     BeforeInsert,
+    OneToMany,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Dataset } from '../datasets/dataset.entity';
 
 export enum UserType {
     ACADEMIC = 'academic',
@@ -42,17 +44,17 @@ export class User {
     @Column({ default: false })
     isAdmin!: boolean;
 
-    @Column({ default: false })
-    isVerified!: boolean;
-
     @Column({ nullable: true })
     emailVerificationToken?: string;
+
+    @OneToMany(() => Dataset, (dataset) => dataset.user, { cascade: true })
+    datasets!: Dataset[];
 
     @CreateDateColumn()
     createdAt!: Date;
 
     @UpdateDateColumn()
-    updatedAt!: Date;
+    updatedAt?: Date;
 
     @DeleteDateColumn()
     deletedAt?: Date;
