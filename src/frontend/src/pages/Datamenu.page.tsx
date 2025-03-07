@@ -6,10 +6,10 @@ import { Carousel } from '@mantine/carousel';
 import '@mantine/carousel/styles.css';
 import { Text, Anchor, Breadcrumbs, Image, Center, rem, SegmentedControl, Space, Avatar, Badge, Group, Card, Flex } from '@mantine/core';
 
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import DeckGL from '@deck.gl/react';
 import { DeckProps, MapViewState } from '@deck.gl/core';
-import { LineLayer, ScatterplotLayer } from '@deck.gl/layers';
+import { GeoJsonLayer, LineLayer, ScatterplotLayer } from '@deck.gl/layers';
 
 import { BASEMAP } from '@deck.gl/carto';
 import { Map, Popup, useControl } from 'react-map-gl/maplibre';
@@ -23,97 +23,37 @@ import { FeaturesGrid } from '@/components/FeaturesGrid/FeaturesGrid';
 import { MapboxOverlay } from '@deck.gl/mapbox';
 import { Link } from 'react-router-dom';
 import { IconEye, IconCode, IconExternalLink, IconMap, IconList } from '@tabler/icons-react';
+import { Feature, FeatureCollection, Position } from 'geojson';
+import { loadInBatches } from '@loaders.gl/core';
+import { ShapefileLoader } from '@loaders.gl/shapefile';
+import proj4 from 'proj4';
 
 const INITIAL_VIEW_STATE = {
   longitude: -0.0167, // Longitude for Olympic Park
-  latitude: 51.5447, // Latitude for Olympic Park
-  zoom: 14.5, // Zoom in closer to Olympic Park
+  latitude: 51.5412, // Latitude for Olympic Park
+  zoom: 14.1, // Zoom in closer to Olympic Park
 };
 
-const dataItems = [
-  {
-    id: 1,
-    image: '/imgs/echobox.jpg',
-    title: 'Bats Activity in the QEOP',
-    lastReading: '21 min',
-    owner: 'Duncan Wilson',
-    ownerAvatar: 'https://avatars.githubusercontent.com/u/145232?s=96&v=4',
-    description: '15 smart bat sensors to monitor bat activity and their species in the park, using ultrasonic microphones and edge AI for classification.',
-    tags: [
-      { text: 'Nature', icon: '' },
-      { text: 'Built environment', icon: '' },
-      { text: 'Bats', icon: '' },
-    ],
-  },
-  {
-    id: 2,
-    image: 'https://connected-environments.org/wp-content/uploads/2019/11/22667474203_4184760ebc_o.jpg',
-    title: 'Weather Data in QEOP',
-    lastReading: '25 sec',
-    owner: 'Andrew Hudson-Smith',
-    ownerAvatar: 'https://avatars.githubusercontent.com/u/50172263?v=4',
-    description: 'The Connected Environments team currently run weather stations at 3 sites with 3 different types of weather station.',
-    tags: [
-      { text: 'Weather', icon: '' },
-      { text: 'Climate', icon: '' },
-    ],
-  },
-  {
-    id: 3,
-    image: 'https://images.squarespace-cdn.com/content/v1/60018ed1f8f42f6c20a04b4f/c1adb054-2854-4c50-a4b4-2db06ef7c4d0/solar-panels.png?format=2500w',
-    title: 'PV Energy Generation',
-    lastReading: '2 years ago',
-    owner: 'Nick Turner',
-    ownerAvatar: 'https://media.licdn.com/dms/image/v2/D4E03AQGVUDKdcXFwAg/profile-displayphoto-shrink_100_100/profile-displayphoto-shrink_100_100/0/1689191979062?e=1742428800&v=beta&t=d5QKRQza3KBVOLab0wz6czUWuFW22zxxdcZjMs8U7dQ',
-    description: 'Historical PV energy generation data for the panels atop the car park by Here East, Riverside East bar/cafe next to Marshgate and Timber Lodge.',
-    tags: [
-      { text: 'PV', icon: '' },
-      { text: 'Built environment', icon: '' },
-      { text: 'Electrcity', icon: '' },
-    ],
-  },
-];
-
-const data = [
-  {
-    id: 1,
-    position: [-0.0167, 51.5447], // Olympic Park Center
-    title: 'London Olympic Stadium visitors data',
-    image: 'https://via.placeholder.com/150',
-    owner: 'London 2012 Organizing Committee',
-    description: 'Data for vistors count in the stadium for 2012 Summer Olympics.',
-    tags: ['Stadium', 'Visitors'],
-  },
-  {
-    id: 2,
-    position: [-0.017, 51.545], // A nearby location around the park
-    title: 'LoRa packets in The Orbit',
-    image: 'https://via.placeholder.com/150',
-    owner: 'ArcelorMittal',
-    description: 'LoRa signal A landmark observation tower in Olympic Park.',
-    tags: ['Signal', 'LoRa'],
-  },
-  {
-    id: 3,
-    position: [-0.018, 51.546], // Another nearby location
-    title: 'Queen Elizabeth Olympic Park visitors',
-    image: 'https://via.placeholder.com/150',
-    owner: 'Greater London Authority',
-    description: 'A park built after the London 2012 Olympics.',
-    tags: ['Park', 'Visitors'],
-  },
-];
-
-type DataType = {
-  from: [longitude: number, latitude: number];
-  to: [longitude: number, latitude: number];
-};
-
-// function DeckGLOverlay(props: DeckProps) {
-//   const overlay = useControl<MapboxOverlay>(() => new MapboxOverlay(props));
-//   overlay.setProps(props);
-//   return null;
-// }
+interface DatasetItem {
+  id: number;
+  name: string;
+  dataOwnerName: string;
+  dataOwnerEmail: string;
+  dataOwnerPhoto: string;
+  datasetType: string;
+  description: string;
+  updateFrequency: number;
+  updateFrequencyUnit: string;
+  dataExample: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  links: any[]; // Replace 'any' with a proper type if you know the structure
+  locations: any[];
+  sliderImages: { id: number; fileName: string }[];
+  tags: { id: number; name: string; colour: string; icon: string }[];
+  lastReading: string;
+}
 
 const breadcrumbs = [
   { label: 'Home', path: '/' },
@@ -131,6 +71,7 @@ const items = [
 ));
 
 interface PopupInfo {
+  id: number,
   position: [number, number];
   image: string;
   title: string;
@@ -143,18 +84,134 @@ export function Datamenu() {
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
   const [view, setView] = useState('map');
 
-  const layers = [
+  const [dataItems, setDataItems] = useState<DatasetItem[]>([]); //For List
+  const [mappedData, setMappedData] = useState([]); //For map
+  const [geoJsonData, setGeoJsonData] = useState<FeatureCollection | null>(null);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function loadShapefileFromURL() {
+      const shpUrl = "/maps/MDC_Boundary_2024.shp";
+
+      try {
+        console.log("📡 Fetching SHP from:", shpUrl);
+
+        const batchIterator = (await loadInBatches(shpUrl, ShapefileLoader)) as AsyncIterable<{ data: Feature[] }>;
+        console.log("🔄 Processing SHP Batches:", batchIterator);
+
+        const features: Feature[] = [];
+
+        for await (const batch of batchIterator) {
+          if (batch && Array.isArray(batch.data)) {
+            for (const feature of batch.data) {
+              if (feature.geometry.type === "Polygon") {
+                feature.geometry.coordinates = feature.geometry.coordinates.map((ring) =>
+                  ring.map(([x, y]) => proj4("EPSG:27700", "EPSG:4326", [x, y]) as Position)
+                );
+              } else if (feature.geometry.type === "MultiPolygon") {
+                feature.geometry.coordinates = feature.geometry.coordinates.map((polygon) =>
+                  polygon.map((ring) =>
+                    ring.map(([x, y]) => proj4("EPSG:27700", "EPSG:4326", [x, y]) as Position)
+                  )
+                );
+              }
+            }
+            console.log("🔹 Processed SHP Batch Data:", batch.data);
+            features.push(...batch.data);
+          } else {
+            console.warn("⚠️ Unexpected batch format:", batch);
+          }
+        }
+
+        const geoJson: FeatureCollection = {
+          type: "FeatureCollection",
+          features,
+        };
+
+        console.log("✅ Successfully Loaded GeoJSON:", geoJson);
+        setGeoJsonData(geoJson);
+      } catch (error) {
+        console.error("❌ Error loading SHP:", error);
+      }
+    }
+
+    loadShapefileFromURL();
+
+    fetch('http://localhost:3000/datasets/recent')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        // Transform API response to match `dataItems` format
+        const formattedData = data.map((item: DatasetItem) => ({
+          id: item.id,
+          image: item.sliderImages.length > 0 ? item.sliderImages[0].fileName : '/default-image.jpg',
+          name: item.name,
+          dataOwnerName: item.dataOwnerName,
+          dataOwnerPhoto: item.dataOwnerPhoto || 'https://via.placeholder.com/100', // Placeholder if missing
+          description: item.description,
+          tags: item.tags.map((tag) => ({
+            name: tag.name,
+            icon: '',
+          })),
+        }));
+
+
+        setDataItems(formattedData);
+
+        const mappedData = data.map((item: DatasetItem) =>
+          item.locations.map(location => ({
+            id: item.id,
+            position: [location.lon, location.lat], // Longitude, Latitude
+            title: item.name,
+            image: item.sliderImages.length > 0 ? item.sliderImages[0].fileName : 'https://via.placeholder.com/150',
+            owner: item.dataOwnerName,
+            description: item.description,
+            tags: item.tags.map(tag => tag.name), // Extract only tag names
+          }))
+        ).flat();
+
+        setMappedData(mappedData);
+        console.log("Mapped Data:", mappedData);
+
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+        setError(error.message);
+        setLoading(false);
+      });
+
+  }, []);
+
+  const layers = useMemo(() => [
+    geoJsonData &&
+    new GeoJsonLayer({
+      id: "shp-layer",
+      data: geoJsonData,
+      filled: true,
+      extruded: false,
+      getFillColor: [255, 255, 0, 50], // 🔹 Semi-transparent yellow
+      getLineColor: [255, 255, 0], // 🔹 Bright yellow border
+      lineWidthMinPixels: 2,
+      pickable: true,
+    }),
     new ScatterplotLayer({
       id: 'deckgl-circle',
-      data,
-      getPosition: d => d.position,
+      data: mappedData,  // ✅ Ensure it's updated dynamically
+      getPosition: (d) => d.position,
       getFillColor: [0, 128, 255],
       getRadius: 20,
-      beforeId: 'watername_ocean', // In interleaved mode render the layer under map labels
       pickable: true,
       onClick: (info) => setPopupInfo(info.object),
-    })
-  ];
+    }),
+
+  ], [mappedData, geoJsonData]);
 
   return (
     <>
@@ -204,7 +261,7 @@ export function Datamenu() {
         <div
           style={{
             height: '900px', // Set height
-            width: '90%',  // Set width
+            width: '80%',  // Set width
             border: '0px solid black',
             margin: '40px auto', // Center the div
             position: 'relative',
@@ -213,7 +270,9 @@ export function Datamenu() {
           <Map
             initialViewState={INITIAL_VIEW_STATE}
             mapStyle={BASEMAP.DARK_MATTER}
-
+            interactive={true}
+            dragPan={true}
+            scrollZoom={true}
             onClick={(e) => {
               // Close popup when clicking on the map
               if (!e.features) {
@@ -223,6 +282,7 @@ export function Datamenu() {
           >
             {/* DeckGL layer for interactivity */}
             <DeckGL
+              controller={true} // Enables dragging, zooming, and panning
               layers={layers}
               viewState={INITIAL_VIEW_STATE}
             />
@@ -238,13 +298,18 @@ export function Datamenu() {
                 <Group gap="sm" mb="sm">
                   <Avatar src={popupInfo.image} size={40} />
                   <div>
-                    <Text fw={500}>{popupInfo.title}</Text>
-                    <Text fz="sm" c="dimmed">
+                    <Link
+                      to={`/data-item/${popupInfo.id}`}
+                      style={{ fontSize: 16, color: '#000000', fontWeight: 'bold' }}
+                    >
+                      {popupInfo.title}
+                    </Link>
+                    <Text fz="sm" c="#333333">
                       {popupInfo.owner}
                     </Text>
                   </div>
                 </Group>
-                <Text>{popupInfo.description}</Text>
+                <Text c="#333333">{popupInfo.description}</Text>
                 <Group gap="xs" mt="sm">
                   {popupInfo.tags.map((tag, index) => (
                     <Badge key={index} size="sm">
@@ -284,7 +349,11 @@ export function Datamenu() {
               >
                 <Card.Section style={{ position: 'relative' }}>
                   {/* Image */}
-                  <Image src={card.image} alt={card.title} height={180} />
+                  <Image
+                    src={card.sliderImages != null ? card.sliderImages[0].fileName : '/imgs/qeop.jpg'}
+                    alt={card.name}
+                    height={180}
+                  />
 
                   {/* Badge positioned at the bottom-left of the image */}
                   <Badge
@@ -298,21 +367,21 @@ export function Datamenu() {
                       color: '#c9f3f1',
                     }}
                   >
-                    Last updated: {card.lastReading}
+                    Last updated: {card.lastReading != null ? card.lastReading : 'Unknown'}
                   </Badge>
                 </Card.Section>
 
                 <Card.Section className="section" mt="md">
                   <Group justify="apart">
                     <Text c="white" fz="lg" fw={500}>
-                      {card.title}
+                      {card.name}
                     </Text>
                   </Group>
                   <Group mt="xs" justify="apart">
                     <Center>
-                      <Avatar src={card.ownerAvatar} size={30} radius="xl" mr="xs" />
+                      <Avatar src={card.dataOwnerPhoto} size={30} radius="xl" mr="xs" />
                       <Text c="white" fz="m" inline>
-                        {card.owner}
+                        {card.dataOwnerName}
                       </Text>
                     </Center>
                   </Group>
@@ -330,7 +399,7 @@ export function Datamenu() {
                       color="#d7bf3c"
                       leftSection={tag.icon}
                     >
-                      {tag.text}
+                      {tag.name}
                     </Badge>
                   ))}
                 </Group>

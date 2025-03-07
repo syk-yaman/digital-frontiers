@@ -207,13 +207,13 @@ export function AddDataitemPage() {
                     <form>
                         <TextInput label="Dataset Name" placeholder="Enter the dataset name" required mb="md" />
                         <TextInput
-                            label="Provider Name"
+                            label="Data Owner Name"
                             placeholder="Enter the provider's name"
                             required
                             mb="md"
                         />
                         <TextInput
-                            label="Point of Contact Email Address"
+                            label="Data Owner Email Address"
                             placeholder="Enter the contact email address"
                             type="email"
                             required
