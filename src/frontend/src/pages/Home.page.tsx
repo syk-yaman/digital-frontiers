@@ -8,49 +8,6 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import './Home.page.css'
 import { Link } from 'react-router-dom';
 
-const dataItems = [
-  {
-    id: 1,
-    image: '/imgs/echobox.jpg',
-    title: 'Bats Activity in the QEOP',
-    lastReading: '21 min',
-    owner: 'Duncan Wilson',
-    ownerAvatar: 'https://avatars.githubusercontent.com/u/145232?s=96&v=4',
-    description: '15 smart bat sensors to monitor bat activity and their species in the park, using ultrasonic microphones and edge AI for classification.',
-    tags: [
-      { text: 'Nature', icon: '' },
-      { text: 'Built environment', icon: '' },
-      { text: 'Bats', icon: '' },
-    ],
-  },
-  {
-    id: 2,
-    image: 'https://connected-environments.org/wp-content/uploads/2019/11/22667474203_4184760ebc_o.jpg',
-    title: 'Weather Data in QEOP',
-    lastReading: '25 sec',
-    owner: 'Andrew Hudson-Smith',
-    ownerAvatar: 'https://avatars.githubusercontent.com/u/50172263?v=4',
-    description: 'The Connected Environments team currently run weather stations at 3 sites with 3 different types of weather station.',
-    tags: [
-      { text: 'Weather', icon: '' },
-      { text: 'Climate', icon: '' },
-    ],
-  },
-  {
-    id: 3,
-    image: 'https://images.squarespace-cdn.com/content/v1/60018ed1f8f42f6c20a04b4f/c1adb054-2854-4c50-a4b4-2db06ef7c4d0/solar-panels.png?format=2500w',
-    title: 'PV Energy Generation',
-    lastReading: '2 years ago',
-    owner: 'Nick Turner',
-    ownerAvatar: 'https://media.licdn.com/dms/image/v2/D4E03AQGVUDKdcXFwAg/profile-displayphoto-shrink_100_100/profile-displayphoto-shrink_100_100/0/1689191979062?e=1742428800&v=beta&t=d5QKRQza3KBVOLab0wz6czUWuFW22zxxdcZjMs8U7dQ',
-    description: 'Historical PV energy generation data for the panels atop the car park by Here East, Riverside East bar/cafe next to Marshgate and Timber Lodge.',
-    tags: [
-      { text: 'PV', icon: '' },
-      { text: 'Built environment', icon: '' },
-      { text: 'Electrcity', icon: '' },
-    ],
-  },
-];
 
 const partners = [
   {
@@ -83,9 +40,34 @@ const partners = [
   },
 ];
 
+interface DatasetItem {
+  id: number;
+  name: string;
+  dataOwnerName: string;
+  dataOwnerEmail: string;
+  dataOwnerPhoto: string;
+  datasetType: string;
+  description: string;
+  updateFrequency: number;
+  updateFrequencyUnit: string;
+  dataExample: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  links: any[]; // Replace 'any' with a proper type if you know the structure
+  locations: any[];
+  sliderImages: { id: number; fileName: string }[];
+  tags: { id: number; name: string; colour: string; icon: string }[];
+  lastReading: string;
+}
+
 export function HomePage() {
   const PRIMARY_COL_HEIGHT = '600px';
   const SECONDARY_COL_HEIGHT = `calc(${PRIMARY_COL_HEIGHT} / 2 - var(--mantine-spacing-md) / 2)`;
+
+  const [dataItems, setDataItems] = useState<DatasetItem[]>([]); // Store fetched data
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const [imageSrc, setImageSrc] = useState('/imgs/qeop-hero7.jpg'); // Initial image source
   const [isFading, setIsFading] = useState(false);
@@ -98,6 +80,37 @@ export function HomePage() {
         setIsFading(false); // Reset fade effect
       }, 500); // Duration of the fade-out effect
     }, 3000); // Delay before image change
+
+    fetch('http://localhost:3000/datasets/recent')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        // Transform API response to match `dataItems` format
+        const formattedData = data.map((item: DatasetItem) => ({
+          id: item.id,
+          image: item.sliderImages.length > 0 ? item.sliderImages[0].fileName : '/default-image.jpg',
+          name: item.name,
+          dataOwnerName: item.dataOwnerName,
+          dataOwnerPhoto: item.dataOwnerPhoto || 'https://via.placeholder.com/100', // Placeholder if missing
+          description: item.description,
+          tags: item.tags.map((tag) => ({
+            name: tag.name,
+            icon: '',
+          })),
+        }));
+
+        setDataItems(formattedData);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+        setError(error.message);
+        setLoading(false);
+      });
 
     return () => clearTimeout(timer); // Cleanup the timer
   }, []);
@@ -197,7 +210,11 @@ export function HomePage() {
                   >
                     <Card.Section style={{ position: 'relative' }}>
                       {/* Image */}
-                      <Image src={card.image} alt={card.title} height={180} />
+                      <Image
+                        src={card.sliderImages != null ? card.sliderImages[0].fileName : '/imgs/qeop.jpg'}
+                        alt={card.name}
+                        height={180}
+                      />
 
                       {/* Badge positioned at the bottom-left of the image */}
                       <Badge
@@ -211,21 +228,21 @@ export function HomePage() {
                           color: '#c9f3f1',
                         }}
                       >
-                        Last updated: {card.lastReading}
+                        Last updated: {card.lastReading != null ? card.lastReading : 'Unknown'}
                       </Badge>
                     </Card.Section>
 
                     <Card.Section className="section" mt="md">
                       <Group justify="apart">
                         <Text c="white" fz="lg" fw={500}>
-                          {card.title}
+                          {card.name}
                         </Text>
                       </Group>
                       <Group mt="xs" justify="apart">
                         <Center>
-                          <Avatar src={card.ownerAvatar} size={30} radius="xl" mr="xs" />
+                          <Avatar src={card.dataOwnerPhoto} size={30} radius="xl" mr="xs" />
                           <Text c="white" fz="m" inline>
-                            {card.owner}
+                            {card.dataOwnerName}
                           </Text>
                         </Center>
                       </Group>
@@ -243,7 +260,7 @@ export function HomePage() {
                           color="#d7bf3c"
                           leftSection={tag.icon}
                         >
-                          {tag.text}
+                          {tag.name}
                         </Badge>
                       ))}
                     </Group>
