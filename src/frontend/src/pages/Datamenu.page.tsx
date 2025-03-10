@@ -266,59 +266,59 @@ export function Datamenu() {
             position: 'relative',
           }}
         >
-          <Map
-            initialViewState={INITIAL_VIEW_STATE}
-            mapStyle={BASEMAP.DARK_MATTER}
-            interactive={true}
-            dragPan={true}
-            scrollZoom={true}
-            onClick={(e) => {
-              // Close popup when clicking on the map
-              if (!e.features) {
-                setPopupInfo(null);
-              }
-            }}
-          >
-            {/* DeckGL layer for interactivity */}
-            <DeckGL
-              controller={true} // Enables dragging, zooming, and panning
-              layers={layers}
-              viewState={INITIAL_VIEW_STATE}
-            />
 
-            {popupInfo && (
-              <Popup
-                longitude={popupInfo.position[0]}
-                latitude={popupInfo.position[1]}
-                closeOnClick={true}
-                anchor="top"
-                onClose={() => setPopupInfo(null)}
-              >
-                <Group gap="sm" mb="sm">
-                  <Avatar src={popupInfo.image} size={40} />
-                  <div>
-                    <Link
-                      to={`/data-item/${popupInfo.id}`}
-                      style={{ fontSize: 16, color: '#000000', fontWeight: 'bold' }}
-                    >
-                      {popupInfo.title}
-                    </Link>
-                    <Text fz="sm" c="#333333">
-                      {popupInfo.owner}
-                    </Text>
-                  </div>
-                </Group>
-                <Text c="#333333">{popupInfo.description}</Text>
-                <Group gap="xs" mt="sm">
-                  {popupInfo.tags.map((tag, index) => (
-                    <Badge key={index} size="sm">
-                      {tag}
-                    </Badge>
-                  ))}
-                </Group>
-              </Popup>
-            )}
-          </Map>
+          <DeckGL
+            controller={true} // Enables dragging, zooming, and panning
+            layers={layers}
+            initialViewState={INITIAL_VIEW_STATE}
+          >
+            <Map
+              initialViewState={INITIAL_VIEW_STATE}
+              mapStyle={BASEMAP.DARK_MATTER}
+              interactive={true}
+              dragPan={true}
+              scrollZoom={true}
+              onClick={(e) => {
+                // Close popup when clicking on the map
+                if (!e.features) {
+                  setPopupInfo(null);
+                }
+              }}
+            >
+              {popupInfo && (
+                <Popup
+                  longitude={popupInfo.position[0]}
+                  latitude={popupInfo.position[1]}
+                  closeOnClick={true}
+                  anchor="top"
+                  onClose={() => setPopupInfo(null)}
+                >
+                  <Group gap="sm" mb="sm">
+                    <Avatar src={popupInfo.image} size={40} />
+                    <div>
+                      <Link
+                        to={`/data-item/${popupInfo.id}`}
+                        style={{ fontSize: 16, color: '#000000', fontWeight: 'bold' }}
+                      >
+                        {popupInfo.title}
+                      </Link>
+                      <Text fz="sm" c="#333333">
+                        {popupInfo.owner}
+                      </Text>
+                    </div>
+                  </Group>
+                  <Text c="#333333">{popupInfo.description}</Text>
+                  <Group gap="xs" mt="sm">
+                    {popupInfo.tags.map((tag, index) => (
+                      <Badge key={index} size="sm">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </Group>
+                </Popup>
+              )}
+            </Map>
+          </DeckGL>
 
         </div>
       )}

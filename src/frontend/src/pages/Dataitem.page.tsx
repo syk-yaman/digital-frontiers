@@ -288,6 +288,7 @@ export function Dataitem() {
           <DeckGL
             initialViewState={INITIAL_VIEW_STATE}
             layers={layers}
+            controller={true} // Enables dragging, zooming, and panning
           >
             <Map
               mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
