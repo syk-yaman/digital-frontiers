@@ -92,7 +92,7 @@ export function HomePage() {
         // Transform API response to match `dataItems` format
         const formattedData = data.map((item: DatasetItem) => ({
           id: item.id,
-          image: item.sliderImages.length > 0 ? item.sliderImages[0].fileName : '/default-image.jpg',
+          sliderImages: item.sliderImages,
           name: item.name,
           dataOwnerName: item.dataOwnerName,
           dataOwnerPhoto: item.dataOwnerPhoto || 'https://via.placeholder.com/100', // Placeholder if missing
@@ -211,7 +211,7 @@ export function HomePage() {
                     <Card.Section style={{ position: 'relative' }}>
                       {/* Image */}
                       <Image
-                        src={card.sliderImages != null ? card.sliderImages[0].fileName : '/imgs/qeop.jpg'}
+                        src={card.sliderImages[0] != null ? '/imgs/' + card.sliderImages[0].fileName : '/imgs/qeop.jpg'}
                         alt={card.name}
                         height={180}
                       />

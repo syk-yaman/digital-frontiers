@@ -139,7 +139,7 @@ export function Datamenu() {
 
     loadShapefileFromURL();
 
-    fetch('http://localhost:3000/datasets/recent')
+    fetch('http://localhost:3000/datasets')
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch data');
@@ -177,7 +177,6 @@ export function Datamenu() {
         ).flat();
 
         setMappedData(mappedData);
-        console.log("Mapped Data:", mappedData);
 
         setLoading(false);
       })
