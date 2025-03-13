@@ -24,7 +24,6 @@ import DeckGL from '@deck.gl/react';
 import { BASEMAP } from '@deck.gl/carto';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import '../style.css';
-import { L } from 'vitest/dist/chunks/reporters.D7Jzd9GS';
 import { Feature, FeatureCollection, Position } from 'geojson';
 import { loadInBatches } from '@loaders.gl/core';
 import proj4 from 'proj4';
