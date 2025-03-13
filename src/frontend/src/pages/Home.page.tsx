@@ -81,7 +81,7 @@ export function HomePage() {
       }, 500); // Duration of the fade-out effect
     }, 3000); // Delay before image change
 
-    fetch('http://localhost:3000/datasets/recent')
+    fetch('/api/datasets/recent')
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch data');

@@ -139,7 +139,7 @@ export function Datamenu() {
 
     loadShapefileFromURL();
 
-    fetch('http://localhost:3000/datasets')
+    fetch('/api/datasets')
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch data');
