@@ -20,7 +20,7 @@ import './Datamenu.page.css';
 
 // ✅ Types are available here
 import { FeaturesGrid } from '@/components/FeaturesGrid/FeaturesGrid';
-import { MapboxOverlay } from '@deck.gl/mapbox';
+import { MapboxOverlay as DeckOverlay, MapboxOverlayProps } from '@deck.gl/mapbox';
 import { Link } from 'react-router-dom';
 import { IconEye, IconCode, IconExternalLink, IconMap, IconList } from '@tabler/icons-react';
 import { Feature, FeatureCollection, Position } from 'geojson';
@@ -33,6 +33,12 @@ const INITIAL_VIEW_STATE = {
   latitude: 51.5412, // Latitude for Olympic Park
   zoom: 14.1, // Zoom in closer to Olympic Park
 };
+
+function DeckGLOverlay(props: MapboxOverlayProps) {
+  const overlay = useControl(() => new DeckOverlay(props));
+  overlay.setProps(props);
+  return null;
+}
 
 interface DatasetItem {
   id: number;
@@ -267,58 +273,56 @@ export function Datamenu() {
           }}
         >
 
-          <DeckGL
-            controller={true} // Enables dragging, zooming, and panning
-            layers={layers}
+          <Map
             initialViewState={INITIAL_VIEW_STATE}
+            mapStyle={BASEMAP.DARK_MATTER}
+            interactive={true}
+            dragPan={true}
+            scrollZoom={true}
+            onClick={(e) => {
+              // Close popup when clicking on the map
+              if (!e.features) {
+                setPopupInfo(null);
+              }
+            }}
           >
-            <Map
-              initialViewState={INITIAL_VIEW_STATE}
-              mapStyle={BASEMAP.DARK_MATTER}
-              interactive={true}
-              dragPan={true}
-              scrollZoom={true}
-              onClick={(e) => {
-                // Close popup when clicking on the map
-                if (!e.features) {
-                  setPopupInfo(null);
-                }
-              }}
-            >
-              {popupInfo && (
-                <Popup
-                  longitude={popupInfo.position[0]}
-                  latitude={popupInfo.position[1]}
-                  closeOnClick={true}
-                  anchor="top"
-                  onClose={() => setPopupInfo(null)}
-                >
-                  <Group gap="sm" mb="sm">
-                    <Avatar src={popupInfo.image} size={40} />
-                    <div>
-                      <Link
-                        to={`/data-item/${popupInfo.id}`}
-                        style={{ fontSize: 16, color: '#000000', fontWeight: 'bold' }}
-                      >
-                        {popupInfo.title}
-                      </Link>
-                      <Text fz="sm" c="#333333">
-                        {popupInfo.owner}
-                      </Text>
-                    </div>
-                  </Group>
-                  <Text c="#333333">{popupInfo.description}</Text>
-                  <Group gap="xs" mt="sm">
-                    {popupInfo.tags.map((tag, index) => (
-                      <Badge key={index} size="sm">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </Group>
-                </Popup>
-              )}
-            </Map>
-          </DeckGL>
+            {popupInfo && (
+              <Popup
+                key={popupInfo.id}
+                longitude={popupInfo.position[0]}
+                latitude={popupInfo.position[1]}
+                closeOnClick={true}
+                anchor="top"
+                style={{ zIndex: 10 }} /* position above deck.gl canvas */
+
+                onClose={() => setPopupInfo(null)}
+              >
+                <Group gap="sm" mb="sm">
+                  <Avatar src={popupInfo.image} size={40} />
+                  <div>
+                    <Link
+                      to={`/data-item/${popupInfo.id}`}
+                      style={{ fontSize: 16, color: '#000000', fontWeight: 'bold' }}
+                    >
+                      {popupInfo.title}
+                    </Link>
+                    <Text fz="sm" c="#333333">
+                      {popupInfo.owner}
+                    </Text>
+                  </div>
+                </Group>
+                <Text c="#333333">{popupInfo.description}</Text>
+                <Group gap="xs" mt="sm">
+                  {popupInfo.tags.map((tag, index) => (
+                    <Badge key={index} size="sm">
+                      {tag}
+                    </Badge>
+                  ))}
+                </Group>
+              </Popup>
+            )}
+            <DeckGLOverlay layers={layers} /*interleaved*/ />
+          </Map>
 
         </div>
       )}
