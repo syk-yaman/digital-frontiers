@@ -205,7 +205,7 @@ export function AddDataitemPage() {
 
     const [isChecked, setIsChecked] = useState(false);
     const [frequency, setFrequency] = useState('');
-    //const [unit, setUnit] = useState('');
+    const [unit, setUnit] = useState('');
 
 
     const form = useForm({
@@ -336,13 +336,17 @@ export function AddDataitemPage() {
 
         if (checked) {
             setFrequency('N/A');
-            handleInputChange('frequency', '')
-            handleInputChange('unit', 'once')
+            setUnit('Only once');
+            form.setFieldValue('frequency', 'N/A')
+            form.setFieldValue('unit', 'once')
+
         } else {
             setFrequency('');
-            handleInputChange('unit', '')
+            setUnit('');
+            form.setFieldValue('frequency', '')
+            form.setFieldValue('unit', '')
         }
-    }
+    };
 
     return (
         <Container mb="xl" style={{ marginTop: '50px' }}>
@@ -459,20 +463,22 @@ export function AddDataitemPage() {
                                 size="sm"
                                 required
                                 label="Update Frequency"
-                                placeholder="E.g. every 2 minutes"
+                                placeholder="E.g. 5"
                                 value={frequency}
-                                onChange={(e) => handleInputChange('frequency', e.target.value)}
+                                //onChange={(e) => { setFrequency(e.target.value);form.setFieldValue('frequency', e.target.value);}}
                                 disabled={isChecked}
+                                {...form.getInputProps('frequency')}
                             />
                             <Select
                                 label="Unit"
                                 size="sm"
                                 placeholder="Select"
                                 data={['Only once', 'Seconds', 'Minutes', 'Hours', 'Days', 'Weeks', 'Months', 'Years']}
-                                //value={unit}
-                                onChange={(value) => handleInputChange('unit', value)} // Handle null safely
+                                value={unit}
+                                //onChange={(value) => {setUnit(value || '');form.setFieldValue('unit', value || '');}}
                                 disabled={isChecked}
                                 required
+                                {...form.getInputProps('unit')}
                             />
                             <Checkbox
                                 label="My dataset does not update frequently, I will only add it here once"
