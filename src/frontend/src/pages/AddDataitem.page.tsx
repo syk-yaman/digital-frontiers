@@ -48,6 +48,93 @@ export function AddDataitemPage() {
     const [activeStep, setActiveStep] = useState(1);
     const [jsonInput, setJsonInput] = useState('{\n     \"type\": EXAMPLE,\n     \"num\": 2,\n     \"fields\": [\n        {\"name\": \"Voltage\", \"unit\": \"V\", \"decPrecision\": 3},\n        {\"name\": \"Current\", \"unit\": \"A\", \"decPrecision\": 1}\n     ]\n  }');
     const [attachments, setAttachments] = useState([{ id: 1, fileName: '', file: null }]);
+    const [pins, setPins] = useState<{ position: [number, number]; radius: number }[]>([]);
+
+    const [formData, setFormData] = useState({
+        datasetName: '',
+        ownerName: '',
+        ownerEmail: '',
+        datasetType: '',
+        datasetDescription: '',
+        frequency: '',
+        unit: '',
+        isChecked: false,
+        attachments: [{ id: 1, fileName: '', file: null }],
+        jsonInput: '',
+        pins: pins,
+    });
+
+    const handleSubmit = () => {
+        const formattedData = {
+            id: 5, // This would typically be assigned by the backend
+            name: formData.datasetName,
+            dataOwnerName: formData.ownerName,
+            dataOwnerEmail: formData.ownerEmail,
+            dataOwnerPhoto: "dataOwnerPhoto", // Placeholder, replace if needed
+            datasetType: formData.datasetType.toLowerCase(), // Ensuring lowercase
+            description: formData.datasetDescription,
+            updateFrequency: parseInt(formData.frequency) || 1, // Default to 1 if empty
+            updateFrequencyUnit: formData.unit.toLowerCase(),
+            dataExample: formData.jsonInput, // Assuming JSON input is provided as a string
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            deletedAt: null,
+
+            // Mapping attachments to links
+            links: formData.attachments.map((attachment, index) => ({
+                id: index + 1,
+                title: attachment.fileName || `Link ${index + 1}`,
+                url: attachment.file || "", // Placeholder for file URL
+            })),
+
+            // Mapping pins (locations)
+            locations: formData.pins.map((pin, index) => ({
+                id: index + 1,
+                lon: pin.position[0],
+                lat: pin.position[1],
+            })),
+
+            // Placeholder for slider images (modify if you have images)
+            sliderImages: [
+                { id: 6, fileName: "echobox.jpg" },
+                { id: 4, fileName: "image.png" },
+                { id: 3, fileName: "image-1.png" },
+            ],
+
+            // Placeholder tags (modify based on user input if needed)
+            tags: [
+                {
+                    id: 1,
+                    name: "Nature",
+                    colour: "#009900",
+                    icon: "IconPlane",
+                },
+            ],
+        };
+
+        console.log("Final JSON to Submit:", formattedData);
+
+        // Example HTTP POST request (use the actual API endpoint)
+        fetch('http://localhost:3000/datasets', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formattedData),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("Submission successful:", data);
+            })
+            .catch((error) => {
+                console.error("Submission failed:", error);
+            });
+    };
+
+    const handleInputChange = (key: string, value: any) => {
+        setFormData((prevData) => ({ ...prevData, [key]: value }));
+        console.log(formData);
+    };
 
     const nextStep = () => {
         setActiveStep((current) => {
@@ -83,8 +170,8 @@ export function AddDataitemPage() {
 
     const [isChecked, setIsChecked] = useState(false);
     const [frequency, setFrequency] = useState('');
-    const [unit, setUnit] = useState('');
-    const [pins, setPins] = useState<{ position: [number, number]; radius: number }[]>([]);
+    //const [unit, setUnit] = useState('');
+
 
     const [geoJsonData, setGeoJsonData] = useState<FeatureCollection | null>(null);
 
@@ -173,10 +260,11 @@ export function AddDataitemPage() {
 
         if (checked) {
             setFrequency('N/A');
-            setUnit('Only once');
+            handleInputChange('frequency', '')
+            handleInputChange('unit', 'once')
         } else {
             setFrequency('');
-            setUnit('');
+            handleInputChange('unit', '')
         }
     }
 
@@ -205,12 +293,18 @@ export function AddDataitemPage() {
                         </Text>
                     </Center>
                     <form>
-                        <TextInput label="Dataset Name" placeholder="Enter the dataset name" required mb="md" />
+                        <TextInput
+                            label="Dataset Name"
+                            placeholder="Enter the dataset name"
+                            required mb="md"
+                            onChange={(e) => handleInputChange('datasetName', e.target.value)}
+                        />
                         <TextInput
                             label="Data Owner Name"
                             placeholder="Enter the provider's name"
                             required
                             mb="md"
+                            onChange={(e) => handleInputChange('ownerName', e.target.value)}
                         />
                         <TextInput
                             label="Data Owner Email Address"
@@ -218,13 +312,15 @@ export function AddDataitemPage() {
                             type="email"
                             required
                             mb="md"
+                            onChange={(e) => handleInputChange('ownerEmail', e.target.value)}
                         />
                         <Select
                             label="Dataset Type"
                             placeholder="Select dataset type"
-                            data={['Public', 'Controlled']}
+                            data={['Open', 'Controlled']}
                             required
                             mb="md"
+                            onChange={(value) => handleInputChange('datasetType', value)}
                         />
                     </form>
                 </>
@@ -260,6 +356,7 @@ export function AddDataitemPage() {
                             minRows={4}
                             mb="md"
                             required
+                            onChange={(e) => handleInputChange('datasetDescription', e.target.value)}
                         />
                         <Space h="md" />
                         <TagsCreatable required />
@@ -272,16 +369,16 @@ export function AddDataitemPage() {
                                 label="Update Frequency"
                                 placeholder="E.g. every 2 minutes"
                                 value={frequency}
-                                onChange={(e) => setFrequency(e.target.value)}
+                                onChange={(e) => handleInputChange('frequency', e.target.value)}
                                 disabled={isChecked}
                             />
                             <Select
                                 label="Unit"
                                 size="sm"
                                 placeholder="Select"
-                                data={['Only once', 'Second', 'Minute', 'Hour', 'Day', 'Week', 'Month', 'Year']}
-                                value={unit}
-                                onChange={(value) => setUnit(value || '')} // Handle null safely
+                                data={['Only once', 'Seconds', 'Minutes', 'Hours', 'Days', 'Weeks', 'Months', 'Years']}
+                                //value={unit}
+                                onChange={(value) => handleInputChange('unit', value)} // Handle null safely
                                 disabled={isChecked}
                                 required
                             />
@@ -506,7 +603,7 @@ export function AddDataitemPage() {
                                 fontSize: '1.25rem',
                                 fontWeight: 600,
                             }}
-                            onClick={() => console.log('Submitting for approval')}
+                            onClick={handleSubmit}
                         >
                             Submit for Approval
                         </Button>

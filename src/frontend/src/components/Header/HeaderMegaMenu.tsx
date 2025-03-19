@@ -318,7 +318,7 @@ export function HeaderMegaMenu() {
                 transition: 'all 0.3s ease', // Optional: Smooth hover transition
               }}
               component={NavLink} to="/signin">
-              Log in
+              Log out
             </Button>
           </Group>
 
