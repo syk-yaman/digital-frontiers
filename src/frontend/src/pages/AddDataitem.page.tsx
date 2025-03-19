@@ -28,6 +28,8 @@ import { ShapefileLoader } from '@loaders.gl/shapefile';
 import { load, loadInBatches } from '@loaders.gl/core';
 import { Feature, FeatureCollection, Position } from "geojson";
 import proj4 from 'proj4';
+import { useForm } from '@mantine/form';
+
 
 
 const INITIAL_VIEW_STATE = {
@@ -43,12 +45,25 @@ proj4.defs([
     ],
 ]);
 
+interface Tag {
+    id: number;
+    name: string;
+    color: string;
+    icon?: string;
+}
 
 export function AddDataitemPage() {
     const [activeStep, setActiveStep] = useState(1);
     const [jsonInput, setJsonInput] = useState('{\n     \"type\": EXAMPLE,\n     \"num\": 2,\n     \"fields\": [\n        {\"name\": \"Voltage\", \"unit\": \"V\", \"decPrecision\": 3},\n        {\"name\": \"Current\", \"unit\": \"A\", \"decPrecision\": 1}\n     ]\n  }');
     const [attachments, setAttachments] = useState([{ id: 1, fileName: '', file: null }]);
     const [pins, setPins] = useState<{ position: [number, number]; radius: number }[]>([]);
+    const [availableTags, setAvailableTags] = useState<Tag[]>([]);
+    const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+
+    const handleTagsChange = (tags: Tag[]) => {
+        setSelectedTags(tags);
+        //form.setFieldValue('datasetTags', tags);
+    };
 
     const [formData, setFormData] = useState({
         datasetName: '',
@@ -137,12 +152,32 @@ export function AddDataitemPage() {
     };
 
     const nextStep = () => {
-        setActiveStep((current) => {
-            const next = current < 4 ? current + 1 : current;
-            window.scrollTo(0, 0); // Scroll to top
-            return next;
-        });
+        let isValid = false;
+
+        if (activeStep === 1) {
+            isValid = form.validateField('datasetName').hasError ||
+                form.validateField('ownerName').hasError ||
+                form.validateField('ownerEmail').hasError ||
+                form.validateField('datasetType').hasError
+                ? false
+                : true;
+        } else if (activeStep === 2) {
+            isValid = form.validateField('datasetDescription').hasError ||
+                form.validateField('datasetTags').hasError ||
+                form.validateField('frequency').hasError ||
+                form.validateField('unit').hasError
+                ? false
+                : true;
+        } else if (activeStep === 3) {
+            isValid = form.validateField('jsonInput').hasError ? false : true;
+        }
+
+        if (isValid) {
+            setActiveStep((current) => current + 1);
+            window.scrollTo(0, 0); // Scroll to top on step change
+        }
     };
+
 
     const prevStep = () => {
         setActiveStep((current) => {
@@ -172,6 +207,38 @@ export function AddDataitemPage() {
     const [frequency, setFrequency] = useState('');
     //const [unit, setUnit] = useState('');
 
+
+    const form = useForm({
+        initialValues: {
+            datasetName: '',
+            ownerName: '',
+            ownerEmail: '',
+            datasetType: '',
+            datasetDescription: '',
+            frequency: '',
+            unit: '',
+            jsonInput: '',
+            datasetTags: []
+        },
+        validate: {
+            datasetName: (value) => (value.length > 2 ? null : 'Dataset name must be at least 3 characters'),
+            ownerName: (value) => (value.length > 2 ? null : 'Owner name must be at least 3 characters'),
+            ownerEmail: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+            datasetType: (value) => (value ? null : 'Dataset type is required'),
+            datasetDescription: (value) => (value.length > 100 ? null : 'Description must be at least 100 characters'),
+            datasetTags: (value) => (value.length > 0) ? null : 'You should provide at least one tag',
+            frequency: (value) => (isChecked || value ? null : 'Frequency is required'),
+            unit: (value) => (isChecked || value ? null : 'Unit is required'),
+            jsonInput: (value) => {
+                try {
+                    JSON.parse(value);
+                    return null;
+                } catch {
+                    return 'Invalid JSON format';
+                }
+            },
+        },
+    });
 
     const [geoJsonData, setGeoJsonData] = useState<FeatureCollection | null>(null);
 
@@ -222,6 +289,15 @@ export function AddDataitemPage() {
         }
 
         loadShapefileFromURL();
+
+        fetch('/api/tags')
+            .then((res) => res.json())
+            .then((tags) => setAvailableTags(tags || [])) // Ensure it’s an array
+            .catch((error) => {
+                console.error('Failed to load tags:', error);
+                setAvailableTags([]); // Ensure component still loads
+            });
+
     }, []);
 
     const handleMapClick = (info: any, event: any) => {
@@ -297,14 +373,16 @@ export function AddDataitemPage() {
                             label="Dataset Name"
                             placeholder="Enter the dataset name"
                             required mb="md"
-                            onChange={(e) => handleInputChange('datasetName', e.target.value)}
+                            //onChange={(e) => handleInputChange('datasetName', e.target.value)}
+                            {...form.getInputProps('datasetName')}
                         />
                         <TextInput
                             label="Data Owner Name"
                             placeholder="Enter the provider's name"
                             required
                             mb="md"
-                            onChange={(e) => handleInputChange('ownerName', e.target.value)}
+                            //onChange={(e) => handleInputChange('ownerName', e.target.value)}
+                            {...form.getInputProps('ownerName')}
                         />
                         <TextInput
                             label="Data Owner Email Address"
@@ -312,7 +390,8 @@ export function AddDataitemPage() {
                             type="email"
                             required
                             mb="md"
-                            onChange={(e) => handleInputChange('ownerEmail', e.target.value)}
+                            //onChange={(e) => handleInputChange('ownerEmail', e.target.value)}
+                            {...form.getInputProps('ownerEmail')}
                         />
                         <Select
                             label="Dataset Type"
@@ -320,7 +399,8 @@ export function AddDataitemPage() {
                             data={['Open', 'Controlled']}
                             required
                             mb="md"
-                            onChange={(value) => handleInputChange('datasetType', value)}
+                            //onChange={(value) => handleInputChange('datasetType', value)}
+                            {...form.getInputProps('datasetType')}
                         />
                     </form>
                 </>
@@ -343,8 +423,9 @@ export function AddDataitemPage() {
                             <List size="sm">
                                 <List.Item>How the dataset is created (sensors, crowd-sourced... etc.)</List.Item>
                                 <List.Item>What is the used sensor, and what standard does it have.</List.Item>
-                                <List.Item>Dataset license, if any.</List.Item>
+                                <List.Item>Dataset license or other terms of use.</List.Item>
                                 <List.Item>Is the dataset related to a commercial product or prototype.</List.Item>
+                                <List.Item>Initial reason/use case for implementation</List.Item>
                                 <List.Item>How do you want to be cited when others use this dataset.</List.Item>
                             </List>
                         </Text>
@@ -356,10 +437,21 @@ export function AddDataitemPage() {
                             minRows={4}
                             mb="md"
                             required
-                            onChange={(e) => handleInputChange('datasetDescription', e.target.value)}
+                            //onChange={(e) => handleInputChange('datasetDescription', e.target.value)}
+                            {...form.getInputProps('datasetDescription')}
                         />
                         <Space h="md" />
-                        <TagsCreatable required />
+                        <TagsCreatable
+                            availableTags={availableTags}
+                            value={selectedTags}
+                            required
+                            {...form.getInputProps('datasetTags')}
+                        />
+                        {form.errors.datasetTags && (
+                            <Text color="red" size="sm" mt="xs">
+                                {form.errors.datasetTags}
+                            </Text>
+                        )}
                         <Space h="md" />
 
                         <Flex justify="left" align="center" gap="md" wrap="wrap">
@@ -490,7 +582,7 @@ export function AddDataitemPage() {
 
                         <Space h="md" />
 
-                        <CustomTextRequired text='Dataset Locations' required />
+                        <CustomTextRequired text='Dataset Locations' />
                         <Text size="sm" c="dimmed" inline mb="md">
                             Click on the map to add the places that your dataset is related to. In case of sensors, it
                             could be where your sensors are deployed. <br />
@@ -614,12 +706,12 @@ export function AddDataitemPage() {
 
             <Space h="md" />
 
-            <Group style={{ justifyContent: 'center' }}>
+            <Group justify="center">
                 <Button onClick={prevStep} disabled={activeStep === 1}>
                     Back
                 </Button>
-                <Button onClick={nextStep} disabled={activeStep === 4} hidden={activeStep === 4}>
-                    {activeStep === 6 ? 'Finish' : 'Next'}
+                <Button onClick={nextStep} disabled={activeStep === 4}>
+                    {activeStep === 3 ? 'Finish' : 'Next'}
                 </Button>
             </Group>
         </Container>

@@ -1,59 +1,97 @@
-import { useState } from 'react';
-import { Text, CheckIcon, Combobox, Group, Pill, PillsInput, useCombobox } from '@mantine/core';
+import { useState, useEffect } from 'react';
+import { Text, CheckIcon, Combobox, Group, Pill, PillsInput, useCombobox, Avatar } from '@mantine/core';
 
-export function TagsCreatable({ required = false }) {
+interface Tag {
+    id: number;
+    name: string;
+    color: string;
+    icon?: string; // Optional icon URL
+}
+
+interface TagsCreatableProps {
+    availableTags?: Tag[]; // Optional list of available tags
+    value: Tag[]; // Selected tags
+    onChange: (tags: Tag[]) => void; // Function to update parent state
+    required?: boolean;
+}
+
+export function TagsCreatable({ availableTags = [], value, onChange, required = false }: TagsCreatableProps) {
     const combobox = useCombobox({
         onDropdownClose: () => combobox.resetSelectedOption(),
         onDropdownOpen: () => combobox.updateSelectedOptionIndex('active'),
     });
 
     const [search, setSearch] = useState('');
-    const [data, setData] = useState<string[]>([]);
-    const [value, setValue] = useState<string[]>([]);
+    const [data, setData] = useState<Tag[]>(availableTags);
 
-    const exactOptionMatch = data.some((item) => item === search);
+    // Update local data when availableTags changes
+    useEffect(() => {
+        setData(availableTags);
+    }, [availableTags]);
+
+    const exactOptionMatch = data.some((tag) => tag.name.toLowerCase() === search.trim().toLowerCase());
 
     const handleValueSelect = (val: string) => {
         setSearch('');
+        let newValue: Tag[];
 
         if (val === '$create') {
-            setData((current) => [...current, search]);
-            setValue((current) => [...current, search]);
+            const newTag: Tag = {
+                id: Date.now(),
+                name: search.trim(),
+                color: '#000000',
+            };
+            newValue = [...(value || []), newTag];
+            setData((current) => [...current, newTag]);
         } else {
-            setValue((current) =>
-                current.includes(val) ? current.filter((v) => v !== val) : [...current, val]
-            );
+            const selectedTag = data.find((tag) => tag.id === Number(val));
+            if (!selectedTag) return;
+
+            newValue = (value || []).some((tag) => tag.id === selectedTag.id)
+                ? (value || []).filter((tag) => tag.id !== selectedTag.id)
+                : [...(value || []), selectedTag];
         }
+
+        onChange(newValue);
     };
 
-    const handleValueRemove = (val: string) =>
-        setValue((current) => current.filter((v) => v !== val));
+    const handleValueRemove = (id: number) => {
+        const newValue = value.filter((tag) => tag.id !== id);
+        onChange(newValue);
+    };
 
     const handleCreateTag = () => {
         if (!exactOptionMatch && search.trim().length > 0) {
-            setData((current) => [...current, search]);
-            setValue((current) => [...current, search]);
+            const newTag: Tag = {
+                id: Date.now(), // Generates a unique number ID
+                name: search.trim(),
+                color: '#000000',
+            };
+            setData((current) => [...current, newTag]);
+            onChange([...value, newTag]);
             setSearch('');
         }
     };
 
-    const values = value.map((item) => (
-        <Pill key={item} withRemoveButton onRemove={() => handleValueRemove(item)}>
-            {item}
+    const values = (value || []).map((tag) => (
+        <Pill key={tag.id} withRemoveButton onRemove={() => handleValueRemove(tag.id)} color={tag.color}>
+            {tag.icon && <Avatar src={tag.icon} size={16} mr="xs" />}
+            {tag.name}
         </Pill>
     ));
 
+
     const options = data
-        .filter((item) => item.toLowerCase().includes(search.trim().toLowerCase()))
-        .map((item) => (
-            <Combobox.Option value={item} key={item} active={value.includes(item)}>
+        .filter((tag) => tag.name.toLowerCase().includes(search.trim().toLowerCase()))
+        .map((tag) => (
+            <Combobox.Option value={tag.id.toString()} key={tag.id} active={value.some((v) => v.id === tag.id)}>
                 <Group gap="sm">
-                    {value.includes(item) ? <CheckIcon size={12} /> : null}
-                    <span>{item}</span>
+                    {value.some((v) => v.id === tag.id) ? <CheckIcon size={12} /> : null}
+                    {tag.icon && <Avatar src={tag.icon} size={16} />}
+                    <span>{tag.name}</span>
                 </Group>
             </Combobox.Option>
         ));
-
 
     return (
         <div>
@@ -66,7 +104,6 @@ export function TagsCreatable({ required = false }) {
                     <PillsInput onClick={() => combobox.openDropdown()}>
                         <Pill.Group>
                             {values}
-
                             <Combobox.EventsTarget>
                                 <PillsInput.Field
                                     onFocus={() => combobox.openDropdown()}
@@ -80,7 +117,7 @@ export function TagsCreatable({ required = false }) {
                                     onKeyDown={(event) => {
                                         if (event.key === 'Backspace' && search.length === 0) {
                                             event.preventDefault();
-                                            handleValueRemove(value[value.length - 1]);
+                                            handleValueRemove(value[value.length - 1]?.id);
                                         }
 
                                         if (event.key === 'Enter') {
@@ -97,11 +134,9 @@ export function TagsCreatable({ required = false }) {
                 <Combobox.Dropdown>
                     <Combobox.Options>
                         {options}
-
                         {!exactOptionMatch && search.trim().length > 0 && (
                             <Combobox.Option value="$create">+ Create "{search}"</Combobox.Option>
                         )}
-
                         {exactOptionMatch && search.trim().length > 0 && options.length === 0 && (
                             <Combobox.Empty>No tags found</Combobox.Empty>
                         )}
