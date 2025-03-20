@@ -14,6 +14,7 @@ import {
     FileInput,
     List,
     Flex,
+    Loader,
 } from '@mantine/core';
 import DeckGL from '@deck.gl/react';
 import { GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers';
@@ -146,18 +147,24 @@ export function AddDataitemPage() {
                 console.error("Submission failed:", error);
             });
     };
+    const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+    const [loading, setLoading] = useState(false);
     const handleDrop = (acceptedFiles: File[]) => {
-        setFiles(acceptedFiles);
-        uploadFiles(acceptedFiles);
+        setUploadedFiles([...uploadedFiles, ...acceptedFiles]);
     };
 
-    const uploadFiles = async (filesToUpload: File[]) => {
-        const formData = new FormData();
-        filesToUpload.forEach((file) => {
-            formData.append('files', file, file.name); // Append each file
-        });
+    const handleDeleteFile = (fileToRemove: File) => {
+        setUploadedFiles(uploadedFiles.filter((file) => file !== fileToRemove));
+    };
 
+    const handleUpload = async () => {
+        setLoading(true);
         try {
+            const formData = new FormData();
+            uploadedFiles.forEach((file) => {
+                formData.append('files', file, file.name);
+            });
+
             const response = await fetch(`${API_BASE_URL}/datasets/uploadHeroImages`, {
                 method: 'POST',
                 body: formData,
@@ -165,15 +172,16 @@ export function AddDataitemPage() {
 
             if (response.ok) {
                 console.log('Files uploaded successfully!');
-                setFiles([]); // Clear files after successful upload
+                //setUploadedFiles([]);
             } else {
                 console.error('File upload failed.');
             }
         } catch (error) {
             console.error('Error during file upload:', error);
+        } finally {
+            setLoading(false);
         }
     };
-
 
     const getFieldsToValidate = (step: number) => {
         switch (step) {
@@ -335,9 +343,12 @@ export function AddDataitemPage() {
                 setAvailableTags([]); // Ensure component still loads
             });
 
+        if (uploadedFiles.length > 0 && !loading) {
+            handleUpload();
+        }
 
 
-    }, []);
+    }, [uploadedFiles, loading]);
 
     const handleMapClick = (info: any, event: any) => {
         console.log("📌 Click event info:", info);
@@ -533,34 +544,33 @@ export function AddDataitemPage() {
                         <Text size="sm" c="dimmed" inline mb="md">
                             Provide some nice photos of your dataset and how it was created, this is your spot to get people's attention!
                         </Text>
-                        <Dropzone
-                            onDrop={handleDrop}
-                            onReject={(files) => console.log('rejected files', files)}
-                            maxSize={5 * 1024 ** 2}
-                            accept={IMAGE_MIME_TYPE}
-                            multiple
-                        >
-                            <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
-                                <Dropzone.Accept>
-                                    <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
-                                </Dropzone.Accept>
-                                <Dropzone.Reject>
-                                    <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
-                                </Dropzone.Reject>
-                                <Dropzone.Idle>
-                                    <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
-                                </Dropzone.Idle>
+                        <div>
+                            <Dropzone onDrop={handleDrop} multiple loading={loading}>
+                                <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
+                                    <Dropzone.Idle>
+                                        <Text size="xl">Drag files here or click to select files</Text>
+                                    </Dropzone.Idle>
+                                </Group>
+                            </Dropzone>
 
-                                <div>
-                                    <Text size="xl" inline>
-                                        Drag hero images for your dataset here or click to select files
-                                    </Text>
-                                    <Text size="sm" c="dimmed" inline mt={7}>
-                                        Attach as many files as you like, each file should not exceed 3mb
-                                    </Text>
-                                </div>
-                            </Group>
-                        </Dropzone>
+                            {uploadedFiles.length > 0 && (
+                                <Group mt="md">
+                                    {uploadedFiles.map((file) => (
+                                        <Flex key={file.name} align="center" justify="space-between">
+                                            <Text>{file.name}</Text>
+                                            <Button
+                                                variant="outline"
+                                                color="red"
+                                                size="xs"
+                                                onClick={() => handleDeleteFile(file)}
+                                            >
+                                                Delete
+                                            </Button>
+                                        </Flex>
+                                    ))}
+                                </Group>
+                            )}
+                        </div>
                         <Space h="md" />
 
                         <CustomTextRequired text='Dataset Sample' />

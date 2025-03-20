@@ -64,7 +64,7 @@ export class DatasetsController {
         }),
     )
     uploadFiles(@UploadedFiles() files: Express.Multer.File[]) {
-        console.log(files);
-        return { message: 'Files uploaded successfully!' };
+        const fileNames = files.map((file) => file.filename);
+        return fileNames;
     }
 }
