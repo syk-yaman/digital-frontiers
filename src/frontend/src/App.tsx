@@ -14,6 +14,7 @@ import { Dataitem } from './pages/Dataitem.page';
 import ScrollToTop from './components/ScrollToTop';
 import { SigninPage } from './pages/Signin.page';
 import { AddDataitemPage } from './pages/AddDataitem.page';
+import { NavbarNested } from './pages/NavbarNested';
 
 export default function App() {
   return (
@@ -35,7 +36,7 @@ export default function App() {
           <Route path="/data-item/:id" element={<Dataitem />} />
           <Route path='/signin' element={<SigninPage />} />
           <Route path="/add-data-item" element={<AddDataitemPage />} />
-
+          <Route path="/admin" element={<NavbarNested />} />
         </Routes>
         <FooterLinks />
       </BrowserRouter>

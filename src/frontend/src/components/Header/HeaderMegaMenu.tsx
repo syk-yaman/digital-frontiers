@@ -37,8 +37,14 @@ import { useDisclosure } from '@mantine/hooks';
 import { NavLink, useLocation } from 'react-router-dom';
 import classes from './HeaderMegaMenu.module.css';
 
-const version = 'v0.1.5'
+const version = 'v0.2.1'
 const changelog = [
+  {
+    version: 'v0.2.1',
+    changes: [
+      ''
+    ],
+  },
   {
     version: 'v0.1.5',
     changes: [
@@ -265,6 +271,9 @@ export function HeaderMegaMenu() {
                     <Button variant="default" component={NavLink} to="/add-dataset">
                       Add dataset
                     </Button>
+                    <Button variant="default" component={NavLink} to="/admin">
+                      Admin
+                    </Button>
                   </Group>
                 </div>
               </HoverCard.Dropdown>
@@ -306,6 +315,19 @@ export function HeaderMegaMenu() {
               }}
               component={NavLink} to="/add-data-item">
               Add dataset
+            </Button>
+
+            <Button variant="outline"
+              style={{
+                color: '#ffffff', // White text
+                backgroundColor: 'transparent', // Transparent background
+                border: '1px solid #fff', // White border
+                fontWeight: 'normal', // Optional: Adjust font weight for visibility
+                padding: '8px 16px', // Optional: Adjust padding
+                transition: 'all 0.3s ease', // Optional: Smooth hover transition
+              }}
+              component={NavLink} to="/admin">
+              Admin
             </Button>
 
             <Button variant="outline"

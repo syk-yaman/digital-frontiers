@@ -1,0 +1,36 @@
+.navbar {
+    width: 200px;
+    /* Adjust as needed */
+    height: 100vh;
+    /* Full viewport height */
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #e0e0e0;
+    /* Optional border */
+}
+
+.header {
+    padding: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+    /* Optional border */
+}
+
+.links {
+    flex: 1;
+    /* Take up remaining space */
+}
+
+.linksInner {
+    padding: 1rem;
+}
+
+.footer {
+    padding: 1rem;
+    border-top: 1px solid #e0e0e0;
+    /* Optional border */
+}
+
+/* Adjust the container to take up the remaining width */
+.mantine-Container-root {
+    flex: 1;
+}
