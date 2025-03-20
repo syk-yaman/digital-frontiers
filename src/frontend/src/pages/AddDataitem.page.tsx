@@ -60,6 +60,7 @@ export function AddDataitemPage() {
     const [pins, setPins] = useState<{ position: [number, number]; radius: number }[]>([]);
     const [availableTags, setAvailableTags] = useState<Tag[]>([]);
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+    const [files, setFiles] = useState<File[]>([]);
 
     const handleTagsChange = (tags: Tag[]) => {
         setSelectedTags(tags);
@@ -145,11 +146,34 @@ export function AddDataitemPage() {
                 console.error("Submission failed:", error);
             });
     };
-
-    const handleInputChange = (key: string, value: any) => {
-        setFormData((prevData) => ({ ...prevData, [key]: value }));
-        console.log(formData);
+    const handleDrop = (acceptedFiles: File[]) => {
+        setFiles(acceptedFiles);
+        uploadFiles(acceptedFiles);
     };
+
+    const uploadFiles = async (filesToUpload: File[]) => {
+        const formData = new FormData();
+        filesToUpload.forEach((file) => {
+            formData.append('files', file, file.name); // Append each file
+        });
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/datasets/uploadHeroImages`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                console.log('Files uploaded successfully!');
+                setFiles([]); // Clear files after successful upload
+            } else {
+                console.error('File upload failed.');
+            }
+        } catch (error) {
+            console.error('Error during file upload:', error);
+        }
+    };
+
 
     const getFieldsToValidate = (step: number) => {
         switch (step) {
@@ -303,9 +327,9 @@ export function AddDataitemPage() {
 
         loadShapefileFromURL();
 
-        fetch('/api/tags')
+        fetch(`${API_BASE_URL}/tags`)
             .then((res) => res.json())
-            .then((tags) => setAvailableTags(tags || [])) // Ensure it’s an array
+            //.then((tags) => setAvailableTags(tags || [])) // Ensure it’s an array
             .catch((error) => {
                 console.error('Failed to load tags:', error);
                 setAvailableTags([]); // Ensure component still loads
@@ -510,10 +534,11 @@ export function AddDataitemPage() {
                             Provide some nice photos of your dataset and how it was created, this is your spot to get people's attention!
                         </Text>
                         <Dropzone
-                            onDrop={(files) => console.log('accepted files', files)}
+                            onDrop={handleDrop}
                             onReject={(files) => console.log('rejected files', files)}
                             maxSize={5 * 1024 ** 2}
                             accept={IMAGE_MIME_TYPE}
+                            multiple
                         >
                             <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
                                 <Dropzone.Accept>
