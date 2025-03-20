@@ -27,6 +27,7 @@ import { Feature, FeatureCollection, Position } from 'geojson';
 import { loadInBatches } from '@loaders.gl/core';
 import { ShapefileLoader } from '@loaders.gl/shapefile';
 import proj4 from 'proj4';
+import { API_BASE_URL } from '@/config';
 
 const INITIAL_VIEW_STATE = {
   longitude: -0.0167, // Longitude for Olympic Park
@@ -145,7 +146,7 @@ export function Datamenu() {
 
     loadShapefileFromURL();
 
-    fetch('/api/datasets')
+    fetch(`${API_BASE_URL}/datasets`)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch data');

@@ -29,6 +29,7 @@ import { load, loadInBatches } from '@loaders.gl/core';
 import { Feature, FeatureCollection, Position } from "geojson";
 import proj4 from 'proj4';
 import { useForm } from '@mantine/form';
+import { API_BASE_URL } from '@/config';
 
 
 
@@ -129,8 +130,7 @@ export function AddDataitemPage() {
 
         console.log("Final JSON to Submit:", formattedData);
 
-        // Example HTTP POST request (use the actual API endpoint)
-        fetch('http://localhost:3000/datasets', {
+        fetch(`${API_BASE_URL}/datasets`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

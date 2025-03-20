@@ -7,6 +7,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 
 import './Home.page.css'
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '@/config';
 
 
 const partners = [
@@ -81,7 +82,7 @@ export function HomePage() {
       }, 500); // Duration of the fade-out effect
     }, 3000); // Delay before image change
 
-    fetch('/api/datasets/recent')
+    fetch(`${API_BASE_URL}/datasets/recent`)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch data');

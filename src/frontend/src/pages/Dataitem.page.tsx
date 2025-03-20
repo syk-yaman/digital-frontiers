@@ -28,6 +28,7 @@ import { Feature, FeatureCollection, Position } from 'geojson';
 import { loadInBatches } from '@loaders.gl/core';
 import proj4 from 'proj4';
 import { ShapefileLoader } from '@loaders.gl/shapefile';
+import { API_BASE_URL } from '@/config';
 
 const INITIAL_VIEW_STATE = {
   longitude: -0.0167,
@@ -145,7 +146,7 @@ export function Dataitem() {
 
     loadShapefileFromURL();
 
-    fetch(`http://localhost:3000/datasets/${id}`)
+    fetch(`${API_BASE_URL}/datasets/${id}`)
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch dataset');
         return res.json();
