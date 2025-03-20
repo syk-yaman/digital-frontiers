@@ -151,33 +151,46 @@ export function AddDataitemPage() {
         console.log(formData);
     };
 
-    const nextStep = () => {
-        let isValid = false;
-
-        if (activeStep === 1) {
-            isValid = form.validateField('datasetName').hasError ||
-                form.validateField('ownerName').hasError ||
-                form.validateField('ownerEmail').hasError ||
-                form.validateField('datasetType').hasError
-                ? false
-                : true;
-        } else if (activeStep === 2) {
-            isValid = form.validateField('datasetDescription').hasError ||
-                form.validateField('datasetTags').hasError ||
-                form.validateField('frequency').hasError ||
-                form.validateField('unit').hasError
-                ? false
-                : true;
-        } else if (activeStep === 3) {
-            isValid = form.validateField('jsonInput').hasError ? false : true;
-        }
-
-        if (isValid) {
-            setActiveStep((current) => current + 1);
-            window.scrollTo(0, 0); // Scroll to top on step change
+    const getFieldsToValidate = (step: number) => {
+        switch (step) {
+            case 1:
+                return ['datasetName', 'ownerName', 'ownerEmail', 'datasetType'];
+            case 2:
+                return ['datasetDescription', 'datasetTags', 'frequency', 'unit'];
+            case 3:
+                return ['jsonInput'];
+            default:
+                return []; // Return an empty array for other steps
         }
     };
 
+    const nextStep = () => {
+        const fields = getFieldsToValidate(activeStep);
+        const validationResults = form.validate(); // Validate all fields
+        const hasErrors = fields.some((field) => validationResults.errors[field]); // Check for errors in specified fields
+
+        if (!hasErrors) {
+            setActiveStep((current) => current + 1);
+            window.scrollTo(0, 0);
+        } else {
+            console.log("Form has errors in the current step. Please correct them.");
+        }
+    };
+
+    const handleStepClick = (step: number) => {
+        const fields = getFieldsToValidate(activeStep);
+        const validationResults = form.validate(); // Validate all fields
+        const hasErrors = fields.some((field) => validationResults.errors[field]); // Check for errors in specified fields
+
+        if (step + 1 <= activeStep || !hasErrors) {
+            setActiveStep(step + 1);
+            window.scrollTo(0, 0);
+        } else if (step < activeStep) {
+            setActiveStep(step);
+        } else {
+            console.log("Cannot proceed to step. Please correct all form errors.");
+        }
+    };
 
     const prevStep = () => {
         setActiveStep((current) => {
@@ -298,6 +311,8 @@ export function AddDataitemPage() {
                 setAvailableTags([]); // Ensure component still loads
             });
 
+
+
     }, []);
 
     const handleMapClick = (info: any, event: any) => {
@@ -356,7 +371,7 @@ export function AddDataitemPage() {
 
             <Space h="md" />
 
-            <Stepper active={activeStep - 1} onStepClick={(step) => setActiveStep(step + 1)} size="sm">
+            <Stepper active={activeStep - 1} onStepClick={handleStepClick} size="sm">
                 <Stepper.Step label="Step 1" description="Dataset Main Info" />
                 <Stepper.Step label="Step 2" description="Dataset Description" />
                 <Stepper.Step label="Step 3" description="Dataset links" />
@@ -463,6 +478,7 @@ export function AddDataitemPage() {
                                 size="sm"
                                 required
                                 label="Update Frequency"
+                                type="number"
                                 placeholder="E.g. 5"
                                 value={frequency}
                                 //onChange={(e) => { setFrequency(e.target.value);form.setFieldValue('frequency', e.target.value);}}
