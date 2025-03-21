@@ -139,7 +139,7 @@ export function AddDataitemPage() {
         setLoading(true);
         try {
             const formData = new FormData();
-            filesToUpload.forEach((file) => { // Use filesToUpload
+            filesToUpload.forEach((file) => {
                 formData.append('files', file, file.name);
             });
 
@@ -150,7 +150,21 @@ export function AddDataitemPage() {
 
             if (response.ok) {
                 console.log('Files uploaded successfully!');
-                setUploadedFiles([...uploadedFiles, ...filesToUpload]);
+                const uploadedFileNames: string[] = await response.json(); // Parse response
+                console.log('Server-side file names:', uploadedFileNames);
+
+                // Update sliderImages with server-side file names
+                setSliderImages(uploadedFileNames);
+
+                // Update uploadedFiles to reflect new names
+                const updatedUploadedFiles = filesToUpload.map((file, index) => {
+                    return {
+                        ...file,
+                        name: uploadedFileNames[index], // Replace with server-side name
+                    };
+                });
+                setUploadedFiles([...uploadedFiles, ...updatedUploadedFiles]);
+
                 setFilesToUpload([]); // Clear filesToUpload
             } else {
                 console.error('File upload failed.');
@@ -179,6 +193,8 @@ export function AddDataitemPage() {
         const fields = getFieldsToValidate(activeStep);
         const validationResults = form.validate(); // Validate all fields
         const hasErrors = fields.some((field) => validationResults.errors[field]); // Check for errors in specified fields
+
+        console.log(formData);
 
         if (!hasErrors) {
             setActiveStep((current) => current + 1);
@@ -326,11 +342,7 @@ export function AddDataitemPage() {
                 setAvailableTags([]); // Ensure component still loads
             });
 
-        console.log("before if:" + filesToUpload.length);
-
         if (filesToUpload.length > 0 && !loading) { // Trigger on filesToUpload
-            console.log("inside if");
-
             handleUpload();
         }
 
@@ -343,14 +355,14 @@ export function AddDataitemPage() {
             frequency: form.values.frequency,
             unit: form.values.unit,
             isFreqOnceChecked: form.values.isFreqOnceChecked,
-            sliderImages: form.values.sliderImages,
+            sliderImages: uploadedFiles.map((file) => file.name),
             dataSample: form.values.dataSample,
             pins: pins,
-            datasetTags: form.values.datasetTags || [], // Add default value if needed
-            links: form.values.links,
+            datasetTags: form.values.datasetTags,
+            links: links,
         });
 
-    }, [filesToUpload, loading]);
+    }, [filesToUpload, loading, pins, links]);
 
     const handleMapClick = (info: any, event: any) => {
         console.log("📌 Click event info:", info);
@@ -601,14 +613,14 @@ export function AddDataitemPage() {
                             Add any external links you may have, such as visualisation dashboards, documentation, GitHub repositories...
                         </Text>
                         {links.map((link, index) => (
-                            <Group grow={false} key={link.title} mb="md" align="center">
+                            <Group grow={false} key={index} mb="md" align="center">
                                 <TextInput
                                     placeholder="Title"
                                     value={link.title}
                                     onChange={(e) =>
                                         setLinks((current) =>
-                                            current.map((item) =>
-                                                item.title === link.title ? { ...item, fileName: e.target.value } : item
+                                            current.map((item, i) =>
+                                                i === index ? { ...item, title: e.target.value } : item
                                             )
                                         )
                                     }
@@ -616,10 +628,11 @@ export function AddDataitemPage() {
                                 />
                                 <TextInput
                                     placeholder="Link"
-                                    onChange={(urlfile) =>
+                                    value={link.url}
+                                    onChange={(e) =>
                                         setLinks((current) =>
-                                            current.map((item) =>
-                                                item.url === item.url ? { ...item, file } : item
+                                            current.map((item, i) =>
+                                                i === index ? { ...item, url: e.target.value } : item
                                             )
                                         )
                                     }
@@ -628,8 +641,8 @@ export function AddDataitemPage() {
                                 <Button
                                     variant="subtle"
                                     color="red"
-                                    onClick={() => handleDeleteLink(link.title)}
-                                    style={{ width: '40px', padding: 0 }} // Adjust the width and remove padding
+                                    onClick={() => handleDeleteLink(link.url)} //delete by url, as it is unique.
+                                    style={{ width: '40px', padding: 0 }}
                                 >
                                     <IconTrash size={16} />
                                 </Button>
