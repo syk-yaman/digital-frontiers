@@ -51,7 +51,7 @@ interface DatasetItem {
   updatedAt: string;
   deletedAt: string | null;
   links: { id: number; title: string; url: string }[]; // Replace 'any' with a more specific type if possible
-  locations: Location[];
+  locations: any[];
   sliderImages: { id: number; fileName: string }[];
   tags: { id: number; name: string; colour: string; icon: string }[];
   lastReading: string;
@@ -95,7 +95,7 @@ export function Dataitem() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [geoJsonData, setGeoJsonData] = useState<FeatureCollection | null>(null);
-  const [mappedData, setMappedData] = useState<Location[]>(); //For map
+  const [mappedData, setMappedData] = useState([]); //For map
 
   useEffect(() => {
 
@@ -153,7 +153,13 @@ export function Dataitem() {
       })
       .then((data: DatasetItem) => {
         setDataset(data);
-        setMappedData(data.locations);
+
+        const dddd = data.locations.map(location => ({
+          position: [location.lon, location.lat], // Longitude, Latitude
+        })) as any;
+
+        setMappedData(dddd);
+
 
         setLoading(false);
       })
@@ -224,7 +230,7 @@ export function Dataitem() {
           {/* Badges Section */}
           <Group align="left" >
             {dataset.tags.map(tag => (
-              <Badge key={tag.id} variant="outline" color={tag.colour}>
+              <Badge key={tag.id} variant="outline" color={tag.colour == "#000000" ? "#c6ff00" : tag.colour}>
                 {tag.name}
               </Badge>
             ))}
