@@ -9,7 +9,7 @@ import { Map, MapLayerMouseEvent } from 'react-map-gl/maplibre';
 import { TagsCreatable } from '@/components/TagsCreatable';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { atomOneDark, atomOneLight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import { IconPhoto, IconTrash, IconUpload, IconX } from '@tabler/icons-react';
+import { IconCheck, IconError404, IconPhoto, IconTrash, IconUpload, IconX } from '@tabler/icons-react';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import '@mantine/dropzone/styles.css';
 import { ShapefileLoader } from '@loaders.gl/shapefile';
@@ -18,6 +18,9 @@ import { Feature, FeatureCollection, Position } from "geojson";
 import proj4 from 'proj4';
 import { useForm } from '@mantine/form';
 import { API_BASE_URL } from '@/config';
+import { notifications, Notifications } from '@mantine/notifications';
+import '@mantine/notifications/styles.css';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -61,6 +64,11 @@ export function AddDataitemPage() {
     const [mqttUsername, setMqttUsername] = useState('');
     const [mqttPassword, setMqttPassword] = useState('');
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submissionSuccess, setSubmissionSuccess] = useState(false);
+    const navigate = useNavigate();
+
+
     const [formData, setFormData] = useState({
         datasetName: '',
         ownerName: '',
@@ -79,6 +87,8 @@ export function AddDataitemPage() {
 
     const handleSubmit = () => {
 
+        setIsSubmitting(true);
+
         const mqttLink = {
             title: 'MQTT',
             url: isFreqOnceChecked
@@ -94,7 +104,7 @@ export function AddDataitemPage() {
             dataOwnerPhoto: "dataOwnerPhoto",
             datasetType: formData.datasetType.toLowerCase(),
             description: formData.datasetDescription,
-            updateFrequency: parseInt(formData.frequency),
+            updateFrequency: (formData.frequency && formData.frequency !== 'N/A') ? parseInt(formData.frequency) : 0, // Modified line
             updateFrequencyUnit: formData.unit.toLowerCase(),
             dataExample: formData.dataSample,
             createdAt: new Date().toISOString(),
@@ -138,12 +148,35 @@ export function AddDataitemPage() {
             },
             body: JSON.stringify(formattedData),
         })
-            .then((response) => response.json())
-            .then((data) => {
+            .then((response) => {
+                if (!response.ok) {
+                    // Check if the response was not OK (e.g., 4xx or 5xx status code)
+                    return response.json().then(errorData => {
+                        throw new Error(`Submission failed with status ${response.status}: ${JSON.stringify(errorData)}`);
+                    });
+                }
+                return response.json();
+            }).then((data) => {
                 console.log("Submission successful:", data);
+                notifications.show({
+                    title: 'Success',
+                    message: 'Dataset submitted successfully!',
+                    color: 'green',
+                    icon: <IconCheck />,
+                });
+                setSubmissionSuccess(true); // Set success state
+                setTimeout(() => navigate('/'), 4000); // Navigate after 2 seconds
+
             })
             .catch((error) => {
                 console.error("Submission failed:", error);
+                notifications.show({
+                    title: 'Error',
+                    message: 'Failed to submit dataset:' + error,
+                    color: 'red',
+                    icon: <IconError404 />,
+                });
+                setIsSubmitting(false);
             });
     };
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
@@ -804,10 +837,13 @@ export function AddDataitemPage() {
                                 padding: '15px 30px',
                                 fontSize: '1.25rem',
                                 fontWeight: 600,
+                                backgroundColor: submissionSuccess ? 'lightgreen' : undefined,
                             }}
                             onClick={handleSubmit}
+                            loading={isSubmitting} // Use Mantine's loading prop
+                            disabled={submissionSuccess} // Disable the button after successful submission
                         >
-                            Submit for Approval
+                            {submissionSuccess ? 'Submitted!' : 'Submit for Approval'}
                         </Button>
                     </Center>
                 </>
@@ -824,6 +860,7 @@ export function AddDataitemPage() {
                     {activeStep === 3 ? 'Finish' : 'Next'}
                 </Button>
             </Group>
+            <Notifications />
         </Container>
     );
 }
