@@ -212,7 +212,7 @@ export function HomePage() {
                     <Card.Section style={{ position: 'relative' }}>
                       {/* Image */}
                       <Image
-                        src={card.sliderImages[0] != null ? '/imgs/' + card.sliderImages[0].fileName : '/imgs/qeop.jpg'}
+                        src={card.sliderImages[0] != null ? `${API_BASE_URL}/uploads/` + card.sliderImages[0].fileName : `${API_BASE_URL}/uploads/qeop.jpg`}
                         alt={card.name}
                         height={180}
                       />
