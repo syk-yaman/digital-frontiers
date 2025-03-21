@@ -37,12 +37,21 @@ import { useDisclosure } from '@mantine/hooks';
 import { NavLink, useLocation } from 'react-router-dom';
 import classes from './HeaderMegaMenu.module.css';
 
-const version = 'v0.2.1'
+const version = 'v0.2.2'
 const changelog = [
+  {
+    version: 'v0.2.2',
+    changes: [
+      'Major fixes for the dataset add page',
+      'Backend architecture upgrade',
+      'Admin page skelaton was added'
+    ],
+  },
   {
     version: 'v0.2.1',
     changes: [
-      ''
+      'Add dataset page is working',
+      'Backend is available now',
     ],
   },
   {
