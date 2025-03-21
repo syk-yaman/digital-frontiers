@@ -55,10 +55,11 @@ export function AddDataitemPage() {
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
     const [sliderImages, setSliderImages] = useState<string[]>([]);
 
-    //const handleTagsChange = (tags: Tag[]) => {
-    //    setSelectedTags(tags);
-    //form.setFieldValue('datasetTags', tags);
-    //};
+    const [mqttAddress, setMqttAddress] = useState('');
+    const [mqttPort, setMqttPort] = useState('');
+    const [mqttTopic, setMqttTopic] = useState('');
+    const [mqttUsername, setMqttUsername] = useState('');
+    const [mqttPassword, setMqttPassword] = useState('');
 
     const [formData, setFormData] = useState({
         datasetName: '',
@@ -77,8 +78,16 @@ export function AddDataitemPage() {
     });
 
     const handleSubmit = () => {
+
+        const mqttLink = {
+            title: 'MQTT',
+            url: isFreqOnceChecked
+                ? ''
+                : `mqtt://${form.values.mqttAddress}:${form.values.mqttPort}/${form.values.mqttTopic}?username=${form.values.mqttUsername}&password=${form.values.mqttPassword}`,
+        };
+
         const formattedData = {
-            id: 5,
+            id: 5, // You might want to generate this dynamically
             name: formData.datasetName,
             dataOwnerName: formData.ownerName,
             dataOwnerEmail: formData.ownerEmail,
@@ -91,19 +100,33 @@ export function AddDataitemPage() {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             deletedAt: null,
-
-            links: formData.links,
-
-            // Mapping pins (locations)
+            links: isFreqOnceChecked
+                ? formData.links.map((link, index) => ({
+                    title: link.title,
+                    url: link.url,
+                }))
+                : [
+                    ...formData.links.map((link, index) => ({
+                        title: link.title,
+                        url: link.url,
+                    })),
+                    {
+                        title: 'MQTT',
+                        url: `mqtt://${form.values.mqttAddress}:${form.values.mqttPort}/${form.values.mqttTopic}?username=${form.values.mqttUsername}&password=${form.values.mqttPassword}`,
+                    },
+                ],
             locations: formData.pins.map((pin, index) => ({
-                id: index + 1,
                 lon: pin.position[0],
                 lat: pin.position[1],
             })),
-
-            sliderImages: formData.sliderImages,
-
-            datasetTags: formData.datasetTags,
+            sliderImages: formData.sliderImages.map((fileName, index) => ({
+                fileName: fileName,
+            })),
+            tags: formData.datasetTags.map((tag) => ({
+                name: tag.name,
+                colour: tag.color,
+                icon: 'IconPlane',
+            })),
         };
 
         console.log("Final JSON to Submit:", formattedData);
@@ -195,6 +218,7 @@ export function AddDataitemPage() {
         const hasErrors = fields.some((field) => validationResults.errors[field]); // Check for errors in specified fields
 
         console.log(formData);
+        console.log(validationResults);
 
         if (!hasErrors) {
             setActiveStep((current) => current + 1);
@@ -261,7 +285,12 @@ export function AddDataitemPage() {
             dataSample: '',
             datasetTags: [],
             sliderImages: [''],
-            links: []
+            links: [],
+            mqttAddress: '',
+            mqttPort: '',
+            mqttTopic: '',
+            mqttUsername: '',
+            mqttPassword: '',
         },
         validate: {
             datasetName: (value) => (value.length > 2 ? null : 'Dataset name must be at least 3 characters'),
@@ -272,14 +301,9 @@ export function AddDataitemPage() {
             datasetTags: (value) => (value.length > 0) ? null : 'You should provide at least one tag',
             frequency: (value) => (isFreqOnceChecked || value ? null : 'Frequency is required'),
             unit: (value) => (isFreqOnceChecked || value ? null : 'Unit is required'),
-            dataSample: (value) => {
-                try {
-                    JSON.parse(value);
-                    return null;
-                } catch {
-                    return 'Invalid JSON format';
-                }
-            },
+            mqttAddress: (value) => !isFreqOnceChecked && !value ? 'MQTT Address is required' : null,
+            mqttPort: (value) => !isFreqOnceChecked && !value ? 'MQTT Port is required' : null,
+            mqttTopic: (value) => !isFreqOnceChecked && !value ? 'MQTT Topic is required' : null,
         },
     });
 
@@ -709,42 +733,56 @@ export function AddDataitemPage() {
                     <Center mt="xl" style={{ flexDirection: 'column' }}>
                         <Text size="lg">Part 3: MQTT Configuration</Text>
                         <Text c="dimmed" size="sm" mb="lg">
-                            Configure the MQTT connection settings to stream your data.
+                            Configure the MQTT connection settings to stream your data. Required if your data is not added once.
                         </Text>
                     </Center>
                     <form>
                         <TextInput
                             label="MQTT Address"
                             placeholder="Enter the MQTT broker address (e.g., mqtt://broker.hivemq.com)"
-                            required
+                            required={!isFreqOnceChecked}
+                            disabled={isFreqOnceChecked}
                             mb="md"
+                            value={mqttAddress}
+                            {...form.getInputProps('mqttAddress')}
                         />
                         <TextInput
                             label="MQTT Port"
                             placeholder="Enter the MQTT broker port (e.g., 1883)"
-                            required
+                            required={!isFreqOnceChecked}
+                            disabled={isFreqOnceChecked}
                             type="number"
                             mb="md"
+                            value={mqttPort}
+                            {...form.getInputProps('mqttPort')}
                         />
                         <TextInput
                             label="MQTT Topic"
                             placeholder="Enter the topic to subscribe to (e.g., /sensor/data)"
-                            required
+                            required={!isFreqOnceChecked}
+                            disabled={isFreqOnceChecked}
                             mb="md"
+                            value={mqttTopic}
+                            {...form.getInputProps('mqttTopic')}
                         />
                         <TextInput
                             label="MQTT Username"
                             placeholder="Enter the username (if applicable)"
                             mb="md"
+                            disabled={isFreqOnceChecked}
+                            value={mqttUsername}
+                            {...form.getInputProps('mqttUsername')}
                         />
                         <TextInput
                             label="MQTT Password"
                             placeholder="Enter the password (if applicable)"
-                            type="password"
                             mb="md"
+                            disabled={isFreqOnceChecked}
+                            value={mqttPassword}
+                            {...form.getInputProps('mqttPassword')}
                         />
                         <Group mt="md">
-                            <Button variant="outline" color="blue" onClick={() => console.log('Testing MQTT Connection')}>
+                            <Button style={{ visibility: 'hidden' }} disabled={isFreqOnceChecked} variant="outline" color="blue" onClick={() => console.log('Testing MQTT Connection')}>
                                 Test Connection
                             </Button>
                         </Group>
