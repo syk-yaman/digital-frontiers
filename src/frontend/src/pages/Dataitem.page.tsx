@@ -241,7 +241,7 @@ export function Dataitem() {
         <Carousel mx="auto" mt="lg" withIndicators >
           {dataset.sliderImages.map(img => (
             <Carousel.Slide key={img.id}>
-              <Image src={`/imgs/${img.fileName}`} alt="Dataset Image" />
+              <Image src={`${API_BASE_URL}/uploads/` + img.fileName} alt="Dataset Image" />
             </Carousel.Slide>
           ))}
         </Carousel>
