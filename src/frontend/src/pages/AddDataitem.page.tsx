@@ -1,20 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
-    Container,
-    Stepper,
-    Button,
-    Text,
-    TextInput,
-    Select,
-    Checkbox,
-    Group,
-    Space,
-    Center,
-    Textarea,
-    FileInput,
-    List,
-    Flex,
-    Loader,
+    Container, Stepper, Button, Text, TextInput, Select, Checkbox, Group, Space, Center, Textarea, FileInput,
+    List, Flex, Loader
 } from '@mantine/core';
 import DeckGL from '@deck.gl/react';
 import { GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers';
@@ -54,19 +41,24 @@ interface Tag {
     icon?: string;
 }
 
+interface Link {
+    url: string;
+    title: string;
+}
+
 export function AddDataitemPage() {
     const [activeStep, setActiveStep] = useState(1);
-    const [jsonInput, setJsonInput] = useState('{\n     \"type\": EXAMPLE,\n     \"num\": 2,\n     \"fields\": [\n        {\"name\": \"Voltage\", \"unit\": \"V\", \"decPrecision\": 3},\n        {\"name\": \"Current\", \"unit\": \"A\", \"decPrecision\": 1}\n     ]\n  }');
-    const [attachments, setAttachments] = useState([{ id: 1, fileName: '', file: null }]);
+    const [dataSample, setDataSample] = useState('{\n     \"type\": EXAMPLE,\n     \"num\": 2,\n     \"fields\": [\n        {\"name\": \"Voltage\", \"unit\": \"V\", \"decPrecision\": 3},\n        {\"name\": \"Current\", \"unit\": \"A\", \"decPrecision\": 1}\n     ]\n  }');
+    const [links, setLinks] = useState<Link[]>([]);
     const [pins, setPins] = useState<{ position: [number, number]; radius: number }[]>([]);
     const [availableTags, setAvailableTags] = useState<Tag[]>([]);
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
-    const [files, setFiles] = useState<File[]>([]);
+    const [sliderImages, setSliderImages] = useState<string[]>([]);
 
-    const handleTagsChange = (tags: Tag[]) => {
-        setSelectedTags(tags);
-        //form.setFieldValue('datasetTags', tags);
-    };
+    //const handleTagsChange = (tags: Tag[]) => {
+    //    setSelectedTags(tags);
+    //form.setFieldValue('datasetTags', tags);
+    //};
 
     const [formData, setFormData] = useState({
         datasetName: '',
@@ -76,34 +68,31 @@ export function AddDataitemPage() {
         datasetDescription: '',
         frequency: '',
         unit: '',
-        isChecked: false,
-        attachments: [{ id: 1, fileName: '', file: null }],
-        jsonInput: '',
+        isFreqOnceChecked: false,
+        sliderImages: sliderImages,
+        dataSample: '',
         pins: pins,
+        datasetTags: selectedTags,
+        links: links
     });
 
     const handleSubmit = () => {
         const formattedData = {
-            id: 5, // This would typically be assigned by the backend
+            id: 5,
             name: formData.datasetName,
             dataOwnerName: formData.ownerName,
             dataOwnerEmail: formData.ownerEmail,
-            dataOwnerPhoto: "dataOwnerPhoto", // Placeholder, replace if needed
-            datasetType: formData.datasetType.toLowerCase(), // Ensuring lowercase
+            dataOwnerPhoto: "dataOwnerPhoto",
+            datasetType: formData.datasetType.toLowerCase(),
             description: formData.datasetDescription,
-            updateFrequency: parseInt(formData.frequency) || 1, // Default to 1 if empty
+            updateFrequency: parseInt(formData.frequency),
             updateFrequencyUnit: formData.unit.toLowerCase(),
-            dataExample: formData.jsonInput, // Assuming JSON input is provided as a string
+            dataExample: formData.dataSample,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             deletedAt: null,
 
-            // Mapping attachments to links
-            links: formData.attachments.map((attachment, index) => ({
-                id: index + 1,
-                title: attachment.fileName || `Link ${index + 1}`,
-                url: attachment.file || "", // Placeholder for file URL
-            })),
+            links: formData.links,
 
             // Mapping pins (locations)
             locations: formData.pins.map((pin, index) => ({
@@ -112,22 +101,9 @@ export function AddDataitemPage() {
                 lat: pin.position[1],
             })),
 
-            // Placeholder for slider images (modify if you have images)
-            sliderImages: [
-                { id: 6, fileName: "echobox.jpg" },
-                { id: 4, fileName: "image.png" },
-                { id: 3, fileName: "image-1.png" },
-            ],
+            sliderImages: formData.sliderImages,
 
-            // Placeholder tags (modify based on user input if needed)
-            tags: [
-                {
-                    id: 1,
-                    name: "Nature",
-                    colour: "#009900",
-                    icon: "IconPlane",
-                },
-            ],
+            datasetTags: formData.datasetTags,
         };
 
         console.log("Final JSON to Submit:", formattedData);
@@ -149,8 +125,10 @@ export function AddDataitemPage() {
     };
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
     const [loading, setLoading] = useState(false);
+    const [filesToUpload, setFilesToUpload] = useState<File[]>([]); // New state
+
     const handleDrop = (acceptedFiles: File[]) => {
-        setUploadedFiles([...uploadedFiles, ...acceptedFiles]);
+        setFilesToUpload([...filesToUpload, ...acceptedFiles]);
     };
 
     const handleDeleteFile = (fileToRemove: File) => {
@@ -161,7 +139,7 @@ export function AddDataitemPage() {
         setLoading(true);
         try {
             const formData = new FormData();
-            uploadedFiles.forEach((file) => {
+            filesToUpload.forEach((file) => { // Use filesToUpload
                 formData.append('files', file, file.name);
             });
 
@@ -172,7 +150,8 @@ export function AddDataitemPage() {
 
             if (response.ok) {
                 console.log('Files uploaded successfully!');
-                //setUploadedFiles([]);
+                setUploadedFiles([...uploadedFiles, ...filesToUpload]);
+                setFilesToUpload([]); // Clear filesToUpload
             } else {
                 console.error('File upload failed.');
             }
@@ -190,7 +169,7 @@ export function AddDataitemPage() {
             case 2:
                 return ['datasetDescription', 'datasetTags', 'frequency', 'unit'];
             case 3:
-                return ['jsonInput'];
+                return ['dataSample'];
             default:
                 return []; // Return an empty array for other steps
         }
@@ -232,12 +211,12 @@ export function AddDataitemPage() {
         });
     };
 
-    const handleAddAttachment = () => {
-        setAttachments([...attachments, { id: attachments.length + 1, fileName: '', file: null }]);
+    const handleAddLink = () => {
+        setLinks([...links, { title: '', url: '' }]);
     };
 
-    const handleDeleteAttachment = (id: number) => {
-        setAttachments((current) => current.filter((item) => item.id !== id));
+    const handleDeleteLink = (url: string) => {
+        setLinks((current) => current.filter((item) => item.url !== url));
     };
 
     function CustomTextRequired({ required = false, text = "" }) {
@@ -248,7 +227,7 @@ export function AddDataitemPage() {
         )
     }
 
-    const [isChecked, setIsChecked] = useState(false);
+    const [isFreqOnceChecked, setIsFreqOnceChecked] = useState(false);
     const [frequency, setFrequency] = useState('');
     const [unit, setUnit] = useState('');
 
@@ -262,8 +241,11 @@ export function AddDataitemPage() {
             datasetDescription: '',
             frequency: '',
             unit: '',
-            jsonInput: '',
-            datasetTags: []
+            isFreqOnceChecked: false,
+            dataSample: '',
+            datasetTags: [],
+            sliderImages: [''],
+            links: []
         },
         validate: {
             datasetName: (value) => (value.length > 2 ? null : 'Dataset name must be at least 3 characters'),
@@ -272,9 +254,9 @@ export function AddDataitemPage() {
             datasetType: (value) => (value ? null : 'Dataset type is required'),
             datasetDescription: (value) => (value.length > 100 ? null : 'Description must be at least 100 characters'),
             datasetTags: (value) => (value.length > 0) ? null : 'You should provide at least one tag',
-            frequency: (value) => (isChecked || value ? null : 'Frequency is required'),
-            unit: (value) => (isChecked || value ? null : 'Unit is required'),
-            jsonInput: (value) => {
+            frequency: (value) => (isFreqOnceChecked || value ? null : 'Frequency is required'),
+            unit: (value) => (isFreqOnceChecked || value ? null : 'Unit is required'),
+            dataSample: (value) => {
                 try {
                     JSON.parse(value);
                     return null;
@@ -331,6 +313,7 @@ export function AddDataitemPage() {
             } catch (error) {
                 console.error("❌ Error loading SHP:", error);
             }
+
         }
 
         loadShapefileFromURL();
@@ -343,12 +326,31 @@ export function AddDataitemPage() {
                 setAvailableTags([]); // Ensure component still loads
             });
 
-        if (uploadedFiles.length > 0 && !loading) {
+        console.log("before if:" + filesToUpload.length);
+
+        if (filesToUpload.length > 0 && !loading) { // Trigger on filesToUpload
+            console.log("inside if");
+
             handleUpload();
         }
 
+        setFormData({
+            datasetName: form.values.datasetName,
+            ownerName: form.values.ownerName,
+            ownerEmail: form.values.ownerEmail,
+            datasetType: form.values.datasetType,
+            datasetDescription: form.values.datasetDescription,
+            frequency: form.values.frequency,
+            unit: form.values.unit,
+            isFreqOnceChecked: form.values.isFreqOnceChecked,
+            sliderImages: form.values.sliderImages,
+            dataSample: form.values.dataSample,
+            pins: pins,
+            datasetTags: form.values.datasetTags || [], // Add default value if needed
+            links: form.values.links,
+        });
 
-    }, [uploadedFiles, loading]);
+    }, [filesToUpload, loading]);
 
     const handleMapClick = (info: any, event: any) => {
         console.log("📌 Click event info:", info);
@@ -382,7 +384,7 @@ export function AddDataitemPage() {
 
     const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const checked = event.currentTarget.checked;
-        setIsChecked(checked);
+        setIsFreqOnceChecked(checked);
 
         if (checked) {
             setFrequency('N/A');
@@ -517,7 +519,7 @@ export function AddDataitemPage() {
                                 placeholder="E.g. 5"
                                 value={frequency}
                                 //onChange={(e) => { setFrequency(e.target.value);form.setFieldValue('frequency', e.target.value);}}
-                                disabled={isChecked}
+                                disabled={isFreqOnceChecked}
                                 {...form.getInputProps('frequency')}
                             />
                             <Select
@@ -527,14 +529,14 @@ export function AddDataitemPage() {
                                 data={['Only once', 'Seconds', 'Minutes', 'Hours', 'Days', 'Weeks', 'Months', 'Years']}
                                 value={unit}
                                 //onChange={(value) => {setUnit(value || '');form.setFieldValue('unit', value || '');}}
-                                disabled={isChecked}
+                                disabled={isFreqOnceChecked}
                                 required
                                 {...form.getInputProps('unit')}
                             />
                             <Checkbox
                                 label="My dataset does not update frequently, I will only add it here once"
                                 mt="24px"
-                                checked={isChecked}
+                                checked={isFreqOnceChecked}
                                 onChange={handleCheckboxChange}
                             />
                         </Flex>
@@ -582,14 +584,14 @@ export function AddDataitemPage() {
                         <Textarea
                             label=""
                             placeholder="Paste JSON data here"
-                            value={jsonInput}
-                            onChange={(event) => setJsonInput(event.target.value)}
+                            value={dataSample}
+                            onChange={(event) => setDataSample(event.target.value)}
                             autosize
                             minRows={4}
                             mb="md"
                         />
                         <SyntaxHighlighter language="json" style={atomOneDark}>
-                            {jsonInput.trim() || '{}'}
+                            {dataSample.trim() || '{}'}
                         </SyntaxHighlighter>
 
                         <Text size="sm" mt="lg" mb="xs">
@@ -598,15 +600,15 @@ export function AddDataitemPage() {
                         <Text size="sm" c="dimmed" inline mb="md">
                             Add any external links you may have, such as visualisation dashboards, documentation, GitHub repositories...
                         </Text>
-                        {attachments.map((attachment, index) => (
-                            <Group grow={false} key={attachment.id} mb="md" align="center">
+                        {links.map((link, index) => (
+                            <Group grow={false} key={link.title} mb="md" align="center">
                                 <TextInput
                                     placeholder="Title"
-                                    value={attachment.fileName}
+                                    value={link.title}
                                     onChange={(e) =>
-                                        setAttachments((current) =>
+                                        setLinks((current) =>
                                             current.map((item) =>
-                                                item.id === attachment.id ? { ...item, fileName: e.target.value } : item
+                                                item.title === link.title ? { ...item, fileName: e.target.value } : item
                                             )
                                         )
                                     }
@@ -614,26 +616,26 @@ export function AddDataitemPage() {
                                 />
                                 <TextInput
                                     placeholder="Link"
-                                    //   onChange={(file) =>
-                                    //     setAttachments((current) =>
-                                    //       current.map((item) =>
-                                    //         item.id === attachment.id ? { ...item, file } : item
-                                    //       )
-                                    //     )
-                                    //   }
+                                    onChange={(urlfile) =>
+                                        setLinks((current) =>
+                                            current.map((item) =>
+                                                item.url === item.url ? { ...item, file } : item
+                                            )
+                                        )
+                                    }
                                     style={{ flex: 1 }}
                                 />
                                 <Button
                                     variant="subtle"
                                     color="red"
-                                    onClick={() => handleDeleteAttachment(attachment.id)}
+                                    onClick={() => handleDeleteLink(link.title)}
                                     style={{ width: '40px', padding: 0 }} // Adjust the width and remove padding
                                 >
                                     <IconTrash size={16} />
                                 </Button>
                             </Group>
                         ))}
-                        <Button variant="outline" onClick={handleAddAttachment}>
+                        <Button variant="outline" onClick={handleAddLink}>
                             + Add another link
                         </Button>
 
