@@ -37,8 +37,15 @@ import { useDisclosure } from '@mantine/hooks';
 import { NavLink, useLocation } from 'react-router-dom';
 import classes from './HeaderMegaMenu.module.css';
 
-const version = 'v0.2.2'
+const version = 'v0.2.3'
 const changelog = [
+  {
+    version: 'v0.2.3',
+    changes: [
+      'Bug fixes in dataset add wizrd',
+      'Admin page is capable of deleting datasets now',
+    ],
+  },
   {
     version: 'v0.2.2',
     changes: [
