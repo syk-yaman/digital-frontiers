@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import {
     Container, Stepper, Button, Text, TextInput, Select, Checkbox, Group, Space, Center, Textarea, FileInput,
-    List, Flex, Loader
+    List, Flex, Loader,
+    Alert
 } from '@mantine/core';
 import DeckGL from '@deck.gl/react';
 import { GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers';
@@ -9,7 +10,7 @@ import { Map, MapLayerMouseEvent } from 'react-map-gl/maplibre';
 import { TagsCreatable } from '@/components/TagsCreatable';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { atomOneDark, atomOneLight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import { IconCheck, IconError404, IconPhoto, IconTrash, IconUpload, IconX } from '@tabler/icons-react';
+import { IconCheck, IconCheckbox, IconCloudCheck, IconCloudNetwork, IconCopyCheck, IconError404, IconFileCheck, IconHttpConnect, IconLockCheck, IconLockQuestion, IconMapQuestion, IconNetwork, IconNetworkOff, IconPhoto, IconPlugConnected, IconQuestionMark, IconTrash, IconUpload, IconX } from '@tabler/icons-react';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import '@mantine/dropzone/styles.css';
 import { ShapefileLoader } from '@loaders.gl/shapefile';
@@ -21,7 +22,6 @@ import { API_BASE_URL } from '@/config';
 import { notifications, Notifications } from '@mantine/notifications';
 import '@mantine/notifications/styles.css';
 import { useNavigate } from 'react-router-dom';
-
 
 
 const INITIAL_VIEW_STATE = {
@@ -58,11 +58,9 @@ export function AddDataitemPage() {
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
     const [sliderImages, setSliderImages] = useState<string[]>([]);
 
-    const [mqttAddress, setMqttAddress] = useState('');
-    const [mqttPort, setMqttPort] = useState('');
-    const [mqttTopic, setMqttTopic] = useState('');
-    const [mqttUsername, setMqttUsername] = useState('');
-    const [mqttPassword, setMqttPassword] = useState('');
+    const [mqttConnectionLoading, setMqttConnectionLoading] = useState(false);
+    const [mqttConnectionSuccess, setMqttConnectionSuccess] = useState(false);
+    const [mqttConnectionError, setMqttConnectionError] = useState<string | null>(null);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submissionSuccess, setSubmissionSuccess] = useState(false);
@@ -88,13 +86,6 @@ export function AddDataitemPage() {
     const handleSubmit = () => {
 
         setIsSubmitting(true);
-
-        const mqttLink = {
-            title: 'MQTT',
-            url: isFreqOnceChecked
-                ? ''
-                : `mqtt://${form.values.mqttAddress}:${form.values.mqttPort}/${form.values.mqttTopic}?username=${form.values.mqttUsername}&password=${form.values.mqttPassword}`,
-        };
 
         const formattedData = {
             id: 5, // You might want to generate this dynamically
@@ -122,7 +113,7 @@ export function AddDataitemPage() {
                     })),
                     {
                         title: 'MQTT',
-                        url: `mqtt://${form.values.mqttAddress}:${form.values.mqttPort}/${form.values.mqttTopic}?username=${form.values.mqttUsername}&password=${form.values.mqttPassword}`,
+                        url: `mqtt://${form.values.mqttAddress.replace('mqtt://', '')}:${form.values.mqttPort}/${form.values.mqttTopic}?username=${form.values.mqttUsername}&password=${form.values.mqttPassword}`,
                     },
                 ],
             locations: formData.pins.map((pin, index) => ({
@@ -179,6 +170,58 @@ export function AddDataitemPage() {
                 setIsSubmitting(false);
             });
     };
+
+    const verifyMqttConnection = async () => {
+        setMqttConnectionLoading(true);
+        setMqttConnectionError(null);
+        setMqttConnectionSuccess(false);
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/datasets/mqtt/verify`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    mqttAddress: form.values.mqttAddress.replace('mqtt://', ''),
+                    mqttPort: form.values.mqttPort,
+                    mqttTopic: form.values.mqttTopic,
+                    mqttUsername: form.values.mqttUsername,
+                    mqttPassword: form.values.mqttPassword,
+                }),
+            });
+
+            if (response.ok) {
+                setMqttConnectionSuccess(true);
+                notifications.show({
+                    title: 'MQTT Connection Successful',
+                    message: 'Successfully connected to the MQTT broker.',
+                    color: 'green',
+                    icon: <IconCheck />,
+                });
+            } else {
+                const errorData = await response.json();
+                setMqttConnectionError(errorData.message || 'MQTT connection failed');
+                notifications.show({
+                    title: 'MQTT Connection Failed',
+                    message: errorData.message || 'Failed to connect to the MQTT broker.',
+                    color: 'red',
+                    icon: <IconError404 />,
+                });
+            }
+        } catch (error) {
+            setMqttConnectionError(error instanceof Error ? error.message : 'An unexpected error occurred.');
+            notifications.show({
+                title: 'MQTT Connection Error',
+                message: error instanceof Error ? error.message : 'An unexpected error occurred.',
+                color: 'red',
+                icon: <IconError404 />,
+            });
+        } finally {
+            setMqttConnectionLoading(false);
+        }
+    };
+
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
     const [loading, setLoading] = useState(false);
     const [filesToUpload, setFilesToUpload] = useState<File[]>([]); // New state
@@ -776,7 +819,6 @@ export function AddDataitemPage() {
                             required={!isFreqOnceChecked}
                             disabled={isFreqOnceChecked}
                             mb="md"
-                            value={mqttAddress}
                             {...form.getInputProps('mqttAddress')}
                         />
                         <TextInput
@@ -786,7 +828,6 @@ export function AddDataitemPage() {
                             disabled={isFreqOnceChecked}
                             type="number"
                             mb="md"
-                            value={mqttPort}
                             {...form.getInputProps('mqttPort')}
                         />
                         <TextInput
@@ -795,7 +836,6 @@ export function AddDataitemPage() {
                             required={!isFreqOnceChecked}
                             disabled={isFreqOnceChecked}
                             mb="md"
-                            value={mqttTopic}
                             {...form.getInputProps('mqttTopic')}
                         />
                         <TextInput
@@ -803,7 +843,6 @@ export function AddDataitemPage() {
                             placeholder="Enter the username (if applicable)"
                             mb="md"
                             disabled={isFreqOnceChecked}
-                            value={mqttUsername}
                             {...form.getInputProps('mqttUsername')}
                         />
                         <TextInput
@@ -811,17 +850,50 @@ export function AddDataitemPage() {
                             placeholder="Enter the password (if applicable)"
                             mb="md"
                             disabled={isFreqOnceChecked}
-                            value={mqttPassword}
                             {...form.getInputProps('mqttPassword')}
                         />
-                        <Group mt="md">
-                            <Button style={{ visibility: 'hidden' }} disabled={isFreqOnceChecked} variant="outline" color="blue" onClick={() => console.log('Testing MQTT Connection')}>
-                                Test Connection
-                            </Button>
-                        </Group>
+                        <Center mb="xl" mt="xl" style={{ flexDirection: 'column' }}>
+                            <Text c="dimmed" size="sm" mb="lg">
+                                Before continuing, please verify that the MQTT connection is working correctly
+                            </Text>
+                            <Button
+                                leftSection={mqttConnectionSuccess ? <IconCheck size={25} /> : <IconPlugConnected size={25} />}
+                                variant="gradient"
+                                gradient={mqttConnectionSuccess ? { from: 'lime', to: 'teal', deg: 297 } : { from: 'blue', to: 'teal', deg: 315 }}
+                                onClick={verifyMqttConnection}
+                                loading={mqttConnectionLoading}
+                                color={mqttConnectionSuccess ? 'green' : (mqttConnectionError ? 'red' : 'blue')}
+                            >
+                                {mqttConnectionSuccess ? 'MQTT connection verified' : 'Verify MQTT connection'}</Button>
+                            {mqttConnectionError && (
+                                <Alert color="red" mt="md">
+                                    {'Connection error: '}
+                                    {mqttConnectionError}
+                                </Alert>
+                            )}
+
+                            {mqttConnectionError && (
+                                <Alert color="blue" mt="md">
+                                    {'Need help?'}
+                                    <br />
+                                    {'Click here to get help directly from '}
+                                    <a
+                                        href={`https://chat.openai.com/?model=gpt-4&q=${encodeURIComponent(
+                                            `I am not a tech expert so please make your answer simple. I encountered an error while using a website that connects to an MQTT broker. Here are the connection details (without username and password) and the error message. Please help me troubleshoot this issue.\n\n---\n\nConnection Details:\nAddress: ${form.values.mqttAddress}\nPort: ${form.values.mqttPort}\nTopic: ${form.values.mqttTopic}\n\n---\n\nError Message:\n${mqttConnectionError}\n\n---`
+                                        )}`}
+                                        target="_blank"
+                                    >
+                                        ChatGPT
+                                    </a>
+                                </Alert>
+                            )}
+                        </Center>
+                        <Space h="xl" />
+
                     </form>
                 </>
             )}
+
             {activeStep === 4 && (
                 <>
                     <Center mt="xl" style={{ flexDirection: 'column', textAlign: 'center' }}>
@@ -856,7 +928,7 @@ export function AddDataitemPage() {
                 <Button onClick={prevStep} disabled={activeStep === 1}>
                     Back
                 </Button>
-                <Button onClick={nextStep} disabled={activeStep === 4}>
+                <Button onClick={nextStep} disabled={activeStep === 4 || (activeStep === 3 && !isFreqOnceChecked && !mqttConnectionSuccess)}>
                     {activeStep === 3 ? 'Finish' : 'Next'}
                 </Button>
             </Group>
