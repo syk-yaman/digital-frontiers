@@ -1,13 +1,25 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, UploadedFiles, UseInterceptors, HttpException, HttpStatus } from '@nestjs/common';
 import { DatasetsService } from './dataset.service';
 import { CreateDatasetDto, UpdateDatasetDto } from './dataset.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import mqtt from 'mqtt';
 //import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+
+interface MqttConnectionDto {
+    mqttAddress: string;
+    mqttPort: number;
+    mqttTopic: string;
+    mqttUsername?: string;
+    mqttPassword?: string;
+}
 
 @Controller('datasets')
 export class DatasetsController {
+    private connectionPool: mqtt.MqttClient[] = []; // Connection pool
+    private maxConnections = 10; // Maximum concurrent connections
+
     constructor(private readonly datasetsService: DatasetsService) { }
 
     @Get()
@@ -66,5 +78,44 @@ export class DatasetsController {
     uploadFiles(@UploadedFiles() files: Express.Multer.File[]) {
         const fileNames = files.map((file) => file.filename);
         return fileNames;
+    }
+
+    @Post('/mqtt/verify')
+    verifyMqttConnection(@Body() connectionDto: MqttConnectionDto): Promise<void> {
+        const { mqttAddress, mqttPort, mqttTopic, mqttUsername, mqttPassword } = connectionDto;
+
+        const options: mqtt.IClientOptions = {
+            username: mqttUsername,
+            password: mqttPassword,
+        };
+
+        if (this.connectionPool.length >= this.maxConnections) {
+            throw new HttpException(`Server does not allow more than ${this.maxConnections}`, HttpStatus.TOO_MANY_REQUESTS);
+        }
+
+        const client = mqtt.connect(`mqtt://${mqttAddress}:${mqttPort}`, options);
+
+        return new Promise<void>((resolve, reject) => {
+            client.on('connect', () => {
+                client.end(); // Close the connection immediately
+                console.log(`Connected to MQTT broker at ${mqttAddress}:${mqttPort}`);
+                resolve();
+            });
+
+            client.on('error', (error) => {
+                client.end(); // close the connection on error.
+                console.error('MQTT connection error:', error);
+                reject(new HttpException(error.message, HttpStatus.BAD_GATEWAY));
+            });
+
+            // Add a timeout to prevent hanging if the connection never succeeds
+            setTimeout(() => {
+                if (!client.connected) {
+                    client.end(); // close the connection on timeout.
+                    console.error('MQTT connection timeout');
+                    reject(new HttpException('MQTT connection timeout', HttpStatus.REQUEST_TIMEOUT));
+                }
+            }, 5000); // 5 seconds timeout (adjust as needed)
+        });
     }
 }
