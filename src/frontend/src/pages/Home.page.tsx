@@ -95,6 +95,8 @@ export function HomePage() {
           id: item.id,
           sliderImages: item.sliderImages,
           name: item.name,
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt,
           dataOwnerName: item.dataOwnerName,
           dataOwnerPhoto: item.dataOwnerPhoto || 'https://via.placeholder.com/100', // Placeholder if missing
           description: item.description,
@@ -207,7 +209,7 @@ export function HomePage() {
                     radius="md"
                     p="md"
                     className="card"
-                    style={{ border: 'none', backgroundColor: '#1F5754', width: '350px' }}
+                    style={{ border: 'none', backgroundColor: '#1F5754', width: '350px', minHeight: '400px' }}
                   >
                     <Card.Section style={{ position: 'relative' }}>
                       {/* Image */}
@@ -229,7 +231,16 @@ export function HomePage() {
                           color: '#c9f3f1',
                         }}
                       >
-                        Last updated: {card.lastReading != null ? card.lastReading : 'Unknown'}
+
+                        Last updated: {card.createdAt
+                          ? new Date(card.createdAt).toLocaleDateString(undefined, {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })
+                          : 'Unknown'}
                       </Badge>
                     </Card.Section>
 
@@ -249,7 +260,9 @@ export function HomePage() {
                       </Group>
 
                       <Text c="white" fz="sm" mt="xs">
-                        {card.description}
+                        {card.description.length > 100 // Adjust the limit as needed
+                          ? `${card.description.substring(0, 100)}...`
+                          : card.description}
                       </Text>
                     </Card.Section>
 

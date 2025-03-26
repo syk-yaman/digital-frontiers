@@ -157,11 +157,13 @@ export function Datamenu() {
         // Transform API response to match `dataItems` format
         const formattedData = data.map((item: DatasetItem) => ({
           id: item.id,
-          image: item.sliderImages.length > 0 ? item.sliderImages[0].fileName : '/default-image.jpg',
+          sliderImages: item.sliderImages,
           name: item.name,
           dataOwnerName: item.dataOwnerName,
           dataOwnerPhoto: item.dataOwnerPhoto || 'https://via.placeholder.com/100', // Placeholder if missing
           description: item.description,
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt,
           tags: item.tags.map((tag) => ({
             name: tag.name,
             icon: '',
@@ -349,12 +351,13 @@ export function Datamenu() {
                 radius="md"
                 p="md"
                 className="card"
-                style={{ border: 'none', backgroundColor: '#1F5754', width: '350px' }}
+                style={{ border: 'none', backgroundColor: '#1F5754', width: '350px', minHeight: '400px' }}
               >
                 <Card.Section style={{ position: 'relative' }}>
                   {/* Image */}
+
                   <Image
-                    src={card.sliderImages != null ? card.sliderImages[0].fileName : '/imgs/qeop.jpg'}
+                    src={card.sliderImages[0] != null ? `${API_BASE_URL}/uploads/` + card.sliderImages[0].fileName : `${API_BASE_URL}/uploads/qeop.jpg`}
                     alt={card.name}
                     height={180}
                   />
@@ -371,7 +374,15 @@ export function Datamenu() {
                       color: '#c9f3f1',
                     }}
                   >
-                    Last updated: {card.lastReading != null ? card.lastReading : 'Unknown'}
+                    Last updated: {card.createdAt
+                      ? new Date(card.createdAt).toLocaleDateString(undefined, {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })
+                      : 'Unknown'}
                   </Badge>
                 </Card.Section>
 
@@ -391,7 +402,9 @@ export function Datamenu() {
                   </Group>
 
                   <Text c="white" fz="sm" mt="xs">
-                    {card.description}
+                    {card.description.length > 100 // Adjust the limit as needed
+                      ? `${card.description.substring(0, 100)}...`
+                      : card.description}
                   </Text>
                 </Card.Section>
 
