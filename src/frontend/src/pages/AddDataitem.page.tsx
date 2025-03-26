@@ -51,7 +51,7 @@ interface Link {
 
 export function AddDataitemPage() {
     const [activeStep, setActiveStep] = useState(1);
-    const [dataSample, setDataSample] = useState('{\n     \"type\": EXAMPLE,\n     \"num\": 2,\n     \"fields\": [\n        {\"name\": \"Voltage\", \"unit\": \"V\", \"decPrecision\": 3},\n        {\"name\": \"Current\", \"unit\": \"A\", \"decPrecision\": 1}\n     ]\n  }');
+    const [dataSample, setDataSample] = useState('');
     const [links, setLinks] = useState<Link[]>([]);
     const [pins, setPins] = useState<{ position: [number, number]; radius: number }[]>([]);
     const [availableTags, setAvailableTags] = useState<Tag[]>([]);
@@ -97,7 +97,7 @@ export function AddDataitemPage() {
             description: formData.datasetDescription,
             updateFrequency: (formData.frequency && formData.frequency !== 'N/A') ? parseInt(formData.frequency) : 0, // Modified line
             updateFrequencyUnit: formData.unit.toLowerCase(),
-            dataExample: formData.dataSample,
+            dataExample: dataSample,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             deletedAt: null,
@@ -156,7 +156,7 @@ export function AddDataitemPage() {
                     icon: <IconCheck />,
                 });
                 setSubmissionSuccess(true); // Set success state
-                setTimeout(() => navigate('/'), 4000); // Navigate after 2 seconds
+                setTimeout(() => navigate('/'), 500); // Navigate after 2 seconds
 
             })
             .catch((error) => {
@@ -282,7 +282,8 @@ export function AddDataitemPage() {
             case 2:
                 return ['datasetDescription', 'datasetTags', 'frequency', 'unit'];
             case 3:
-                return ['dataSample'];
+                return ['mqttAddress', 'mqttPort', 'mqttTopic'];
+
             default:
                 return []; // Return an empty array for other steps
         }
@@ -307,7 +308,7 @@ export function AddDataitemPage() {
     const handleStepClick = (step: number) => {
         const fields = getFieldsToValidate(activeStep);
         const validationResults = form.validate(); // Validate all fields
-        const hasErrors = fields.some((field) => validationResults.errors[field]); // Check for errors in specified fields
+        const hasErrors = fields.some((field) => validationResults.errors[field]) || (activeStep === 3 && !isFreqOnceChecked && !mqttConnectionSuccess); // Check for errors in specified fields
 
         if (step + 1 <= activeStep || !hasErrors) {
             setActiveStep(step + 1);
@@ -687,26 +688,7 @@ export function AddDataitemPage() {
                         </div>
                         <Space h="md" />
 
-                        <CustomTextRequired text='Dataset Sample' />
-
-                        <Text size="sm" c="dimmed" inline mb="md">
-                            How does your data look like? E.g: JSON, CSV, XML... etc. Try to paste some of it here with some real values..
-                        </Text>
-
-                        <Textarea
-                            label=""
-                            placeholder="Paste JSON data here"
-                            value={dataSample}
-                            onChange={(event) => setDataSample(event.target.value)}
-                            autosize
-                            minRows={4}
-                            mb="md"
-                        />
-                        <SyntaxHighlighter language="json" style={atomOneDark}>
-                            {dataSample.trim() || '{}'}
-                        </SyntaxHighlighter>
-
-                        <Text size="sm" mt="lg" mb="xs">
+                        <Text size="lg" mt="lg" mb="xs">
                             Extra links
                         </Text>
                         <Text size="sm" c="dimmed" inline mb="md">
@@ -751,6 +733,31 @@ export function AddDataitemPage() {
                         <Button variant="outline" onClick={handleAddLink}>
                             + Add another link
                         </Button>
+
+                        <Space h="md" />
+
+                        <CustomTextRequired text='Dataset Sample' />
+
+                        <Text size="sm" c="dimmed" inline mb="md">
+                            How does your data look like? E.g: JSON, CSV, XML... etc. Try to paste some of it here with some real values..
+                        </Text>
+
+                        <Textarea
+                            label=""
+                            placeholder="Paste data sample here"
+                            value={dataSample}
+                            onChange={(event) => setDataSample(event.target.value)}
+                            autosize
+                            minRows={4}
+                            mb="md"
+                        />
+                        <Text size="sm" c="dimmed" inline mb="md">
+                            Auto preview:
+                        </Text>
+                        <SyntaxHighlighter language="auto" style={atomOneDark}>
+                            {dataSample.trim() || 'Here is how it looks'}
+                        </SyntaxHighlighter>
+
 
                         <Space h="md" />
 
@@ -879,7 +886,7 @@ export function AddDataitemPage() {
                                     {'Click here to get help directly from '}
                                     <a
                                         href={`https://chat.openai.com/?model=gpt-4&q=${encodeURIComponent(
-                                            `I am not a tech expert so please make your answer simple. I encountered an error while using a website that connects to an MQTT broker. Here are the connection details (without username and password) and the error message. Please help me troubleshoot this issue.\n\n---\n\nConnection Details:\nAddress: ${form.values.mqttAddress}\nPort: ${form.values.mqttPort}\nTopic: ${form.values.mqttTopic}\n\n---\n\nError Message:\n${mqttConnectionError}\n\n---`
+                                            `I am not a tech expert so please make your answer easy to understand. I encountered an error while using a website that connects to an MQTT broker. Here are the connection details (without username and password) and the error message. Please help me troubleshoot this issue.\n\n---\n\nConnection Details:\nAddress: ${form.values.mqttAddress}\nPort: ${form.values.mqttPort}\nTopic: ${form.values.mqttTopic}\n\n---\n\nError Message:\n${mqttConnectionError}\n\n---`
                                         )}`}
                                         target="_blank"
                                     >

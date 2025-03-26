@@ -29,6 +29,8 @@ import { loadInBatches } from '@loaders.gl/core';
 import proj4 from 'proj4';
 import { ShapefileLoader } from '@loaders.gl/shapefile';
 import { API_BASE_URL } from '@/config';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 const INITIAL_VIEW_STATE = {
   longitude: -0.0167,
@@ -336,7 +338,9 @@ export function Dataitem() {
 
         <Text mt="xl" ta="center" className="title" c="white">Data sample</Text>
         <Center mb="xl" mt="lg">
-          <Text> {dataset.dataExample}</Text>
+          <SyntaxHighlighter language="auto" style={atomOneDark}>
+            {dataset.dataExample.trim() || 'No data example provided'}
+          </SyntaxHighlighter>
         </Center>
       </Container>
     </>
