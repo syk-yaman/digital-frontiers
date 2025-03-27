@@ -406,7 +406,14 @@ export function Datamenu() {
 
                 <Card.Section className="section" mt="md">
                   <Group justify="apart">
-                    <Text c="white" fz="lg" fw={500}>
+                    <Text c="white" fz="lg" fw={500}
+                      style={{
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        fontSize: 'clamp(12px, 2vw, 16px)' // Adjust min, preferred, and max font sizes as needed
+                      }}
+                    >
                       {card.name}
                     </Text>
                   </Group>
