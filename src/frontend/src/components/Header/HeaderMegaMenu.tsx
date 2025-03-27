@@ -37,8 +37,17 @@ import { useDisclosure } from '@mantine/hooks';
 import { NavLink, useLocation } from 'react-router-dom';
 import classes from './HeaderMegaMenu.module.css';
 
-const version = 'v0.2.3'
+const version = 'v0.2.4'
 const changelog = [
+  {
+    version: 'v0.2.4',
+    changes: [
+      'Bug fixes in dataset add wizrd',
+      'Bug fixes in homepage',
+      'MQTT link validation feature was added',
+      'Changed map mode to satellite',
+    ],
+  },
   {
     version: 'v0.2.3',
     changes: [
