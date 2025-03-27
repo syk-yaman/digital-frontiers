@@ -213,7 +213,7 @@ export function Datamenu() {
       id: 'deckgl-circle',
       data: mappedData,  // ✅ Ensure it's updated dynamically
       getPosition: (d) => d.position,
-      getFillColor: [0, 128, 255],
+      getFillColor: [0, 200, 255],
       getRadius: 20,
       pickable: true,
       onClick: (info) => setPopupInfo(info.object),
@@ -278,7 +278,25 @@ export function Datamenu() {
 
           <Map
             initialViewState={INITIAL_VIEW_STATE}
-            mapStyle={BASEMAP.DARK_MATTER}
+            mapStyle={{
+              version: 8,
+              sources: {
+                'esri-world-imagery': {
+                  type: 'raster',
+                  tiles: [
+                    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                  ],
+                  tileSize: 256,
+                },
+              },
+              layers: [
+                {
+                  id: 'esri-world-imagery',
+                  type: 'raster',
+                  source: 'esri-world-imagery',
+                },
+              ],
+            }}
             interactive={true}
             dragPan={true}
             scrollZoom={true}

@@ -785,7 +785,7 @@ export function AddDataitemPage() {
                                         data: pins, // Dynamic pins
                                         getPosition: (d) => d.position,
                                         getRadius: (d) => d.radius,
-                                        getFillColor: [0, 128, 255],
+                                        getFillColor: [0, 200, 255],
                                         pickable: true, // Allow interaction
                                     }),
                                     geoJsonData &&
@@ -802,8 +802,25 @@ export function AddDataitemPage() {
                                 ]}
                             >
                                 <Map
-                                    mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
-                                    interactive={true} // Ensure interactivity
+                                    mapStyle={{
+                                        version: 8,
+                                        sources: {
+                                            'esri-world-imagery': {
+                                                type: 'raster',
+                                                tiles: [
+                                                    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                                                ],
+                                                tileSize: 256,
+                                            },
+                                        },
+                                        layers: [
+                                            {
+                                                id: 'esri-world-imagery',
+                                                type: 'raster',
+                                                source: 'esri-world-imagery',
+                                            },
+                                        ],
+                                    }} interactive={true} // Ensure interactivity
                                 />
                             </DeckGL>
                         </div>

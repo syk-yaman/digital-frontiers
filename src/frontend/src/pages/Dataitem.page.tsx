@@ -200,7 +200,7 @@ export function Dataitem() {
       id: 'deckgl-circle',
       data: mappedData,  // ✅ Ensure it's updated dynamically
       getPosition: (d) => d.position,
-      getFillColor: [0, 128, 255],
+      getFillColor: [0, 200, 255],
       getRadius: 20,
       pickable: true,
     }),
@@ -299,7 +299,25 @@ export function Dataitem() {
             controller={true} // Enables dragging, zooming, and panning
           >
             <Map
-              mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
+              mapStyle={{
+                version: 8,
+                sources: {
+                  'esri-world-imagery': {
+                    type: 'raster',
+                    tiles: [
+                      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                    ],
+                    tileSize: 256,
+                  },
+                },
+                layers: [
+                  {
+                    id: 'esri-world-imagery',
+                    type: 'raster',
+                    source: 'esri-world-imagery',
+                  },
+                ],
+              }}
               interactive={true} // Ensure interactivity
 
             />
