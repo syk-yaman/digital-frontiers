@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import {
     Container, Stepper, Button, Text, TextInput, Select, Checkbox, Group, Space, Center, Textarea, FileInput,
     List, Flex, Loader,
-    Alert
+    Alert,
+    Tooltip,
+    ActionIcon
 } from '@mantine/core';
 import DeckGL from '@deck.gl/react';
 import { GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers';
@@ -10,7 +12,7 @@ import { Map, MapLayerMouseEvent } from 'react-map-gl/maplibre';
 import { TagsCreatable } from '@/components/TagsCreatable';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { atomOneDark, atomOneLight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import { IconCheck, IconCheckbox, IconCloudCheck, IconCloudNetwork, IconCopyCheck, IconError404, IconFileCheck, IconHttpConnect, IconLockCheck, IconLockQuestion, IconMapQuestion, IconNetwork, IconNetworkOff, IconPhoto, IconPlugConnected, IconQuestionMark, IconTrash, IconUpload, IconX } from '@tabler/icons-react';
+import { IconAlertCircleOff, IconAlertTriangleOff, IconArrowAutofitRight, IconBlocks, IconBusStop, IconCheck, IconCheckbox, IconCircleX, IconCloudCheck, IconCloudNetwork, IconCopyCheck, IconError404, IconFileCheck, IconHttpConnect, IconLockCheck, IconLockQuestion, IconMapQuestion, IconNetwork, IconNetworkOff, IconPhoto, IconPlugConnected, IconQuestionMark, IconTrash, IconUpload, IconX } from '@tabler/icons-react';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import '@mantine/dropzone/styles.css';
 import { ShapefileLoader } from '@loaders.gl/shapefile';
@@ -302,6 +304,12 @@ export function AddDataitemPage() {
             window.scrollTo(0, 0);
         } else {
             console.log("Form has errors in the current step. Please correct them.");
+            notifications.show({
+                title: 'Cannot go to next step',
+                message: 'Please correct all required fields before proceeding.',
+                color: 'red',
+                icon: <IconX />,
+            });
         }
     };
 
@@ -316,7 +324,12 @@ export function AddDataitemPage() {
         } else if (step < activeStep) {
             setActiveStep(step);
         } else {
-            console.log("Cannot proceed to step. Please correct all form errors.");
+            notifications.show({
+                title: 'Cannot jump to step',
+                message: 'Please correct all required fields before proceeding.',
+                color: 'red',
+                icon: <IconX />,
+            });
         }
     };
 
@@ -688,11 +701,29 @@ export function AddDataitemPage() {
                         </div>
                         <Space h="md" />
 
-                        <Text size="lg" mt="lg" mb="xs">
-                            Extra links
-                        </Text>
+                        <Group justify="space-between" align="center" mt={'lg'}>
+                            <Group align="center">
+                                <Text size="lg">
+                                    Other links
+                                </Text>
+                                <Tooltip label="This platform does not directly support uploading files. 
+                                                You can contact platform admin to request upload files if needed."
+                                    position="right"
+                                    multiline
+                                    color="gray"
+                                    arrowOffset={38} arrowSize={5} withArrow
+                                >
+                                    <ActionIcon variant="light" size="sm">
+                                        <IconQuestionMark size={16} />
+                                    </ActionIcon>
+                                </Tooltip>
+                            </Group>
+                            <Button variant="outline" onClick={handleAddLink}>
+                                + Add link
+                            </Button>
+                        </Group>
                         <Text size="sm" c="dimmed" inline mb="md">
-                            Add any external links you may have, such as visualisation dashboards, documentation, GitHub repositories...
+                            Add any external links you may have, such as data files, visualisation dashboards, documentation, GitHub repositories...
                         </Text>
                         {links.map((link, index) => (
                             <Group grow={false} key={index} mb="md" align="center">
@@ -730,9 +761,6 @@ export function AddDataitemPage() {
                                 </Button>
                             </Group>
                         ))}
-                        <Button variant="outline" onClick={handleAddLink}>
-                            + Add another link
-                        </Button>
 
                         <Space h="md" />
 
