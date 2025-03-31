@@ -246,12 +246,18 @@ export function Dataitem() {
         </Group>
 
         {/* Image Slider */}
-        <Carousel mx="auto" mt="lg" withIndicators >
-          {dataset.sliderImages.map(img => (
-            <Carousel.Slide key={img.id}>
-              <Image src={`${API_BASE_URL}/uploads/` + img.fileName} alt="Dataset Image" />
+        <Carousel mx="auto" mt="lg" withIndicators>
+          {dataset.sliderImages.length > 0 ? (
+            dataset.sliderImages.map(img => (
+              <Carousel.Slide key={img.id}>
+                <Image src={`${API_BASE_URL}/uploads/` + img.fileName} alt="Dataset Image" />
+              </Carousel.Slide>
+            ))
+          ) : (
+            <Carousel.Slide>
+              <Image src={'/imgs/dataset-default.jpeg'} alt="Default Dataset Image" />
             </Carousel.Slide>
-          ))}
+          )}
         </Carousel>
 
         {/* Provider Info */}

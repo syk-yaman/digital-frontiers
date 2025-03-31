@@ -375,7 +375,7 @@ export function Datamenu() {
                   {/* Image */}
 
                   <Image
-                    src={card.sliderImages[0] != null ? `${API_BASE_URL}/uploads/` + card.sliderImages[0].fileName : `${API_BASE_URL}/uploads/qeop.jpg`}
+                    src={card.sliderImages[0] != null ? `${API_BASE_URL}/uploads/` + card.sliderImages[0].fileName : `/imgs/dataset-default.jpeg`}
                     alt={card.name}
                     height={180}
                   />
@@ -427,8 +427,8 @@ export function Datamenu() {
                   </Group>
 
                   <Text c="white" fz="sm" mt="xs">
-                    {card.description.length > 100 // Adjust the limit as needed
-                      ? `${card.description.substring(0, 100)}...`
+                    {card.description.length > 80 // Adjust the limit as needed
+                      ? `${card.description.substring(0, 80)}...`
                       : card.description}
                   </Text>
                 </Card.Section>
