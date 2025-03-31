@@ -1,18 +1,15 @@
-import { Controller, Get, Post, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { AuthService } from '../auth/auth.service';
-import { LocalAuthGuard } from '../auth/local-auth.guard';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
-    constructor(
-        private readonly usersService: UsersService,
-    ) { }
+    constructor(private readonly usersService: UsersService) { }
 
     @Get()
+    @ApiOperation({ summary: 'Get all users' })
     async findAll() {
         return this.usersService.findAll();
     }
-
-
 }

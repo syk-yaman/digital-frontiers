@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { UsersModule } from '../users/users.module';
@@ -9,7 +9,7 @@ import { LocalStrategy } from './local.strategy';
 
 @Module({
     imports: [
-        UsersModule,
+        forwardRef(() => UsersModule), // Use forwardRef to resolve circular dependency
         PassportModule,
         JwtModule.register({
             secret: process.env.JWT_SECRET || 'defaultSecret', // Use environment variable for production
@@ -18,5 +18,6 @@ import { LocalStrategy } from './local.strategy';
     ],
     providers: [AuthService, JwtStrategy, LocalStrategy], // Add LocalStrategy
     controllers: [AuthController],
+    exports: [AuthService],
 })
 export class AuthModule { }
