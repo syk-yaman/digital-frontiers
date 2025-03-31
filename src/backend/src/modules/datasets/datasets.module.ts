@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Dataset } from './dataset.entity';
+import { Dataset, DatasetTag } from './dataset.entity'; // Import DatasetTag
 import { DatasetsController } from './dataset.controller';
 import { DatasetsService } from './dataset.service';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Dataset])],
+    imports: [TypeOrmModule.forFeature([Dataset, DatasetTag])], // Add DatasetTag
     providers: [DatasetsService],
     controllers: [DatasetsController],
 })

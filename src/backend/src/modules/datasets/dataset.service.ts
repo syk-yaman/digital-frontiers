@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Dataset } from './dataset.entity';
+import { Dataset, DatasetTag } from './dataset.entity'; // Import DatasetTag
 import { CreateDatasetDto, UpdateDatasetDto } from './dataset.dto';
 
 @Injectable()
@@ -9,6 +9,8 @@ export class DatasetsService {
     constructor(
         @InjectRepository(Dataset)
         private datasetRepository: Repository<Dataset>,
+        @InjectRepository(DatasetTag)
+        private tagRepository: Repository<DatasetTag>, // Inject the tag repository
     ) { }
 
     findAll(): Promise<Dataset[]> {
@@ -31,7 +33,26 @@ export class DatasetsService {
     }
 
     async create(createDto: CreateDatasetDto): Promise<Dataset> {
-        const newDataset = this.datasetRepository.create(createDto);
+        // Handle tags
+        const tags = await Promise.all(
+            createDto.tags.map(async (tagDto) => {
+                if (tagDto.id) {
+                    // Check if the tag exists
+                    const existingTag = await this.tagRepository.findOne({ where: { id: tagDto.id } });
+                    if (existingTag) {
+                        return existingTag; // Reuse existing tag
+                    }
+                }
+                // Generate a random color if not provided
+                tagDto.colour = `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
+                tagDto.icon = '🏷️';
+                const newTag = this.tagRepository.create(tagDto);
+                return this.tagRepository.save(newTag);
+            }),
+        );
+
+        // Create the dataset with the processed tags
+        const newDataset = this.datasetRepository.create({ ...createDto, tags });
         return this.datasetRepository.save(newDataset);
     }
 
