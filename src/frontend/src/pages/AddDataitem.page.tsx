@@ -4,7 +4,8 @@ import {
     List, Flex, Loader,
     Alert,
     Tooltip,
-    ActionIcon
+    ActionIcon,
+    TagsInput
 } from '@mantine/core';
 import DeckGL from '@deck.gl/react';
 import { GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers';
@@ -40,7 +41,7 @@ proj4.defs([
 ]);
 
 interface Tag {
-    id: number;
+    id?: number;
     name: string;
     color: string;
     icon?: string;
@@ -57,7 +58,7 @@ export function AddDataitemPage() {
     const [links, setLinks] = useState<Link[]>([]);
     const [pins, setPins] = useState<{ position: [number, number]; radius: number }[]>([]);
     const [availableTags, setAvailableTags] = useState<Tag[]>([]);
-    const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [sliderImages, setSliderImages] = useState<string[]>([]);
 
     const [mqttConnectionLoading, setMqttConnectionLoading] = useState(false);
@@ -125,11 +126,15 @@ export function AddDataitemPage() {
             sliderImages: formData.sliderImages.map((fileName, index) => ({
                 fileName: fileName,
             })),
-            tags: formData.datasetTags.map((tag) => ({
-                name: tag.name,
-                colour: tag.color,
-                icon: 'IconPlane',
-            })),
+            tags: formData.datasetTags.map((tagName) => { // Map string[] to Tag-like objects
+                const tag = availableTags.find(t => t.name === tagName);
+                return tag ? {
+                    id: tag.id,
+                    name: tag.name,
+                    colour: tag.color,
+                    icon: tag.icon,
+                } : { id: null, name: tagName, colour: null, icon: null }; // If not found, create a new tag-like object
+            }),
         };
 
         console.log("Final JSON to Submit:", formattedData);
@@ -450,7 +455,9 @@ export function AddDataitemPage() {
 
         fetch(`${API_BASE_URL}/tags`)
             .then((res) => res.json())
-            //.then((tags) => setAvailableTags(tags || [])) // Ensure it’s an array
+            .then((tags: Tag[]) => {
+                setAvailableTags(tags);
+            })
             .catch((error) => {
                 console.error('Failed to load tags:', error);
                 setAvailableTags([]); // Ensure component still loads
@@ -623,17 +630,23 @@ export function AddDataitemPage() {
                             {...form.getInputProps('datasetDescription')}
                         />
                         <Space h="md" />
-                        <TagsCreatable
+
+                        <TagsInput
+                            label="Tags"
+                            placeholder="Search or type to add tags. Press Enter to create a new tag."
+                            value={selectedTags}
+                            data={availableTags.map(tag => ({ value: tag.id?.toString() || '', label: tag.name }))}
+                            splitChars={[',']}
+                            withAsterisk
+                            {...form.getInputProps('datasetTags')}
+                            comboboxProps={{ transitionProps: { transition: 'pop', duration: 200 } }}
+                        />
+                        {/* <TagsCreatable
                             availableTags={availableTags}
                             value={selectedTags}
                             required
                             {...form.getInputProps('datasetTags')}
-                        />
-                        {form.errors.datasetTags && (
-                            <Text color="red" size="sm" mt="xs">
-                                {form.errors.datasetTags}
-                            </Text>
-                        )}
+                        /> */}
                         <Space h="md" />
 
                         <Flex justify="left" align="center" gap="md" wrap="wrap">
@@ -711,6 +724,7 @@ export function AddDataitemPage() {
                                     position="right"
                                     multiline
                                     color="gray"
+                                    w={300}
                                     arrowOffset={38} arrowSize={5} withArrow
                                 >
                                     <ActionIcon variant="light" size="sm">
