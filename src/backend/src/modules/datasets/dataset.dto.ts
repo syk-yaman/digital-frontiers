@@ -17,9 +17,10 @@ class DatasetSliderImageDto {
 }
 
 class DatasetTagDto {
+    id?: number;
     @IsString() name!: string;
     @IsString() colour!: string;
-    @IsString() icon!: string;
+    @IsString() icon: string;
 }
 
 export class CreateDatasetDto {

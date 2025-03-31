@@ -5,6 +5,7 @@ import { UsersModule } from './modules/users/users.module';
 import { AppDataSource } from '../data-source';
 import { DatasetsModule } from './modules/datasets/datasets.module';
 import { Dataset, DatasetLink, DatasetLocation, DatasetSliderImage, DatasetTag } from './modules/datasets/dataset.entity';
+import { TagsModule } from './modules/tags/tags.module';
 
 @Module({
   //imports: [TypeOrmModule.forRoot(AppDataSource.options)],
@@ -21,7 +22,8 @@ import { Dataset, DatasetLink, DatasetLocation, DatasetSliderImage, DatasetTag }
     migrationsTableName: '_migrations',
   }),
     UsersModule,
-    DatasetsModule],
+    DatasetsModule,
+    TagsModule],
   controllers: [],
   providers: [],
 })
