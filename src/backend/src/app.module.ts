@@ -6,6 +6,7 @@ import { AppDataSource } from '../data-source';
 import { DatasetsModule } from './modules/datasets/datasets.module';
 import { Dataset, DatasetLink, DatasetLocation, DatasetSliderImage, DatasetTag } from './modules/datasets/dataset.entity';
 import { TagsModule } from './modules/tags/tags.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   //imports: [TypeOrmModule.forRoot(AppDataSource.options)],
@@ -23,7 +24,8 @@ import { TagsModule } from './modules/tags/tags.module';
   }),
     UsersModule,
     DatasetsModule,
-    TagsModule],
+    TagsModule,
+    AuthModule],
   controllers: [],
   providers: [],
 })

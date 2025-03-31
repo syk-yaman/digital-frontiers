@@ -11,6 +11,10 @@ export class UsersService {
         private usersRepository: Repository<User>,
     ) { }
 
+    create(user: User): Promise<User> {
+        return this.usersRepository.save(user);
+    }
+
     findAll(): Promise<User[]> {
         return this.usersRepository.find();
     }
@@ -21,5 +25,9 @@ export class UsersService {
 
     async remove(id: number): Promise<void> {
         await this.usersRepository.delete(id);
+    }
+
+    async findByEmail(email: string): Promise<User | undefined> {
+        return this.usersRepository.findOne({ where: { email } });
     }
 }
