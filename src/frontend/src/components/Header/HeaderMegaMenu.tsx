@@ -35,6 +35,8 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { NavLink, useLocation } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from '@/context/AuthContext';
 import classes from './HeaderMegaMenu.module.css';
 
 const version = 'v0.2.4'
@@ -162,6 +164,11 @@ export function HeaderMegaMenu() {
   // Detect current route
   const location = useLocation();
   const isHome = location.pathname === '/';
+
+  const authContext = useContext(AuthContext);
+
+  const isAuthenticated = authContext?.isAuthenticated;
+  const logout = authContext?.logout;
 
   const links = mockdata.map((item) => (
     <UnstyledButton className={classes.subLink} key={item.title}>
@@ -355,18 +362,24 @@ export function HeaderMegaMenu() {
               Admin
             </Button>
 
-            <Button variant="outline"
-              style={{
-                color: '#ffffff', // White text
-                backgroundColor: 'transparent', // Transparent background
-                border: '1px solid #fff', // White border
-                fontWeight: 'normal', // Optional: Adjust font weight for visibility
-                padding: '8px 16px', // Optional: Adjust padding
-                transition: 'all 0.3s ease', // Optional: Smooth hover transition
-              }}
-              component={NavLink} to="/signin">
-              Log out
-            </Button>
+            {isAuthenticated ? (
+              <Button
+                variant="outline"
+                style={{ color: '#ffffff', border: '1px solid #fff' }}
+                onClick={logout}
+              >
+                Log Out
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
+                style={{ color: '#ffffff', border: '1px solid #fff' }}
+                component={NavLink}
+                to="/signin"
+              >
+                Sign In
+              </Button>
+            )}
           </Group>
 
           <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />

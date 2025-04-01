@@ -42,6 +42,7 @@
     "@mui/icons-material": "^6.1.9",
     "@tabler/icons": "^3.24.0",
     "@tabler/icons-react": "^3.24.0",
+    "axios": "^1.8.4",
     "embla-carousel-react": "^7.1.0",
     "maplibre-gl": "^4.7.1",
     "proj4": "^2.15.0",

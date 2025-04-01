@@ -40,7 +40,7 @@ export function SigninPage() {
             firstName: (value) => (value.length > 0 ? null : 'First name is required'),
             lastName: (value) => (value.length > 0 ? null : 'Last name is required'),
             company: (value) => (value.length > 0 ? null : 'Company/University is required'),
-            type: (value) => (value ? null : 'Please select a user type'),
+            type: (value) => (value ? null : 'Please select your work type'),
             termsAccepted: (value) =>
                 value ? null : 'You must accept the terms and conditions',
         },
@@ -71,7 +71,9 @@ export function SigninPage() {
                 });
                 console.log('Sign-in response:', data);
 
-                // Delay navigation to allow the notification to display
+                // Save the JWT token to localStorage
+                localStorage.setItem('authToken', data.access_token);
+
                 setTimeout(() => {
                     navigate('/add-data-item');
                 }, 1000); // 1-second delay
