@@ -11,10 +11,9 @@ import {
     Checkbox,
     Button,
     Space,
-    Notification,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { notifications } from '@mantine/notifications';
+import { Notifications, notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '@/config';
 
@@ -102,7 +101,7 @@ export function SigninPage() {
             const data = await response.json();
             notifications.show({
                 title: 'Success',
-                message: 'Sign-up successful! Please check your email for verification.',
+                message: 'Sign-up successful! You can now sign in using the email and password provided.',
                 color: 'green',
             });
             console.log('Sign-up response:', data);
@@ -219,7 +218,7 @@ export function SigninPage() {
                         mb="md"
                     />
                     <Select
-                        label="How do you describe yourself?"
+                        label="Where do you work?"
                         placeholder="Select an option"
                         data={[
                             { value: 'academic', label: 'Academic' },
@@ -242,6 +241,7 @@ export function SigninPage() {
                     </Button>
                 </form>
             )}
+            <Notifications />
         </Container>
     );
 }
