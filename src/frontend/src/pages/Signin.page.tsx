@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import axiosInstance from '@/utils/axiosInstance';
 import {
     Container,
     Text,
@@ -47,32 +48,21 @@ export function SigninPage() {
     });
 
     const handleSignIn = () => {
-        fetch(`${API_BASE_URL}/auth/signin`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
+        axiosInstance
+            .post(`${API_BASE_URL}/auth/signin`, {
                 email: form.values.email,
                 password: form.values.password,
-            }),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    return response.json().then((errorData) => {
-                        throw new Error(errorData.message || 'Invalid credentials');
-                    });
-                }
-                return response.json();
             })
-            .then((data) => {
+            .then((response) => {
                 notifications.show({
                     title: 'Success',
                     message: 'Sign-in successful!',
                     color: 'green',
                 });
-                console.log('Sign-in response:', data);
+                console.log('Sign-in response:', response.data);
 
                 // Save the JWT token to localStorage
-                localStorage.setItem('authToken', data.access_token);
+                localStorage.setItem('authToken', response.data.access_token);
 
                 setTimeout(() => {
                     navigate('/add-data-item');
@@ -81,7 +71,7 @@ export function SigninPage() {
             .catch((error) => {
                 notifications.show({
                     title: 'Error',
-                    message: error.message || 'Sign-in failed. Please check your credentials.',
+                    message: error.response?.data?.message || 'Sign-in failed. Please check your credentials.',
                     color: 'red',
                 });
                 console.error('Sign-in error:', error);
@@ -90,39 +80,28 @@ export function SigninPage() {
 
     const handleSignUp = () => {
         if (!form.validate().hasErrors) {
-            fetch(`${API_BASE_URL}/auth/signup`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
+            axiosInstance
+                .post(`${API_BASE_URL}/auth/signup`, {
                     email: form.values.email,
                     password: form.values.password,
                     firstName: form.values.firstName,
                     lastName: form.values.lastName,
                     company: form.values.company,
                     type: form.values.type,
-                }),
-            })
-                .then((response) => {
-                    if (!response.ok) {
-                        return response.json().then((errorData) => {
-                            throw new Error(errorData.message || 'Sign-up failed. Please try again.');
-                        });
-                    }
-                    return response.json();
                 })
-                .then((data) => {
+                .then((response) => {
                     notifications.show({
                         title: 'Success',
                         message: 'Sign-up successful! You can now sign in using the email and password provided.',
                         color: 'green',
                     });
-                    console.log('Sign-up response:', data);
+                    console.log('Sign-up response:', response.data);
                     setView('sign-in'); // Switch to sign-in view after successful sign-up
                 })
                 .catch((error) => {
                     notifications.show({
                         title: 'Error',
-                        message: error.message || 'Sign-up failed. Please try again.',
+                        message: error.response?.data?.message || 'Sign-up failed. Please try again.',
                         color: 'red',
                     });
                     console.error('Sign-up error:', error);
