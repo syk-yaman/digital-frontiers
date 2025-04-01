@@ -12,10 +12,12 @@ import * as bcrypt from 'bcrypt';
 import { Dataset } from '../datasets/dataset.entity';
 
 export enum UserType {
-    ACADEMIC = 'academic',
-    BUSINESS_OWNER = 'business_owner',
-    CORPORATE = 'corporate',
-    ENTHUSIAST = 'enthusiast',
+    PUBLIC_SECTOR = 'public_sector',
+    SME = 'sme',
+    LARGE_BUSINESS = 'large_business',
+    UNIVERSITY = 'university',
+    CITIZEN_SCIENTIST = 'citizen_scientist',
+    NONE = 'none',
 }
 
 @Entity('users')

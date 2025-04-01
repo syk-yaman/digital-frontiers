@@ -27,7 +27,7 @@ export class SignUpDto {
     @IsNotEmpty()
     password!: string;
 
-    @ApiProperty({ description: 'User type', enum: UserType, example: UserType.ACADEMIC })
+    @ApiProperty({ description: 'User type', enum: UserType, example: UserType.PUBLIC_SECTOR })
     @IsEnum(UserType)
     type!: UserType;
 }

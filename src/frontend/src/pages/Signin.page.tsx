@@ -221,10 +221,12 @@ export function SigninPage() {
                         label="Where do you work?"
                         placeholder="Select an option"
                         data={[
-                            { value: 'academic', label: 'Academic' },
-                            { value: 'business_owner', label: 'Business owner' },
-                            { value: 'corporate', label: 'Corporate representer' },
-                            { value: 'enthusiast', label: 'Enthusiast' },
+                            { value: 'public_sector', label: 'Public Sector' },
+                            { value: 'sme', label: 'SME' },
+                            { value: 'large_business', label: 'Large Business' },
+                            { value: 'university', label: 'University' },
+                            { value: 'citizen_scientist', label: 'Citizen Scientist' },
+                            { value: 'none', label: 'None of the above' },
                         ]}
                         required
                         {...form.getInputProps('type')}
