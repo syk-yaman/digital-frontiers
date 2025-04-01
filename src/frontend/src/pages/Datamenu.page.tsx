@@ -93,12 +93,26 @@ export function Datamenu() {
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
   const [view, setView] = useState('map');
 
-  const [dataItems, setDataItems] = useState<DatasetItem[]>([]); //For List
-  const [mappedData, setMappedData] = useState([]); //For map
+  const [dataItems, setDataItems] = useState<DatasetItem[]>([]); // For List
   const [geoJsonData, setGeoJsonData] = useState<FeatureCollection | null>(null);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Compute mappedData using useMemo to ensure it persists across view switches
+  const mappedData = useMemo(() => {
+    return dataItems.flatMap((item) =>
+      item.locations.map((location) => ({
+        id: item.id,
+        position: [location.lon, location.lat], // Longitude, Latitude
+        title: item.name,
+        image: item.sliderImages.length > 0 ? item.sliderImages[0].fileName : 'https://via.placeholder.com/150',
+        owner: item.dataOwnerName,
+        description: item.description,
+        tags: item.tags.map((tag) => tag.name), // Extract only tag names
+      }))
+    );
+  }, [dataItems]);
 
   useEffect(() => {
     async function loadShapefileFromURL() {
@@ -166,25 +180,10 @@ export function Datamenu() {
             name: tag.name,
             icon: '',
           })),
+          locations: item.locations,
         }));
 
-
         setDataItems(formattedData);
-
-        const mappedData = data.map((item: DatasetItem) =>
-          item.locations.map(location => ({
-            id: item.id,
-            position: [location.lon, location.lat], // Longitude, Latitude
-            title: item.name,
-            image: item.sliderImages.length > 0 ? item.sliderImages[0].fileName : 'https://via.placeholder.com/150',
-            owner: item.dataOwnerName,
-            description: item.description,
-            tags: item.tags.map(tag => tag.name), // Extract only tag names
-          }))
-        ).flat();
-
-        setMappedData(mappedData);
-
         setLoading(false);
       })
       .catch((error) => {
@@ -268,88 +267,85 @@ export function Datamenu() {
           ]}
         />
       </Center>
-      {view === 'map' && (
-        <div
-          style={{
-            height: '900px', // Set height
-            width: '80%',  // Set width
-            border: '0px solid black',
-            margin: '40px auto', // Center the div
-            position: 'relative',
+      <div
+        style={{
+          display: view === 'map' ? 'block' : 'none', // Hide or show the map
+          height: '900px', // Set height
+          width: '80%',  // Set width
+          border: '0px solid black',
+          margin: '40px auto', // Center the div
+          position: 'relative',
+        }}
+      >
+        <Map
+          initialViewState={INITIAL_VIEW_STATE}
+          mapStyle={{
+            version: 8,
+            sources: {
+              'esri-world-imagery': {
+                type: 'raster',
+                tiles: [
+                  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                ],
+                tileSize: 256,
+              },
+            },
+            layers: [
+              {
+                id: 'esri-world-imagery',
+                type: 'raster',
+                source: 'esri-world-imagery',
+              },
+            ],
+          }}
+          interactive={true}
+          dragPan={true}
+          scrollZoom={true}
+          onClick={(e) => {
+            // Close popup when clicking on the map
+            if (!e.features) {
+              setPopupInfo(null);
+            }
           }}
         >
+          {popupInfo && (
+            <Popup
+              key={popupInfo.id}
+              longitude={popupInfo.position[0]}
+              latitude={popupInfo.position[1]}
+              closeOnClick={true}
+              anchor="top"
+              style={{ zIndex: 10 }} /* position above deck.gl canvas */
 
-          <Map
-            initialViewState={INITIAL_VIEW_STATE}
-            mapStyle={{
-              version: 8,
-              sources: {
-                'esri-world-imagery': {
-                  type: 'raster',
-                  tiles: [
-                    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-                  ],
-                  tileSize: 256,
-                },
-              },
-              layers: [
-                {
-                  id: 'esri-world-imagery',
-                  type: 'raster',
-                  source: 'esri-world-imagery',
-                },
-              ],
-            }}
-            interactive={true}
-            dragPan={true}
-            scrollZoom={true}
-            onClick={(e) => {
-              // Close popup when clicking on the map
-              if (!e.features) {
-                setPopupInfo(null);
-              }
-            }}
-          >
-            {popupInfo && (
-              <Popup
-                key={popupInfo.id}
-                longitude={popupInfo.position[0]}
-                latitude={popupInfo.position[1]}
-                closeOnClick={true}
-                anchor="top"
-                style={{ zIndex: 10 }} /* position above deck.gl canvas */
-
-                onClose={() => setPopupInfo(null)}
-              >
-                <Group gap="sm" mb="sm">
-                  <Avatar src={popupInfo.image} size={40} />
-                  <div>
-                    <Link
-                      to={`/data-item/${popupInfo.id}`}
-                      style={{ fontSize: 16, color: '#000000', fontWeight: 'bold' }}
-                    >
-                      {popupInfo.title}
-                    </Link>
-                    <Text fz="sm" c="#333333">
-                      {popupInfo.owner}
-                    </Text>
-                  </div>
-                </Group>
-                <Text c="#333333">{popupInfo.description}</Text>
-                <Group gap="xs" mt="sm">
-                  {popupInfo.tags.map((tag, index) => (
-                    <Badge key={index} size="sm">
-                      {tag}
-                    </Badge>
-                  ))}
-                </Group>
-              </Popup>
-            )}
-            <DeckGLOverlay layers={layers} /*interleaved*/ />
-          </Map>
-
-        </div>
-      )}
+              onClose={() => setPopupInfo(null)}
+            >
+              <Group gap="sm" mb="sm">
+                <Avatar src={popupInfo.image} size={40} />
+                <div>
+                  <Link
+                    to={`/data-item/${popupInfo.id}`}
+                    style={{ fontSize: 16, color: '#000000', fontWeight: 'bold' }}
+                  >
+                    {popupInfo.title}
+                  </Link>
+                  <Text fz="sm" c="#333333">
+                    {popupInfo.owner}
+                  </Text>
+                </div>
+              </Group>
+              <Text c="#333333">{popupInfo.description}</Text>
+              <Group gap="xs" mt="sm">
+                {popupInfo.tags.map((tag, index) => (
+                  <Badge key={index} size="sm">
+                    {tag}
+                  </Badge>
+                ))}
+              </Group>
+            </Popup>
+          )}
+          <DeckGLOverlay layers={layers} /*interleaved*/ />
+        </Map>
+      </div>
 
       {view === 'list' && (
         <Flex
