@@ -8,6 +8,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import './Home.page.css'
 import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '@/config';
+import { Notifications, notifications } from '@mantine/notifications';
 
 
 const partners = [
@@ -386,6 +387,7 @@ export function HomePage() {
               ))}
 
             </SimpleGrid>
+            <Notifications />
           </Container>
 
         </div >

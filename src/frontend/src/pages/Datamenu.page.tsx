@@ -28,6 +28,7 @@ import { loadInBatches } from '@loaders.gl/core';
 import { ShapefileLoader } from '@loaders.gl/shapefile';
 import proj4 from 'proj4';
 import { API_BASE_URL } from '@/config';
+import { Notifications, notifications } from '@mantine/notifications';
 
 const INITIAL_VIEW_STATE = {
   longitude: -0.0167, // Longitude for Olympic Park
@@ -450,6 +451,7 @@ export function Datamenu() {
           ))}
         </Flex>
       )}
+      <Notifications />
 
     </>
   );

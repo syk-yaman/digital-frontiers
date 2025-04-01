@@ -31,6 +31,7 @@ import { ShapefileLoader } from '@loaders.gl/shapefile';
 import { API_BASE_URL } from '@/config';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { Notifications, notifications } from '@mantine/notifications';
 
 const INITIAL_VIEW_STATE = {
   longitude: -0.0167,
@@ -366,6 +367,7 @@ export function Dataitem() {
             {dataset.dataExample.trim() || 'No data example provided'}
           </SyntaxHighlighter>
         </Center>
+        <Notifications />
       </Container>
     </>
   );
