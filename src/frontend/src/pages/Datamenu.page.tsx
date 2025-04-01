@@ -29,6 +29,7 @@ import { ShapefileLoader } from '@loaders.gl/shapefile';
 import proj4 from 'proj4';
 import { API_BASE_URL } from '@/config';
 import { Notifications, notifications } from '@mantine/notifications';
+import axiosInstance from '@/utils/axiosInstance';
 
 const INITIAL_VIEW_STATE = {
   longitude: -0.0167, // Longitude for Olympic Park
@@ -147,14 +148,10 @@ export function Datamenu() {
 
     loadShapefileFromURL();
 
-    fetch(`${API_BASE_URL}/datasets`)
+    axiosInstance
+      .get(`${API_BASE_URL}/datasets`)
       .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch data');
-        }
-        return response.json();
-      })
-      .then((data) => {
+        const data = response.data;
         // Transform API response to match `dataItems` format
         const formattedData = data.map((item: DatasetItem) => ({
           id: item.id,
@@ -192,6 +189,11 @@ export function Datamenu() {
       })
       .catch((error) => {
         console.error('Error fetching data:', error);
+        notifications.show({
+          title: 'Error',
+          message: 'Failed to load data: ' + error.message,
+          color: 'red',
+        });
         setError(error.message);
         setLoading(false);
       });
