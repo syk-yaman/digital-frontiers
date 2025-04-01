@@ -46,42 +46,49 @@ export function SigninPage() {
         },
     });
 
-    const handleSignIn = async () => {
-        try {
-            const response = await fetch(`${API_BASE_URL}/auth/signin`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: form.values.email,
-                    password: form.values.password,
-                }),
-            });
+    const handleSignIn = () => {
+        fetch(`${API_BASE_URL}/auth/signin`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: form.values.email,
+                password: form.values.password,
+            }),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    return response.json().then((errorData) => {
+                        throw new Error(errorData.message || 'Invalid credentials');
+                    });
+                }
+                return response.json();
+            })
+            .then((data) => {
+                notifications.show({
+                    title: 'Success',
+                    message: 'Sign-in successful!',
+                    color: 'green',
+                });
+                console.log('Sign-in response:', data);
 
-            if (!response.ok) {
-                throw new Error('Invalid credentials');
-            }
-
-            const data = await response.json();
-            notifications.show({
-                title: 'Success',
-                message: 'Sign-in successful!',
-                color: 'green',
+                // Delay navigation to allow the notification to display
+                setTimeout(() => {
+                    navigate('/add-data-item');
+                }, 1000); // 1-second delay
+            })
+            .catch((error) => {
+                notifications.show({
+                    title: 'Error',
+                    message: error.message || 'Sign-in failed. Please check your credentials.',
+                    color: 'red',
+                });
+                console.error('Sign-in error:', error);
             });
-            console.log('Sign-in response:', data);
-            navigate('/add-data-item'); // Redirect after successful sign-in
-        } catch (error) {
-            notifications.show({
-                title: 'Error',
-                message: 'Sign-in failed. Please check your credentials.',
-                color: 'red',
-            });
-            console.error('Sign-in error:', error);
-        }
     };
 
-    const handleSignUp = async () => {
-        try {
-            const response = await fetch(`${API_BASE_URL}/auth/signup`, {
+    const handleSignUp = () => {
+        if (!form.validate().hasErrors) {
+            fetch(`${API_BASE_URL}/auth/signup`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -92,27 +99,32 @@ export function SigninPage() {
                     company: form.values.company,
                     type: form.values.type,
                 }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Sign-up failed');
-            }
-
-            const data = await response.json();
-            notifications.show({
-                title: 'Success',
-                message: 'Sign-up successful! You can now sign in using the email and password provided.',
-                color: 'green',
-            });
-            console.log('Sign-up response:', data);
-            setView('sign-in'); // Switch to sign-in view after successful sign-up
-        } catch (error) {
-            notifications.show({
-                title: 'Error',
-                message: 'Sign-up failed. Please try again.',
-                color: 'red',
-            });
-            console.error('Sign-up error:', error);
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        return response.json().then((errorData) => {
+                            throw new Error(errorData.message || 'Sign-up failed. Please try again.');
+                        });
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    notifications.show({
+                        title: 'Success',
+                        message: 'Sign-up successful! You can now sign in using the email and password provided.',
+                        color: 'green',
+                    });
+                    console.log('Sign-up response:', data);
+                    setView('sign-in'); // Switch to sign-in view after successful sign-up
+                })
+                .catch((error) => {
+                    notifications.show({
+                        title: 'Error',
+                        message: error.message || 'Sign-up failed. Please try again.',
+                        color: 'red',
+                    });
+                    console.error('Sign-up error:', error);
+                });
         }
     };
 
