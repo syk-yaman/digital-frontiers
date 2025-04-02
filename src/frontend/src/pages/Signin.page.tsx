@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import axiosInstance from '@/utils/axiosInstance';
 import {
     Container,
@@ -17,10 +17,12 @@ import { useForm } from '@mantine/form';
 import { Notifications, notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '@/config';
+import { AuthContext } from '@/context/AuthContext';
 
 export function SigninPage() {
     const [view, setView] = useState('sign-in'); // Toggle between 'sign-in' and 'sign-up'
     const navigate = useNavigate();
+    const authContext = useContext(AuthContext); // Access AuthContext
 
     const form = useForm({
         initialValues: {
@@ -64,8 +66,11 @@ export function SigninPage() {
                 // Save the JWT token to localStorage
                 localStorage.setItem('authToken', response.data.access_token);
 
+                // Update the AuthContext
+                authContext?.login(response.data.access_token);
+
                 setTimeout(() => {
-                    navigate('/add-data-item');
+                    navigate('/');
                 }, 1000); // 1-second delay
             })
             .catch((error) => {

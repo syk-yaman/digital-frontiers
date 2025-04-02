@@ -366,9 +366,9 @@ export function HeaderMegaMenu() {
               <Button
                 variant="outline"
                 style={{ color: '#ffffff', border: '1px solid #fff' }}
-                onClick={logout}
-              >
-                Log Out
+                component={NavLink}
+                onClick={logout} to={''} >
+                Sign Out
               </Button>
             ) : (
               <Button
