@@ -92,7 +92,7 @@ export function AddDataitemPage() {
         setIsSubmitting(true);
 
         const formattedData = {
-            id: 5, // You might want to generate this dynamically
+            id: null,
             name: formData.datasetName,
             dataOwnerName: formData.ownerName,
             dataOwnerEmail: formData.ownerEmail,
