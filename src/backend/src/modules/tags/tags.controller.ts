@@ -1,7 +1,10 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Query } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Query, UseGuards } from '@nestjs/common';
 import { TagsService } from './tags.service';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiBody, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { CreateDatasetTagDto, UpdateDatasetTagDto } from './tags.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Roles } from '../auth/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
 
 @ApiTags('Dataset Tags')
 @ApiExtraModels(CreateDatasetTagDto, UpdateDatasetTagDto) // Register DTOs for Swagger
@@ -24,6 +27,7 @@ export class TagsController {
     }
 
     @Post()
+    @UseGuards(JwtAuthGuard)
     @ApiOperation({ summary: 'Create a new tag' })
     @ApiResponse({ status: 201, description: 'The tag has been successfully created.' })
     @ApiBody({
@@ -35,6 +39,7 @@ export class TagsController {
     }
 
     @Put(':id')
+    @UseGuards(JwtAuthGuard)
     @ApiOperation({ summary: 'Update an existing tag' })
     @ApiResponse({ status: 200, description: 'The tag has been successfully updated.' })
     @ApiBody({
@@ -46,6 +51,8 @@ export class TagsController {
     }
 
     @Delete(':id')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin')
     @ApiOperation({ summary: 'Delete a tag' })
     @ApiResponse({ status: 200, description: 'The tag has been successfully deleted.' })
     remove(@Param('id') id: number) {

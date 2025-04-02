@@ -2,6 +2,8 @@ import { Controller, Get, UseGuards, Request } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
 
 @ApiTags('Users')
 @Controller('users')
@@ -9,6 +11,8 @@ export class UsersController {
     constructor(private readonly usersService: UsersService) { }
 
     @Get()
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin')
     @ApiOperation({ summary: 'Get all users' })
     async findAll() {
         return this.usersService.findAll();

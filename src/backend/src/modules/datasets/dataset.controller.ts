@@ -47,7 +47,7 @@ export class DatasetsController {
         return this.datasetsService.create(createDto); // Pass the user ID to the service
     }
 
-    //@UseGuards(JwtAuthGuard, AdminGuard)
+    @UseGuards(JwtAuthGuard)
     @Put(':id')
     update(@Param('id') id: number, @Body() updateDto: UpdateDatasetDto) {
         return this.datasetsService.update(id, updateDto);
@@ -60,6 +60,7 @@ export class DatasetsController {
         return this.datasetsService.remove(id);
     }
 
+    @UseGuards(JwtAuthGuard)
     @Post('uploadHeroImages')
     @UseInterceptors(
         FilesInterceptor('files', 20, {
@@ -85,6 +86,7 @@ export class DatasetsController {
         return fileNames;
     }
 
+    @UseGuards(JwtAuthGuard)
     @Post('/mqtt/verify')
     verifyMqttConnection(@Body() connectionDto: MqttConnectionDto): Promise<void> {
         const { mqttAddress, mqttPort, mqttTopic, mqttUsername, mqttPassword } = connectionDto;
