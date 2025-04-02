@@ -51,8 +51,9 @@ export class DatasetsController {
         return this.datasetsService.update(id, updateDto);
     }
 
-    //@UseGuards(JwtAuthGuard, AdminGuard)
     @Delete(':id')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin')
     remove(@Param('id') id: number) {
         return this.datasetsService.remove(id);
     }
