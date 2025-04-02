@@ -168,6 +168,7 @@ export function HeaderMegaMenu() {
   const authContext = useContext(AuthContext);
 
   const isAuthenticated = authContext?.isAuthenticated;
+  const user = authContext?.user;
   const logout = authContext?.logout;
 
   const links = mockdata.map((item) => (
@@ -335,8 +336,7 @@ export function HeaderMegaMenu() {
               {version}
             </Button>
 
-
-            <Button variant="outline"
+            {isAuthenticated && (<Button variant="outline"
               style={{
                 color: '#ffffff', // White text
                 backgroundColor: 'transparent', // Transparent background
@@ -347,20 +347,25 @@ export function HeaderMegaMenu() {
               }}
               component={NavLink} to="/add-data-item">
               Add dataset
-            </Button>
+            </Button>)}
 
-            <Button variant="outline"
-              style={{
-                color: '#ffffff', // White text
-                backgroundColor: 'transparent', // Transparent background
-                border: '1px solid #fff', // White border
-                fontWeight: 'normal', // Optional: Adjust font weight for visibility
-                padding: '8px 16px', // Optional: Adjust padding
-                transition: 'all 0.3s ease', // Optional: Smooth hover transition
-              }}
-              component={NavLink} to="/admin">
-              Admin
-            </Button>
+            {user?.isAdmin && (
+              <Button
+                variant="outline"
+                style={{
+                  color: '#ffffff', // White text
+                  backgroundColor: 'transparent', // Transparent background
+                  border: '1px solid #fff', // White border
+                  fontWeight: 'normal', // Optional: Adjust font weight for visibility
+                  padding: '8px 16px', // Optional: Adjust padding
+                  transition: 'all 0.3s ease', // Optional: Smooth hover transition
+                }}
+                component={NavLink}
+                to="/admin"
+              >
+                Admin
+              </Button>
+            )}
 
             {isAuthenticated ? (
               <Button

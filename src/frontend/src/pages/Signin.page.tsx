@@ -63,11 +63,13 @@ export function SigninPage() {
                 });
                 console.log('Sign-in response:', response.data);
 
+                const { access_token } = response.data;
+
                 // Save the JWT token to localStorage
-                localStorage.setItem('authToken', response.data.access_token);
+                localStorage.setItem('authToken', access_token);
 
                 // Update the AuthContext
-                authContext?.login(response.data.access_token);
+                authContext?.login(access_token);
 
                 setTimeout(() => {
                     navigate('/');
