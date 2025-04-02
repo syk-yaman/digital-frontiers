@@ -15,6 +15,7 @@ import { SigninPage } from './pages/Signin.page';
 import { AddDataitemPage } from './pages/AddDataitem.page';
 import { NavbarNested } from './pages/NavbarNested';
 import { AuthProvider } from './context/AuthContext';
+import { TermsPage } from './pages/Terms.page';
 
 export default function App() {
   return (
@@ -37,6 +38,7 @@ export default function App() {
             <Route path='/signin' element={<SigninPage />} />
             <Route path="/add-data-item" element={<AddDataitemPage />} />
             <Route path="/admin" element={<NavbarNested />} />
+            <Route path="/terms" element={<TermsPage />} />
           </Routes>
           <FooterLinks />
         </BrowserRouter>

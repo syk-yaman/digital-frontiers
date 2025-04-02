@@ -15,7 +15,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { Notifications, notifications } from '@mantine/notifications';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { API_BASE_URL } from '@/config';
 import { AuthContext } from '@/context/AuthContext';
 
@@ -233,11 +233,18 @@ export function SigninPage() {
                         mb="md"
                     />
                     <Checkbox
-                        label="I accept the terms and conditions"
+                        label="By signing up to the SHIFT Digital Frontiers Platform,
+                         you agree to:"
                         required
                         {...form.getInputProps('termsAccepted', { type: 'checkbox' })}
-                        mb="md"
+                        mb="xs"
                     />
+                    <Text c="dimmed" size="sm" ml={"xl"}>
+                        Comply with the Terms of Use which govern the use of both open data (under standard licenses, reflecting our commitment to open access)
+                        and closed data (requiring specific agreements), and outline responsibilities,
+                        compliance requirements, liability disclaimers, and SHIFT's right to modify
+                        the terms. <Link to="/terms" style={{ color: '#1E90FF', textDecoration: 'underline' }}>Read the full terms from here.</Link>
+                    </Text>
                     <Button fullWidth variant="filled" color="blue" mt="lg" type="submit">
                         Sign Up
                     </Button>
