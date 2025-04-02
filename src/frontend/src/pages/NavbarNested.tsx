@@ -31,7 +31,6 @@ import { LinksGroup } from '../components/NavbarLinksGroup/NavbarLinksGroup';
 import classes from './NavbarNested.module.css';
 import { StatsGrid } from '@/components/Statsgrid/StatsGrid';
 import React, { useEffect, useState } from 'react';
-import { API_BASE_URL } from '@/config';
 import { notifications, Notifications } from '@mantine/notifications';
 import '@mantine/notifications/styles.css';
 import axiosInstance from '@/utils/axiosInstance';
@@ -95,7 +94,7 @@ export function NavbarNested() {
 
     useEffect(() => {
         axiosInstance
-            .get(`${API_BASE_URL}/datasets`)
+            .get(`/datasets`)
             .then((response) => {
                 setDatasets(response.data);
                 setLoading(false);
@@ -113,7 +112,7 @@ export function NavbarNested() {
 
     const handleDelete = (id: number) => {
         axiosInstance
-            .delete(`${API_BASE_URL}/datasets/${id}`)
+            .delete(`/datasets/${id}`)
             .then(() => {
                 setDatasets((prevDatasets) => prevDatasets.filter((dataset) => dataset.id !== id));
                 notifications.show({

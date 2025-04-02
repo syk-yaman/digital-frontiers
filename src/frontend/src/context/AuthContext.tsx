@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import axiosInstance from '@/utils/axiosInstance';
-import { API_BASE_URL } from '@/config';
 
 interface User {
     isAdmin: boolean;
@@ -31,7 +30,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const fetchCurrentUser = async () => {
         try {
-            const response = await axiosInstance.get(`${API_BASE_URL}/users/me`);
+            const response = await axiosInstance.get(`/users/me`);
             setUser(response.data); // Store user details in state
         } catch (error) {
             console.error('Failed to fetch current user:', error);

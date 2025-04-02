@@ -21,7 +21,6 @@ import { load, loadInBatches } from '@loaders.gl/core';
 import { Feature, FeatureCollection, Position } from "geojson";
 import proj4 from 'proj4';
 import { useForm } from '@mantine/form';
-import { API_BASE_URL } from '@/config';
 import { notifications, Notifications } from '@mantine/notifications';
 import '@mantine/notifications/styles.css';
 import { useNavigate } from 'react-router-dom';
@@ -141,7 +140,7 @@ export function AddDataitemPage() {
         console.log("Final JSON to Submit:", formattedData);
 
         axiosInstance
-            .post(`${API_BASE_URL}/datasets`, formattedData)
+            .post(`/datasets`, formattedData)
             .then((response) => {
                 console.log("Submission successful:", response.data);
                 notifications.show({
@@ -172,7 +171,7 @@ export function AddDataitemPage() {
         setMqttConnectionSuccess(false);
 
         try {
-            const response = await axiosInstance.post(`${API_BASE_URL}/datasets/mqtt/verify`, {
+            const response = await axiosInstance.post(`/datasets/mqtt/verify`, {
                 mqttAddress: form.values.mqttAddress.replace('mqtt://', ''),
                 mqttPort: form.values.mqttPort,
                 mqttTopic: form.values.mqttTopic,
@@ -220,7 +219,7 @@ export function AddDataitemPage() {
                 formData.append('files', file, file.name);
             });
 
-            const response = await axiosInstance.post(`${API_BASE_URL}/datasets/uploadHeroImages`, formData);
+            const response = await axiosInstance.post(`/datasets/uploadHeroImages`, formData);
 
             console.log('Files uploaded successfully!');
             const uploadedFileNames: string[] = response.data; // Parse response
@@ -422,7 +421,7 @@ export function AddDataitemPage() {
         loadShapefileFromURL();
 
         axiosInstance
-            .get(`${API_BASE_URL}/tags`)
+            .get(`/tags`)
             .then((response) => {
                 setAvailableTags(response.data);
             })

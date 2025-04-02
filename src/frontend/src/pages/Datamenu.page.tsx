@@ -27,9 +27,9 @@ import { Feature, FeatureCollection, Position } from 'geojson';
 import { loadInBatches } from '@loaders.gl/core';
 import { ShapefileLoader } from '@loaders.gl/shapefile';
 import proj4 from 'proj4';
-import { API_BASE_URL } from '@/config';
 import { Notifications, notifications } from '@mantine/notifications';
 import axiosInstance from '@/utils/axiosInstance';
+import { API_BASE_URL } from '@/config';
 
 const INITIAL_VIEW_STATE = {
   longitude: -0.0167, // Longitude for Olympic Park
@@ -163,7 +163,7 @@ export function Datamenu() {
     loadShapefileFromURL();
 
     axiosInstance
-      .get(`${API_BASE_URL}/datasets`)
+      .get(`/datasets`)
       .then((response) => {
         const data = response.data;
         // Transform API response to match `dataItems` format

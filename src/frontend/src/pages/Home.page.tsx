@@ -85,7 +85,7 @@ export function HomePage() {
     }, 3000); // Delay before image change
 
     axiosInstance
-      .get(`${API_BASE_URL}/datasets/recent`)
+      .get(`/datasets/recent`)
       .then((response) => {
         // Transform API response to match `dataItems` format
         const formattedData = response.data.map((item: DatasetItem) => ({

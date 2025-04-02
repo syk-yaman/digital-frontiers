@@ -151,7 +151,7 @@ export function Dataitem() {
     loadShapefileFromURL();
 
     axiosInstance
-      .get(`${API_BASE_URL}/datasets/${id}`)
+      .get(`/datasets/${id}`)
       .then((response) => {
         const data = response.data as DatasetItem;
         setDataset(data);

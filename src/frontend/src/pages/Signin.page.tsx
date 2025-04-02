@@ -16,7 +16,6 @@ import {
 import { useForm } from '@mantine/form';
 import { Notifications, notifications } from '@mantine/notifications';
 import { useNavigate, Link } from 'react-router-dom';
-import { API_BASE_URL } from '@/config';
 import { AuthContext } from '@/context/AuthContext';
 
 export function SigninPage() {
@@ -51,7 +50,7 @@ export function SigninPage() {
 
     const handleSignIn = () => {
         axiosInstance
-            .post(`${API_BASE_URL}/auth/signin`, {
+            .post(`/auth/signin`, {
                 email: form.values.email,
                 password: form.values.password,
             })
@@ -88,7 +87,7 @@ export function SigninPage() {
     const handleSignUp = () => {
         if (!form.validate().hasErrors) {
             axiosInstance
-                .post(`${API_BASE_URL}/auth/signup`, {
+                .post(`/auth/signup`, {
                     email: form.values.email,
                     password: form.values.password,
                     firstName: form.values.firstName,
