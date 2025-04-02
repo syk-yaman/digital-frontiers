@@ -39,8 +39,21 @@ import { useContext } from 'react';
 import { AuthContext } from '@/context/AuthContext';
 import classes from './HeaderMegaMenu.module.css';
 
-const version = 'v0.2.4'
+const version = 'v0.2.5'
 const changelog = [
+  {
+    version: 'v0.2.5',
+    changes: [
+      'Users can sign up and sign in now.',
+      'Admin can sign in and access the admin page (permissons are acitvated).',
+      'Bug fix: park boundaries were not showing on the map.',
+      'Changed user types in sign up page',
+      'Bug fix: tag duplication and tag suggestion in the add wizard page',
+      'Terms and conditions page was added',
+      'Now the wizard jumps to step 4 if the dataset is static',
+      'Several explanations/highlights were added in the wizard',
+    ],
+  },
   {
     version: 'v0.2.4',
     changes: [
