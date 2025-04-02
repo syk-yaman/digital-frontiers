@@ -905,7 +905,7 @@ export function AddDataitemPage() {
                                 loading={mqttConnectionLoading}
                                 color={mqttConnectionSuccess ? 'green' : (mqttConnectionError ? 'red' : 'blue')}
                             >
-                                {mqttConnectionSuccess ? 'MQTT connection verified' : 'Verify MQTT connection'}</Button>
+                                {mqttConnectionSuccess ? 'MQTT connection to broker verified' : 'Verify connection to MQTT broker'}</Button>
                             {mqttConnectionError && (
                                 <Alert color="red" mt="md">
                                     {'Connection error: '}
