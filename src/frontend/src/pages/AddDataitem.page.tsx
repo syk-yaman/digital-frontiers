@@ -269,7 +269,11 @@ export function AddDataitemPage() {
         console.log(validationResults);
 
         if (!hasErrors) {
-            setActiveStep((current) => current + 1);
+            if (isFreqOnceChecked && activeStep === 2) {
+                setActiveStep((current) => current + 2);
+            } else {
+                setActiveStep((current) => current + 1);
+            }
             window.scrollTo(0, 0);
         } else {
             console.log("Form has errors in the current step. Please correct them.");
