@@ -9,7 +9,6 @@ import './Home.page.css'
 import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '@/config';
 import { Notifications, notifications } from '@mantine/notifications';
-import axiosInstance from '@/utils/axiosInstance';
 
 
 const partners = [
@@ -84,11 +83,16 @@ export function HomePage() {
       }, 500); // Duration of the fade-out effect
     }, 3000); // Delay before image change
 
-    axiosInstance
-      .get(`${API_BASE_URL}/datasets/recent`)
+    fetch(`${API_BASE_URL}/datasets/recent`)
       .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        return response.json();
+      })
+      .then((data) => {
         // Transform API response to match `dataItems` format
-        const formattedData = response.data.map((item: DatasetItem) => ({
+        const formattedData = data.map((item: DatasetItem) => ({
           id: item.id,
           sliderImages: item.sliderImages,
           name: item.name,
@@ -109,11 +113,6 @@ export function HomePage() {
       .catch((error) => {
         console.error('Error fetching data:', error);
         setError(error.message);
-        notifications.show({
-          title: 'Error',
-          message: 'Failed to connect to server.',
-          color: 'red',
-        });
         setLoading(false);
       });
 
