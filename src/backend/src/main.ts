@@ -1,4 +1,3 @@
-
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
@@ -13,9 +12,10 @@ async function bootstrap() {
     .setTitle('Digital Frontiers API')
     .setDescription('The Digital Frontiers API description')
     .setVersion('1.0')
+    .addBearerAuth() // Add Bearer token authentication
     .build();
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, documentFactory);
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
 
   // Enable CORS for all origins, to be removed before production
   app.enableCors();

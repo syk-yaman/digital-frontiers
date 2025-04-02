@@ -8,6 +8,7 @@ import mqtt from 'mqtt';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 interface MqttConnectionDto {
     mqttAddress: string;
@@ -41,6 +42,7 @@ export class DatasetsController {
 
     @UseGuards(JwtAuthGuard)
     @Post()
+    @ApiBearerAuth()
     create(@Body() createDto: CreateDatasetDto, @Request() req) {
         const userId = req.user.userId;
         createDto.userId = userId;
@@ -49,6 +51,7 @@ export class DatasetsController {
 
     @UseGuards(JwtAuthGuard)
     @Put(':id')
+    @ApiBearerAuth()
     update(@Param('id') id: number, @Body() updateDto: UpdateDatasetDto) {
         return this.datasetsService.update(id, updateDto);
     }
@@ -56,12 +59,14 @@ export class DatasetsController {
     @Delete(':id')
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('admin')
+    @ApiBearerAuth()
     remove(@Param('id') id: number) {
         return this.datasetsService.remove(id);
     }
 
     @UseGuards(JwtAuthGuard)
     @Post('uploadHeroImages')
+    @ApiBearerAuth()
     @UseInterceptors(
         FilesInterceptor('files', 20, {
             storage: diskStorage({
@@ -88,6 +93,7 @@ export class DatasetsController {
 
     @UseGuards(JwtAuthGuard)
     @Post('/mqtt/verify')
+    @ApiBearerAuth()
     verifyMqttConnection(@Body() connectionDto: MqttConnectionDto): Promise<void> {
         const { mqttAddress, mqttPort, mqttTopic, mqttUsername, mqttPassword } = connectionDto;
 
