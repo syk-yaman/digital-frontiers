@@ -559,6 +559,14 @@ export function AddDataitemPage() {
                             //onChange={(value) => handleInputChange('datasetType', value)}
                             {...form.getInputProps('datasetType')}
                         />
+                        <Space h="md" />
+                        <Text size="sm" c="dimmed">
+                            <strong>Open Datasets:</strong> are open to public and can be used freely by anyone with proper attribution.
+                        </Text>
+                        <Space h="xs" />
+                        <Text size="sm" c="dimmed">
+                            <strong>Controlled Datasets:</strong> require specific agreements for access and use. No one can access them without prior permission from you.
+                        </Text>
                     </form>
                 </>
             )}
