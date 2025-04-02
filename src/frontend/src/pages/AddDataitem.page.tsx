@@ -25,6 +25,7 @@ import { API_BASE_URL } from '@/config';
 import { notifications, Notifications } from '@mantine/notifications';
 import '@mantine/notifications/styles.css';
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from '@/utils/axiosInstance';
 
 
 const INITIAL_VIEW_STATE = {
@@ -139,23 +140,10 @@ export function AddDataitemPage() {
 
         console.log("Final JSON to Submit:", formattedData);
 
-        fetch(`${API_BASE_URL}/datasets`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formattedData),
-        })
+        axiosInstance
+            .post(`${API_BASE_URL}/datasets`, formattedData)
             .then((response) => {
-                if (!response.ok) {
-                    // Check if the response was not OK (e.g., 4xx or 5xx status code)
-                    return response.json().then(errorData => {
-                        throw new Error(`Submission failed with status ${response.status}: ${JSON.stringify(errorData)}`);
-                    });
-                }
-                return response.json();
-            }).then((data) => {
-                console.log("Submission successful:", data);
+                console.log("Submission successful:", response.data);
                 notifications.show({
                     title: 'Success',
                     message: 'Dataset submitted successfully!',
@@ -184,43 +172,26 @@ export function AddDataitemPage() {
         setMqttConnectionSuccess(false);
 
         try {
-            const response = await fetch(`${API_BASE_URL}/datasets/mqtt/verify`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    mqttAddress: form.values.mqttAddress.replace('mqtt://', ''),
-                    mqttPort: form.values.mqttPort,
-                    mqttTopic: form.values.mqttTopic,
-                    mqttUsername: form.values.mqttUsername,
-                    mqttPassword: form.values.mqttPassword,
-                }),
+            const response = await axiosInstance.post(`${API_BASE_URL}/datasets/mqtt/verify`, {
+                mqttAddress: form.values.mqttAddress.replace('mqtt://', ''),
+                mqttPort: form.values.mqttPort,
+                mqttTopic: form.values.mqttTopic,
+                mqttUsername: form.values.mqttUsername,
+                mqttPassword: form.values.mqttPassword,
             });
 
-            if (response.ok) {
-                setMqttConnectionSuccess(true);
-                notifications.show({
-                    title: 'MQTT Connection Successful',
-                    message: 'Successfully connected to the MQTT broker.',
-                    color: 'green',
-                    icon: <IconCheck />,
-                });
-            } else {
-                const errorData = await response.json();
-                setMqttConnectionError(errorData.message || 'MQTT connection failed');
-                notifications.show({
-                    title: 'MQTT Connection Failed',
-                    message: errorData.message || 'Failed to connect to the MQTT broker.',
-                    color: 'red',
-                    icon: <IconError404 />,
-                });
-            }
-        } catch (error) {
-            setMqttConnectionError(error instanceof Error ? error.message : 'An unexpected error occurred.');
+            setMqttConnectionSuccess(true);
             notifications.show({
-                title: 'MQTT Connection Error',
-                message: error instanceof Error ? error.message : 'An unexpected error occurred.',
+                title: 'MQTT Connection Successful',
+                message: 'Successfully connected to the MQTT broker.',
+                color: 'green',
+                icon: <IconCheck />,
+            });
+        } catch (error: any) {
+            setMqttConnectionError(error.response?.data?.message || error.message || 'MQTT connection failed');
+            notifications.show({
+                title: 'MQTT Connection Failed',
+                message: error.response?.data?.message || error.message || 'Failed to connect to the MQTT broker.',
                 color: 'red',
                 icon: <IconError404 />,
             });
@@ -249,32 +220,25 @@ export function AddDataitemPage() {
                 formData.append('files', file, file.name);
             });
 
-            const response = await fetch(`${API_BASE_URL}/datasets/uploadHeroImages`, {
-                method: 'POST',
-                body: formData,
+            const response = await axiosInstance.post(`${API_BASE_URL}/datasets/uploadHeroImages`, formData);
+
+            console.log('Files uploaded successfully!');
+            const uploadedFileNames: string[] = response.data; // Parse response
+            console.log('Server-side file names:', uploadedFileNames);
+
+            // Update sliderImages with server-side file names
+            setSliderImages(uploadedFileNames);
+
+            // Update uploadedFiles to reflect new names
+            const updatedUploadedFiles = filesToUpload.map((file, index) => {
+                return {
+                    ...file,
+                    name: uploadedFileNames[index], // Replace with server-side name
+                };
             });
+            setUploadedFiles([...uploadedFiles, ...updatedUploadedFiles]);
 
-            if (response.ok) {
-                console.log('Files uploaded successfully!');
-                const uploadedFileNames: string[] = await response.json(); // Parse response
-                console.log('Server-side file names:', uploadedFileNames);
-
-                // Update sliderImages with server-side file names
-                setSliderImages(uploadedFileNames);
-
-                // Update uploadedFiles to reflect new names
-                const updatedUploadedFiles = filesToUpload.map((file, index) => {
-                    return {
-                        ...file,
-                        name: uploadedFileNames[index], // Replace with server-side name
-                    };
-                });
-                setUploadedFiles([...uploadedFiles, ...updatedUploadedFiles]);
-
-                setFilesToUpload([]); // Clear filesToUpload
-            } else {
-                console.error('File upload failed.');
-            }
+            setFilesToUpload([]); // Clear filesToUpload
         } catch (error) {
             console.error('Error during file upload:', error);
         } finally {
@@ -453,10 +417,10 @@ export function AddDataitemPage() {
 
         loadShapefileFromURL();
 
-        fetch(`${API_BASE_URL}/tags`)
-            .then((res) => res.json())
-            .then((tags: Tag[]) => {
-                setAvailableTags(tags);
+        axiosInstance
+            .get(`${API_BASE_URL}/tags`)
+            .then((response) => {
+                setAvailableTags(response.data);
             })
             .catch((error) => {
                 console.error('Failed to load tags:', error);

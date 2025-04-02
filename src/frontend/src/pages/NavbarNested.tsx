@@ -34,6 +34,7 @@ import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from '@/config';
 import { notifications, Notifications } from '@mantine/notifications';
 import '@mantine/notifications/styles.css';
+import axiosInstance from '@/utils/axiosInstance';
 
 interface DatasetItem {
     id: number;
@@ -93,31 +94,27 @@ export function NavbarNested() {
     const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
     useEffect(() => {
-        fetch(`${API_BASE_URL}/datasets`)
+        axiosInstance
+            .get(`${API_BASE_URL}/datasets`)
             .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch datasets');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                setDatasets(data);
+                setDatasets(response.data);
                 setLoading(false);
             })
             .catch((error) => {
                 console.error('Error fetching datasets:', error);
+                notifications.show({
+                    title: 'Error',
+                    message: error.response?.data?.message || 'Failed to fetch datasets.',
+                    color: 'red',
+                });
                 setLoading(false);
             });
     }, []);
 
     const handleDelete = (id: number) => {
-        fetch(`${API_BASE_URL}/datasets/${id}`, {
-            method: 'DELETE',
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Failed to delete dataset');
-                }
+        axiosInstance
+            .delete(`${API_BASE_URL}/datasets/${id}`)
+            .then(() => {
                 setDatasets((prevDatasets) => prevDatasets.filter((dataset) => dataset.id !== id));
                 notifications.show({
                     title: 'Success',
@@ -130,7 +127,7 @@ export function NavbarNested() {
                 console.error('Error deleting dataset:', error);
                 notifications.show({
                     title: 'Error',
-                    message: 'Failed to delete dataset:' + error,
+                    message: error.response?.data?.message || 'Failed to delete dataset.',
                     color: 'red',
                     icon: <IconError404 />,
                 });

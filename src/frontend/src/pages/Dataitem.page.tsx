@@ -32,6 +32,7 @@ import { API_BASE_URL } from '@/config';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { Notifications, notifications } from '@mantine/notifications';
+import axiosInstance from '@/utils/axiosInstance';
 
 const INITIAL_VIEW_STATE = {
   longitude: -0.0167,
@@ -149,24 +150,26 @@ export function Dataitem() {
 
     loadShapefileFromURL();
 
-    fetch(`${API_BASE_URL}/datasets/${id}`)
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to fetch dataset');
-        return res.json();
-      })
-      .then((data: DatasetItem) => {
+    axiosInstance
+      .get(`${API_BASE_URL}/datasets/${id}`)
+      .then((response) => {
+        const data = response.data as DatasetItem;
         setDataset(data);
 
-        const dddd = data.locations.map(location => ({
+        const mappedLocations = data.locations.map((location) => ({
           position: [location.lon, location.lat], // Longitude, Latitude
         })) as any;
 
-        setMappedData(dddd);
-
-
+        setMappedData(mappedLocations);
         setLoading(false);
       })
-      .catch(err => {
+      .catch((err) => {
+        console.error('Error fetching dataset:', err);
+        notifications.show({
+          title: 'Error',
+          message: err.response?.data?.message || 'Failed to load dataset.',
+          color: 'red',
+        });
         setError(err.message);
         setLoading(false);
       });
