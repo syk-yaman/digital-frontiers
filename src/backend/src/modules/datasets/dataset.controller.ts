@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, UploadedFiles, UseInterceptors, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, Request, UploadedFiles, UseInterceptors, HttpException, HttpStatus } from '@nestjs/common';
 import { DatasetsService } from './dataset.service';
 import { CreateDatasetDto, UpdateDatasetDto } from './dataset.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
@@ -39,10 +39,12 @@ export class DatasetsController {
         return this.datasetsService.findOne(id);
     }
 
-    //@UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard)
     @Post()
-    create(@Body() createDto: CreateDatasetDto) {
-        return this.datasetsService.create(createDto);
+    create(@Body() createDto: CreateDatasetDto, @Request() req) {
+        const userId = req.user.userId;
+        createDto.userId = userId;
+        return this.datasetsService.create(createDto); // Pass the user ID to the service
     }
 
     //@UseGuards(JwtAuthGuard, AdminGuard)

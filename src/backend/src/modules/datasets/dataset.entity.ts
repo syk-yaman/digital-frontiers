@@ -9,6 +9,7 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     DeleteDateColumn,
+    JoinColumn,
 } from 'typeorm';
 import { User } from '../users/user.entity';
 
@@ -34,6 +35,7 @@ export class Dataset {
     id!: number;
 
     @ManyToOne(() => User, (user) => user.datasets, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'userId' }) // Link the userId column
     user!: User;
 
     @Column()

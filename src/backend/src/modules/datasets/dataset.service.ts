@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Dataset, DatasetTag } from './dataset.entity'; // Import DatasetTag
 import { CreateDatasetDto, UpdateDatasetDto } from './dataset.dto';
+import { User } from '../users/user.entity';
 
 @Injectable()
 export class DatasetsService {
@@ -10,7 +11,9 @@ export class DatasetsService {
         @InjectRepository(Dataset)
         private datasetRepository: Repository<Dataset>,
         @InjectRepository(DatasetTag)
-        private tagRepository: Repository<DatasetTag>, // Inject the tag repository
+        private tagRepository: Repository<DatasetTag>,
+        @InjectRepository(User)
+        private usersRepository: Repository<User>,
     ) { }
 
     findAll(): Promise<Dataset[]> {
@@ -51,8 +54,13 @@ export class DatasetsService {
             }),
         );
 
-        // Create the dataset with the processed tags
-        const newDataset = this.datasetRepository.create({ ...createDto, tags });
+        const user = await this.usersRepository.findOne({ where: { id: createDto.userId } });
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        console.log(createDto);
+        const newDataset = this.datasetRepository.create({ ...createDto, tags, user });
         return this.datasetRepository.save(newDataset);
     }
 
