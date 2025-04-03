@@ -116,7 +116,7 @@ export function AddDataitemPage() {
                     })),
                     {
                         title: 'MQTT',
-                        url: `mqtt://${form.values.mqttAddress.replace('mqtt://', '')}:${form.values.mqttPort}/${form.values.mqttTopic}?username=${form.values.mqttUsername}&password=${form.values.mqttPassword}`,
+                        url: `mqtt://${form.values.mqttAddress.replace('mqtt://', '')}:${form.values.mqttPort}/${form.values.mqttTopic}${form.values.mqttUsername || form.values.mqttPassword ? `?${form.values.mqttUsername ? `username=${form.values.mqttUsername}` : ''}${form.values.mqttUsername && form.values.mqttPassword ? '&' : ''}${form.values.mqttPassword ? `password=${form.values.mqttPassword}` : ''}` : ''}`,
                     },
                 ],
             locations: formData.pins.map((pin, index) => ({
