@@ -433,7 +433,7 @@ export function Datamenu() {
                 </Card.Section>
 
                 <Group gap={7} mt={5}>
-                  {card.tags.map((tag, index) => (
+                  {card.tags.slice(0, 3).map((tag, index) => (
                     <Badge
                       key={index}
                       variant="outline"
