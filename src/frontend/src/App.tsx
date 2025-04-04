@@ -16,18 +16,18 @@ import { AddDataitemPage } from './pages/AddDataitem.page';
 import { NavbarNested } from './pages/NavbarNested';
 import { AuthProvider } from './context/AuthContext';
 import { TermsPage } from './pages/Terms.page';
+import { PrivateRoute } from './components/PrivateRoute';
 
 export default function App() {
   return (
     <AuthProvider>
       <MantineProvider
-        theme=
-        {{
+        theme={{
           fontFamily: 'Public Sans, sans-serif',
-          colors: {
-          },
+          colors: {},
         }}
-        defaultColorScheme="dark" >
+        defaultColorScheme="dark"
+      >
         <BrowserRouter>
           <ScrollToTop />
           <HeaderMegaMenu />
@@ -35,9 +35,9 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/data-menu" element={<Datamenu />} />
             <Route path="/data-item/:id" element={<Dataitem />} />
-            <Route path='/signin' element={<SigninPage />} />
-            <Route path="/add-data-item" element={<AddDataitemPage />} />
-            <Route path="/admin" element={<NavbarNested />} />
+            <Route path="/signin" element={<SigninPage />} />
+            <Route path="/add-data-item" element={<PrivateRoute><AddDataitemPage /></PrivateRoute>} />
+            <Route path="/admin" element={<PrivateRoute><NavbarNested /></PrivateRoute>} />
             <Route path="/terms" element={<TermsPage />} />
           </Routes>
           <FooterLinks />
