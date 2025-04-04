@@ -34,8 +34,8 @@ export class Dataset {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @ManyToOne(() => User, (user) => user.datasets, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'userId' }) // Link the userId column
+    @ManyToOne(() => User, (user) => user.datasets, { onDelete: 'CASCADE', nullable: false })
+    @JoinColumn({ name: 'userId' })
     user!: User;
 
     @Column()
@@ -47,13 +47,10 @@ export class Dataset {
     @Column()
     dataOwnerEmail!: string;
 
-    @Column()
-    dataOwnerPhoto?: string;
-
     @Column({ type: 'enum', enum: DatasetType })
     datasetType!: DatasetType;
 
-    @Column({ type: 'text' })
+    @Column({ type: 'text', nullable: true })
     description?: string;
 
     @Column({ type: 'float' })
@@ -62,7 +59,7 @@ export class Dataset {
     @Column({ type: 'enum', enum: UpdateFrequencyUnit })
     updateFrequencyUnit!: UpdateFrequencyUnit;
 
-    @Column({ type: 'text' })
+    @Column({ type: 'text', nullable: true })
     dataExample?: string;
 
     @OneToMany(() => DatasetLink, (link) => link.dataset, { cascade: true })
@@ -77,6 +74,24 @@ export class Dataset {
     @ManyToMany(() => DatasetTag, { cascade: true })
     @JoinTable()
     tags!: DatasetTag[];
+
+    @Column({ nullable: true })
+    mqttAddress?: string;
+
+    @Column({ nullable: true })
+    mqttPort?: number;
+
+    @Column({ nullable: true })
+    mqttTopic?: string;
+
+    @Column({ nullable: true })
+    mqttUsername?: string;
+
+    @Column({ nullable: true })
+    mqttPassword?: string;
+
+    @Column({ type: 'timestamp', nullable: true })
+    approvedAt?: Date;
 
     @CreateDateColumn()
     createdAt!: Date;
@@ -143,4 +158,19 @@ export class DatasetTag {
 
     @Column()
     icon!: string;
+
+    @Column({ type: 'int', nullable: true })
+    orderInNavbar?: number;
+
+    @Column({ type: 'timestamp', nullable: true })
+    approvedAt?: Date;
+
+    @CreateDateColumn()
+    createdAt!: Date;
+
+    @UpdateDateColumn()
+    updatedAt?: Date;
+
+    @DeleteDateColumn()
+    deletedAt?: Date;  // Soft delete column
 }

@@ -49,6 +49,9 @@ export class User {
     @Column({ nullable: true })
     emailVerificationToken?: string;
 
+    @Column({ default: false })
+    isActivated!: boolean;
+
     @OneToMany(() => Dataset, (dataset) => dataset.user, { cascade: true })
     datasets!: Dataset[];
 
