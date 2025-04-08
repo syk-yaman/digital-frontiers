@@ -35,7 +35,14 @@ export function DatasetCard({
                 radius="md"
                 p="md"
                 className="card"
-                style={{ border: 'none', backgroundColor: '#1F5754', width: '350px', minHeight: '400px' }}
+                style={{
+                    border: 'none',
+                    backgroundColor: '#1F5754',
+                    width: '350px',
+                    minHeight: '400px',
+                    display: 'flex', // Make the card a flex container
+                    flexDirection: 'column', // Arrange children vertically
+                }}
             >
                 <Card.Section style={{ position: 'relative' }}>
                     {/* Image */}
@@ -57,7 +64,6 @@ export function DatasetCard({
                             color: '#c9f3f1',
                         }}
                     >
-
                         Last updated: {createdAt
                             ? new Date(createdAt).toLocaleDateString(undefined, {
                                 year: 'numeric',
@@ -98,7 +104,11 @@ export function DatasetCard({
                     </Text>
                 </Card.Section>
 
-                <Group gap={7} mt={5}>
+                {/* Tags Section */}
+                <Group
+                    gap={7}
+                    mt="auto" // Push this section to the bottom
+                >
                     {tags.slice(0, 3).map((tag, index) => (
                         <Badge
                             key={index}
