@@ -324,7 +324,7 @@ export function Datamenu() {
                 <Avatar src={popupInfo.image} size={40} />
                 <div>
                   <Link
-                    to={`/data-item/${popupInfo.id}`}
+                    to={`/dataset/${popupInfo.id}`}
                     style={{ fontSize: 16, color: '#000000', fontWeight: 'bold' }}
                   >
                     {popupInfo.title}

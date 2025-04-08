@@ -52,7 +52,7 @@ interface Link {
     title: string;
 }
 
-export function AddDataitemPage() {
+export function AddDatasetPage() {
     const [activeStep, setActiveStep] = useState(1);
     const [dataSample, setDataSample] = useState('');
     const [links, setLinks] = useState<Link[]>([]);

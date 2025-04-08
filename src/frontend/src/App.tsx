@@ -9,10 +9,10 @@ import { FooterLinks } from './components/Footer/FooterLinks';
 import { BrowserRouter } from 'react-router-dom';
 import { HomePage } from './pages/Home.page';
 import './style.css';
-import { Dataitem } from './pages/Dataitem.page';
+import { Dataset } from './pages/Dataset.page';
 import ScrollToTop from './components/ScrollToTop';
 import { SigninPage } from './pages/Signin.page';
-import { AddDataitemPage } from './pages/AddDataitem.page';
+import { AddDatasetPage } from './pages/AddDataset.page';
 import { NavbarNested } from './pages/NavbarNested';
 import { AuthProvider } from './context/AuthContext';
 import { TermsPage } from './pages/Terms.page';
@@ -34,9 +34,9 @@ export default function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/data-menu" element={<Datamenu />} />
-            <Route path="/data-item/:id" element={<Dataitem />} />
+            <Route path="/dataset/:id" element={<Dataset />} />
             <Route path="/signin" element={<SigninPage />} />
-            <Route path="/add-data-item" element={<PrivateRoute><AddDataitemPage /></PrivateRoute>} />
+            <Route path="/add-dataset" element={<PrivateRoute><AddDatasetPage /></PrivateRoute>} />
             <Route path="/admin" element={<PrivateRoute><NavbarNested /></PrivateRoute>} />
             <Route path="/terms" element={<TermsPage />} />
           </Routes>

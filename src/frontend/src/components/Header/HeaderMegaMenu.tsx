@@ -117,7 +117,7 @@ const changelog = [
       'New overlays to the hero image in homepage with new high quality photo.',
       'Version number is added to the homepage with changelog dialog.',
       'Homepage has been filled with showable real data.',
-      'Data item page updated with real content (click on "Bats Activity in the QEOP" in homepage)',
+      'Dataset page updated with real content (click on "Bats Activity in the QEOP" in homepage)',
     ],
   },
   {
@@ -358,7 +358,7 @@ export function HeaderMegaMenu() {
                 padding: '8px 16px', // Optional: Adjust padding
                 transition: 'all 0.3s ease', // Optional: Smooth hover transition
               }}
-              component={NavLink} to="/add-data-item">
+              component={NavLink} to="/add-dataset">
               Add dataset
             </Button>)}
 

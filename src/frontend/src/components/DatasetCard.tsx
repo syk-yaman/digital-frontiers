@@ -26,7 +26,7 @@ export function DatasetCard({
     return (
         <Link
             key={id}
-            to={`/data-item/${id}`}
+            to={`/dataset/${id}`}
             style={{ textDecoration: 'none', color: 'inherit' }}
         >
             <Card

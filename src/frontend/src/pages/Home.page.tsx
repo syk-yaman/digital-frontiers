@@ -187,8 +187,8 @@ export function HomePage() {
           <Space h="xl" />
 
 
-          <Text ta="center" className='title' c="white" >Featured data items</Text>
-          <Text ta="center" size="s" c="white" >Browse the featured data items below. You can go to the data menu section and
+          <Text ta="center" className='title' c="white" >Featured datasets</Text>
+          <Text ta="center" size="s" c="white" >Browse the featured datasets below. You can go to the data menu section and
             use an interactive map to explore the data. </Text>
           <Space h="md" />
 

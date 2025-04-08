@@ -66,7 +66,7 @@ interface Location {
 }
 
 
-export function Dataitem() {
+export function Dataset() {
   const { id } = useParams<{ id: string }>(); // Extract ID from URL
   const defaultDatasetItem: DatasetItem = {
     id: 0,
@@ -184,8 +184,8 @@ export function Dataitem() {
 
   const breadcrumbs = [
     { label: 'Home', path: '/' },
-    { label: 'Data Menu', path: '/data-menu' },
-    { label: 'Data Item', path: '#' },
+    { label: 'Data menu', path: '/data-menu' },
+    { label: 'Dataset', path: '#' },
   ];
 
   const layers = useMemo(() => [
