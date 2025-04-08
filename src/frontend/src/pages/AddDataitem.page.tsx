@@ -95,7 +95,6 @@ export function AddDataitemPage() {
             name: formData.datasetName,
             dataOwnerName: formData.ownerName,
             dataOwnerEmail: formData.ownerEmail,
-            dataOwnerPhoto: "dataOwnerPhoto",
             datasetType: formData.datasetType.toLowerCase(),
             description: formData.datasetDescription,
             updateFrequency: (formData.frequency && formData.frequency !== 'N/A') ? parseInt(formData.frequency) : 0, // Modified line
@@ -103,7 +102,6 @@ export function AddDataitemPage() {
             dataExample: dataSample,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
-            deletedAt: null,
             links: isFreqOnceChecked
                 ? formData.links.map((link, index) => ({
                     title: link.title,
@@ -113,12 +111,13 @@ export function AddDataitemPage() {
                     ...formData.links.map((link, index) => ({
                         title: link.title,
                         url: link.url,
-                    })),
-                    {
-                        title: 'MQTT',
-                        url: `mqtt://${form.values.mqttAddress.replace('mqtt://', '')}:${form.values.mqttPort}/${form.values.mqttTopic}${form.values.mqttUsername || form.values.mqttPassword ? `?${form.values.mqttUsername ? `username=${form.values.mqttUsername}` : ''}${form.values.mqttUsername && form.values.mqttPassword ? '&' : ''}${form.values.mqttPassword ? `password=${form.values.mqttPassword}` : ''}` : ''}`,
-                    },
+                    }))
                 ],
+            mqttAddress: form.values.mqttAddress.replace('mqtt://', ''),
+            mqttPort: form.values.mqttPort,
+            mqttTopic: form.values.mqttTopic,
+            mqttUsername: form.values.mqttUsername == '' ? null : form.values.mqttUsername,
+            mqttPassword: form.values.mqttPassword == '' ? null : form.values.mqttPassword,
             locations: formData.pins.map((pin, index) => ({
                 lon: pin.position[0],
                 lat: pin.position[1],

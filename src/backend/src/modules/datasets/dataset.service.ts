@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Dataset, DatasetTag } from './dataset.entity'; // Import DatasetTag
+import { Dataset, DatasetTag } from './dataset.entity';
 import { CreateDatasetDto, UpdateDatasetDto } from './dataset.dto';
 import { User } from '../users/user.entity';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class DatasetsService {
@@ -36,9 +37,16 @@ export class DatasetsService {
     }
 
     async create(createDto: CreateDatasetDto): Promise<Dataset> {
-        // Handle tags
+        // Transform plain object into an instance of CreateDatasetDto
+        const createDatasetInstance = plainToInstance(CreateDatasetDto, createDto);
+
+        // Validation
+        createDatasetInstance.validateTags();
+        createDatasetInstance.validateMqttData();
+
+        // Handle tags & prevent duplicates
         const tags = await Promise.all(
-            createDto.tags.map(async (tagDto) => {
+            createDatasetInstance.tags.map(async (tagDto) => {
                 if (tagDto.id) {
                     // Check if the tag exists
                     const existingTag = await this.tagRepository.findOne({ where: { id: tagDto.id } });
@@ -54,17 +62,20 @@ export class DatasetsService {
             }),
         );
 
-        const user = await this.usersRepository.findOne({ where: { id: createDto.userId } });
+        const user = await this.usersRepository.findOne({ where: { id: createDatasetInstance.userId } });
         if (!user) {
             throw new Error('User not found');
         }
 
-        console.log(createDto);
-        const newDataset = this.datasetRepository.create({ ...createDto, tags, user });
+        console.log(createDatasetInstance);
+        const newDataset = this.datasetRepository.create({ ...createDatasetInstance, tags, user });
         return this.datasetRepository.save(newDataset);
     }
 
     async update(id: number, updateDto: UpdateDatasetDto): Promise<Dataset> {
+        updateDto.validateTags();
+        updateDto.validateMqttData();
+
         await this.datasetRepository.update(id, updateDto);
         return this.findOne(id);
     }
