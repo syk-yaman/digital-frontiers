@@ -165,6 +165,21 @@ export function AddDataitemPage() {
     };
 
     const verifyMqttConnection = async () => {
+        // Validate the form fields related to MQTT
+        const validationResults = form.validate();
+        const mqttFields = ['mqttAddress', 'mqttPort', 'mqttTopic'];
+        const hasErrors = mqttFields.some((field) => validationResults.errors[field]);
+
+        if (hasErrors) {
+            notifications.show({
+                title: 'Validation Error',
+                message: 'Please correct the MQTT configuration fields before verifying the connection.',
+                color: 'red',
+                icon: <IconX />,
+            });
+            return; // Stop execution if there are validation errors
+        }
+
         setMqttConnectionLoading(true);
         setMqttConnectionError(null);
         setMqttConnectionSuccess(false);

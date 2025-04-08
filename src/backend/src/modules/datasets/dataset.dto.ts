@@ -79,11 +79,12 @@ export class CreateDatasetDto {
             if ((this.mqttUsername && !this.mqttPassword) || (!this.mqttUsername && this.mqttPassword)) {
                 throw new Error('If MQTT username or password is provided, both must be provided.');
             }
+
         } else {
             // Nothing to do, maybe force the user to add links to static files in the future.
         }
 
-        //Trying not to store empty strings in the database
+        // Trying not to store empty strings in the database
         this.mqttUsername == '' ? this.mqttUsername = null : this.mqttUsername;
         this.mqttPassword == '' ? this.mqttPassword = null : this.mqttPassword;
     }

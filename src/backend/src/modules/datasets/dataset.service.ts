@@ -5,9 +5,15 @@ import { Dataset, DatasetTag } from './dataset.entity';
 import { CreateDatasetDto, UpdateDatasetDto } from './dataset.dto';
 import { User } from '../users/user.entity';
 import { plainToInstance } from 'class-transformer';
+import mqtt from 'mqtt';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 @Injectable()
 export class DatasetsService {
+    private connectionPool: mqtt.MqttClient[] = []; // Connection pool
+    private maxConnections = 10; // Maximum concurrent connections
+
+
     constructor(
         @InjectRepository(Dataset)
         private datasetRepository: Repository<Dataset>,
@@ -43,6 +49,11 @@ export class DatasetsService {
         // Validation
         createDatasetInstance.validateTags();
         createDatasetInstance.validateMqttData();
+        this.verifyMqttConnection(createDatasetInstance.mqttAddress,
+            createDatasetInstance.mqttPort,
+            createDatasetInstance.mqttTopic,
+            createDatasetInstance.mqttUsername,
+            createDatasetInstance.mqttPassword);
 
         // Handle tags & prevent duplicates
         const tags = await Promise.all(
@@ -73,14 +84,57 @@ export class DatasetsService {
     }
 
     async update(id: number, updateDto: UpdateDatasetDto): Promise<Dataset> {
-        updateDto.validateTags();
-        updateDto.validateMqttData();
+        const editDatasetInstance = plainToInstance(UpdateDatasetDto, updateDto);
 
-        await this.datasetRepository.update(id, updateDto);
+        editDatasetInstance.validateTags();
+        editDatasetInstance.validateMqttData();
+        this.verifyMqttConnection(updateDto.mqttAddress,
+            editDatasetInstance.mqttPort,
+            editDatasetInstance.mqttTopic,
+            editDatasetInstance.mqttUsername,
+            editDatasetInstance.mqttPassword);
+
+        await this.datasetRepository.update(id, editDatasetInstance);
         return this.findOne(id);
     }
 
     async remove(id: number): Promise<void> {
         await this.datasetRepository.delete(id);
+    }
+
+    async verifyMqttConnection(mqttAddress: string, mqttPort: number, mqttTopic: string, mqttUsername?: string, mqttPassword?: string): Promise<void> {
+        const options: mqtt.IClientOptions = {
+            username: mqttUsername,
+            password: mqttPassword,
+        };
+
+        if (this.connectionPool.length >= this.maxConnections) {
+            throw new HttpException(`Limit exceeded during MQTT validation: Server does not allow more than ${this.maxConnections} MQTT connections`, HttpStatus.TOO_MANY_REQUESTS);
+        }
+
+        const client = mqtt.connect(`mqtt://${mqttAddress}:${mqttPort}`, options);
+
+        return new Promise<void>((resolve, reject) => {
+            client.on('connect', () => {
+                client.end(); // Close the connection immediately
+                console.log(`Connected to MQTT broker at ${mqttAddress}:${mqttPort}`);
+                resolve();
+            });
+
+            client.on('error', (error) => {
+                client.end(); // close the connection on error.
+                console.error('MQTT connection error:', error);
+                reject(new HttpException(error.message, HttpStatus.BAD_GATEWAY));
+            });
+
+            // Add a timeout to prevent hanging if the connection never succeeds
+            setTimeout(() => {
+                if (!client.connected) {
+                    client.end(); // close the connection on timeout.
+                    console.error('MQTT connection timeout');
+                    reject(new HttpException('MQTT connection timeout', HttpStatus.REQUEST_TIMEOUT));
+                }
+            }, 5000); // 5 seconds timeout (adjust as needed)
+        });
     }
 }
