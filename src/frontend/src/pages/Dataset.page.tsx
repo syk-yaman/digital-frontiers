@@ -15,6 +15,7 @@ import {
   Button,
   TextInput,
   Loader,
+  Flex,
 } from '@mantine/core';
 import { Carousel } from '@mantine/carousel';
 import { IconClock, IconUser, IconLicense, IconCopy, IconReload } from '@tabler/icons-react';
@@ -33,6 +34,7 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { Notifications, notifications } from '@mantine/notifications';
 import axiosInstance from '@/utils/axiosInstance';
+import { DatasetCard } from '@/components/DatasetCard';
 
 const INITIAL_VIEW_STATE = {
   longitude: -0.0167,
@@ -100,6 +102,7 @@ export function Dataset() {
   const [error, setError] = useState<string | null>(null);
   const [geoJsonData, setGeoJsonData] = useState<FeatureCollection | null>(null);
   const [mappedData, setMappedData] = useState([]); //For map
+  const [featuredDatasets, setFeaturedDatasets] = useState<DatasetItem[]>([]); // State for featured datasets
 
   useEffect(() => {
 
@@ -172,6 +175,34 @@ export function Dataset() {
         });
         setError(err.message);
         setLoading(false);
+      });
+
+    // Fetch featured datasets
+    axiosInstance
+      .get(`/datasets/recent`)
+      .then((response) => {
+        const formattedData = response.data.map((item: DatasetItem) => ({
+          id: item.id,
+          name: item.name,
+          dataOwnerName: item.dataOwnerName,
+          dataOwnerPhoto: item.dataOwnerPhoto || 'https://via.placeholder.com/100', // Placeholder if missing
+          description: item.description,
+          createdAt: item.createdAt,
+          sliderImages: item.sliderImages,
+          tags: item.tags.map((tag) => ({
+            name: tag.name,
+            icon: '',
+          })),
+        }));
+        setFeaturedDatasets(formattedData);
+      })
+      .catch((error) => {
+        console.error('Error fetching featured datasets:', error);
+        notifications.show({
+          title: 'Error',
+          message: 'Failed to load featured datasets.',
+          color: 'red',
+        });
       });
   }, [id]);
 
@@ -370,6 +401,37 @@ export function Dataset() {
             {dataset.dataExample.trim() || 'No data example provided'}
           </SyntaxHighlighter>
         </Center>
+
+        {/* Featured Datasets Section */}
+        <Text mt="3rem" ta="center" className="title" c="white">
+          More Datasets
+        </Text>
+        <section style={{ textAlign: 'left' }}>
+          <Flex
+            gap="lg"
+            justify="center"
+            align="center"
+            style={{ maxWidth: '1600px', margin: '0 auto' }}
+            wrap="wrap"
+          >
+            {featuredDatasets.map((dataset) => (
+              <DatasetCard
+                key={dataset.id}
+                id={dataset.id}
+                name={dataset.name}
+                dataOwnerName={dataset.dataOwnerName}
+                dataOwnerPhoto={dataset.dataOwnerPhoto}
+                description={dataset.description}
+                createdAt={dataset.createdAt}
+                sliderImages={dataset.sliderImages}
+                tags={dataset.tags}
+              />
+            ))}
+          </Flex>
+        </section>
+        <Space h="xl" />
+        <Space h="xl" />
+
         <Notifications />
       </Container>
     </>
