@@ -97,9 +97,15 @@ export function DatasetCard({
                         </Center>
                     </Group>
 
-                    <Text c="white" fz="sm" mt="xs">
-                        {description.length > 80 // Adjust the limit as needed
-                            ? `${description.substring(0, 80)}...`
+                    <Text c="white" fz="sm" mt="xs" style={{
+                        height: '60px', // Set a fixed height for the description section
+                        overflow: 'hidden', // Hide overflowing text
+                        textOverflow: 'ellipsis', // Add ellipsis for truncated text
+                        whiteSpace: 'normal', // Allow wrapping of text
+                        wordBreak: 'break-word', // Break long words to prevent overflow
+                    }}>
+                        {description.length > 80
+                            ? `${description.substring(0, 110)}...`
                             : description}
                     </Text>
                 </Card.Section>
