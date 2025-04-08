@@ -156,9 +156,9 @@ export function AddDataitemPage() {
                 console.error("Submission failed:", error);
                 notifications.show({
                     title: 'Error',
-                    message: 'Failed to submit dataset:' + error,
+                    message: 'Failed to submit dataset: ' + error.response?.data?.message,
                     color: 'red',
-                    icon: <IconError404 />,
+                    icon: <IconX />,
                 });
                 setIsSubmitting(false);
             });
@@ -206,7 +206,7 @@ export function AddDataitemPage() {
                 title: 'MQTT Connection Failed',
                 message: error.response?.data?.message || error.message || 'Failed to connect to the MQTT broker.',
                 color: 'red',
-                icon: <IconError404 />,
+                icon: <IconX />,
             });
         } finally {
             setMqttConnectionLoading(false);

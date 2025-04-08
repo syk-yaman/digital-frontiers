@@ -1,6 +1,7 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, ValidateNested, ValidateIf, IsIn } from 'class-validator';
 import { Type } from 'class-transformer';
 import { DatasetType, UpdateFrequencyUnit } from './dataset.entity';
+import { HttpException, HttpStatus } from '@nestjs/common'; // Import HttpException and HttpStatus
 
 class DatasetLinkDto {
     @IsString() title!: string;
@@ -71,15 +72,23 @@ export class CreateDatasetDto {
     validateMqttData() {
         if (this.updateFrequency != 0 && this.updateFrequencyUnit != UpdateFrequencyUnit.ONLY_ONCE) {
             if (!this.mqttAddress) {
-                throw new Error(`The update frequency is not set to 'once' so MQTT data must be provided.`);
+                throw new HttpException(
+                    'The update frequency is not set to "once", so MQTT data must be provided.',
+                    HttpStatus.BAD_REQUEST,
+                );
             }
             if (!this.mqttPort || !this.mqttTopic) {
-                throw new Error('If MQTT data exists, address, port, and topic must be provided.');
+                throw new HttpException(
+                    'If MQTT data exists, address, port, and topic must be provided.',
+                    HttpStatus.BAD_REQUEST,
+                );
             }
             if ((this.mqttUsername && !this.mqttPassword) || (!this.mqttUsername && this.mqttPassword)) {
-                throw new Error('If MQTT username or password is provided, both must be provided.');
+                throw new HttpException(
+                    'If MQTT username or password is provided, both must be provided.',
+                    HttpStatus.BAD_REQUEST,
+                );
             }
-
         } else {
             // Nothing to do, maybe force the user to add links to static files in the future.
         }
