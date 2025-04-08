@@ -16,9 +16,12 @@ import {
   TextInput,
   Loader,
   Flex,
+  Input,
+  Grid,
+  Tooltip,
 } from '@mantine/core';
 import { Carousel } from '@mantine/carousel';
-import { IconClock, IconUser, IconLicense, IconCopy, IconReload } from '@tabler/icons-react';
+import { IconClock, IconUser, IconLicense, IconCopy, IconReload, IconExternalLink } from '@tabler/icons-react';
 import { Map, Popup, useControl } from 'react-map-gl/maplibre';
 import { GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers';
 import DeckGL from '@deck.gl/react';
@@ -61,6 +64,11 @@ interface DatasetItem {
   sliderImages: { id: number; fileName: string }[];
   tags: { id: number; name: string; colour: string; icon: string }[];
   lastReading: string;
+  mqttAddress: string,
+  mqttPort: number,
+  mqttTopic: string,
+  mqttUsername: string,
+  mqttPassword: string,
 }
 
 interface Location {
@@ -95,6 +103,11 @@ export function Dataset() {
     sliderImages: [],
     tags: [],
     lastReading: '2025-03-07T00:00:00Z',
+    mqttAddress: "string",
+    mqttPort: 0,
+    mqttTopic: "string",
+    mqttUsername: "string",
+    mqttPassword: "string",
   };
 
   const [dataset, setDataset] = useState<DatasetItem>(defaultDatasetItem);
@@ -365,35 +378,115 @@ export function Dataset() {
           </DeckGL>
         </div>
 
+        {/* MQTT Section */}
+        {dataset.mqttAddress && (
+          <>
+            <Text mt="xl" ta="center" className="title" c="white">Live MQTT details</Text>
+            <Container size="l" mt="xl">
+              <Grid>
+                {[
+                  { title: 'MQTT Address', value: dataset.mqttAddress },
+                  { title: 'MQTT Port', value: dataset.mqttPort?.toString() },
+                  { title: 'MQTT Topic', value: dataset.mqttTopic },
+                  ...(dataset.mqttUsername
+                    ? [
+                      { title: 'MQTT Username', value: dataset.mqttUsername },
+                      { title: 'MQTT Password', value: dataset.mqttPassword || 'N/A' },
+                    ]
+                    : []),
+                ].map((item, index) => (
+                  <Grid.Col key={index} span={6}>
+                    <Text size="sm" mb="xs">{item.title}</Text>
+                    <Group align="center">
+                      <Input
+                        value={item.value}
+                        readOnly
+                        style={{
+                          flex: 1,
+                          backgroundColor: '#2F2C2C', // Input background color
+                          color: 'white', // Input text color
+                        }}
+                      />
+                      <Tooltip color="gray" label="Copy to clipboard" position="top" withArrow>
+                        <Button
+                          variant="light"
+                          onClick={() => navigator.clipboard.writeText(item.value || '')}
+                          style={{
+                            height: '36px', // Match the height of the input field
+                            border: '1px solid #ccc', // Add boundaries
+                          }}
+                        >
+                          <IconCopy size={16} />
+                        </Button>
+                      </Tooltip>
+                    </Group>
+                  </Grid.Col>
+                ))}
+              </Grid>
+            </Container>
+          </>
+        )}
+        <Space h="xl" />
         {/* Links Section */}
-        <Center mt="lg">
-          <Group align="center" >
-            {/* Iterate through dataset.links and display each link with a button */}
-            {dataset.links.map((link, index) => (
-              <Group key={index} align="center">
-                {/* Title for the link */}
-                <Text size="sm" >{link.title}</Text>
-
-                {/* TextInput and Button in a Group */}
-                <Group align="center">
-                  <TextInput
-                    value={link.url}
-                    readOnly
-                    style={{ width: 300 }}
-                  />
-                  <Button
-                    variant="outline"
-                    onClick={() => navigator.clipboard.writeText(link.url)}
-                    style={{ height: 36 }} // Ensuring button height matches TextInput
-                  >
-                    Copy
-                  </Button>
-                </Group>
-              </Group>
-            ))}
-          </Group>
-        </Center>
-
+        {dataset.links.length > 0 && (
+          <>
+            <Text mt="xl" ta="center" className="title" c="white">Links</Text>
+            <Container size="l">
+              <Grid>
+                {dataset.links.map((link, index) => (
+                  <Grid.Col key={index} span={12}>
+                    <Text size="sm" mb="xs">{link.title}</Text>
+                    <Group align="center">
+                      <Input
+                        value={link.url}
+                        readOnly
+                        style={{
+                          flex: 1,
+                          backgroundColor: '#2F2C2C', // Input background color
+                          color: 'white', // Input text color
+                        }}
+                      />
+                      <Tooltip color="gray" label="Copy to clipboard" position="top" withArrow>
+                        <Button
+                          variant="light"
+                          onClick={() => navigator.clipboard.writeText(link.url)}
+                          style={{
+                            height: '36px', // Match the height of the input field
+                            border: '1px solid #ccc', // Add boundaries
+                          }}
+                        >
+                          <IconCopy size={16} />
+                        </Button>
+                      </Tooltip>
+                      <Tooltip
+                        color="gray"
+                        label={'Open Link'}
+                        position="top"
+                        withArrow
+                      >
+                        <Button
+                          variant="light"
+                          component={link.url.startsWith('http') ? 'a' : 'button'}
+                          href={link.url.startsWith('http') ? link.url : undefined}
+                          target={link.url.startsWith('http') ? '_blank' : undefined}
+                          rel={link.url.startsWith('http') ? 'noopener noreferrer' : undefined}
+                          disabled={!link.url.startsWith('http')}
+                          style={{
+                            height: '36px', // Match the height of the input field
+                            opacity: link.url.startsWith('http') ? 1 : 0.5, // Dim the button if disabled
+                            cursor: link.url.startsWith('http') ? 'pointer' : 'not-allowed', // Change cursor if disabled
+                          }}
+                        >
+                          <IconExternalLink size={16} />
+                        </Button>
+                      </Tooltip>
+                    </Group>
+                  </Grid.Col>
+                ))}
+              </Grid>
+            </Container>
+          </>
+        )}
 
         <Text mt="xl" ta="center" className="title" c="white">Data sample</Text>
         <Center mb="xl" mt="lg">
