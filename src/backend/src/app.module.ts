@@ -2,21 +2,19 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './modules/users/user.entity';
 import { UsersModule } from './modules/users/users.module';
-import { AppDataSource } from '../data-source';
 import { DatasetsModule } from './modules/datasets/datasets.module';
 import { Dataset, DatasetLink, DatasetLocation, DatasetSliderImage, DatasetTag } from './modules/datasets/dataset.entity';
 import { TagsModule } from './modules/tags/tags.module';
 import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
-  //imports: [TypeOrmModule.forRoot(AppDataSource.options)],
   imports: [TypeOrmModule.forRoot({
     type: 'postgres',
-    host: 'postgres',
-    port: 5432,
-    username: 'postgres',
-    password: 'postgres',
-    database: 'DigitalFrontiersDB',
+    host: process.env.DB_HOST,
+    port: parseInt(process.env.DB_PORT, 10),
+    username: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
     entities: [User, Dataset, DatasetLink, DatasetLocation, DatasetSliderImage, DatasetTag],
     synchronize: false, //to be off in production
     migrations: ['src/database/migrations/*-migration.ts'],
