@@ -20,13 +20,17 @@ export class TagsService {
         return this.tagRepository.findOne({ where: { id } });
     }
 
-    create(createTagDto: CreateDatasetTagDto): Promise<DatasetTag> {
-        const tag = this.tagRepository.create(createTagDto);
-        return this.tagRepository.save(tag);
+    async create(createDto: CreateDatasetTagDto): Promise<DatasetTag> {
+        createDto.validateOrderInNavbar();
+
+        const newTag = this.tagRepository.create(createDto);
+        return this.tagRepository.save(newTag);
     }
 
-    async update(id: number, updateTagDto: UpdateDatasetTagDto): Promise<DatasetTag> {
-        await this.tagRepository.update(id, updateTagDto);
+    async update(id: number, updateDto: UpdateDatasetTagDto): Promise<DatasetTag> {
+        updateDto.validateOrderInNavbar();
+
+        await this.tagRepository.update(id, updateDto);
         return this.findOne(id);
     }
 
