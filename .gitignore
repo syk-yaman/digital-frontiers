@@ -1,2 +1,5 @@
 src/backend/package-lock.json
 src/frontend/package-lock.json
+.DS_Store
+src/backend/uploads
+src/docker-test
