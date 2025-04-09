@@ -67,7 +67,7 @@ services:
       - df-network
 
   nginx:
-    image: nginx:latest
+    image: nginx:1.27.4
     container_name: nginx_proxy
     depends_on:
       - frontend
