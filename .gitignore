@@ -3,3 +3,4 @@ src/frontend/package-lock.json
 .DS_Store
 src/backend/uploads
 src/docker-test
+nginx.conf

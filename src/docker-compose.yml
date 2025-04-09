@@ -75,7 +75,12 @@ services:
     ports:
       - "${NGINX_PORT}:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx.conf.template:/etc/nginx/nginx.conf.template:ro
+      - ./docker-entrypoint.sh:/docker-entrypoint.sh:ro
+    environment:
+      FRONTEND_PORT: ${FRONTEND_PORT}
+      BACKEND_PORT: ${BACKEND_PORT}
+    entrypoint: ["/bin/sh", "/docker-entrypoint.sh"]
     networks:
       - df-network
 
