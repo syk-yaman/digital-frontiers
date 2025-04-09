@@ -350,12 +350,14 @@ export function Datamenu() {
 
       {view === 'list' && (
         <Flex
-          gap="lg"
+          gap="xl"
           justify="center"
           align="center"
           style={{ maxWidth: '1600px', margin: '0 auto' }}
           wrap="wrap"
           mb={'xl'}
+          mr={'xl'}
+          ml={'xl'}
         >
           {dataItems.map((card) => (
             <DatasetCard
