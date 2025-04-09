@@ -18,7 +18,15 @@ export class TagsController {
         return this.tagsService.findAll();
     }
 
-    @Get(':id')
+    @Get('search') //TODO: discuss lowercase and other potential inputs..
+    @ApiOperation({ summary: 'Search tags by name' })
+    @ApiQuery({ name: 'name', required: true, description: 'The name of the tag to search for.' })
+    @ApiResponse({ status: 200, description: 'Returns tags matching the search criteria.' })
+    search(@Query('name') name: string) {
+        return this.tagsService.search(name);
+    }
+
+    @Get(':id') //TODO: discuss if it doesn't exist
     @ApiOperation({ summary: 'Get a single tag by ID' })
     @ApiResponse({ status: 200, description: 'Returns the tag with the specified ID.' })
     findOne(@Param('id') id: number) {
@@ -53,13 +61,5 @@ export class TagsController {
     @ApiResponse({ status: 200, description: 'The tag has been successfully deleted.' })
     remove(@Param('id') id: number) {
         return this.tagsService.remove(id);
-    }
-
-    @Get('search')
-    @ApiOperation({ summary: 'Search tags by name' })
-    @ApiQuery({ name: 'name', required: true, description: 'The name of the tag to search for.' })
-    @ApiResponse({ status: 200, description: 'Returns tags matching the search criteria.' })
-    search(@Query('name') name: string) {
-        return this.tagsService.search(name);
     }
 }
