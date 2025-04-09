@@ -1,0 +1,19 @@
+version: '3'
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:2.11.2'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+    networks:
+      - df-network
+
+networks:
+  df-network:
+    driver: bridge
+    external: true
