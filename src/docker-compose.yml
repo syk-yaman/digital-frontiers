@@ -31,7 +31,6 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
       JWT_SECRET: ${JWT_SECRET}
-      BACKEND_URL: ${BACKEND_URL}
     command: >
       sh -c "
       if [ ! -d /app/.git ]; then
