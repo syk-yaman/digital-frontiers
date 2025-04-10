@@ -4,3 +4,4 @@ src/frontend/package-lock.json
 src/backend/uploads
 src/docker-test
 nginx.conf
+.env

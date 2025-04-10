@@ -25,7 +25,13 @@ services:
     volumes:
       - ./backend:/app
     environment:
-      DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@postgres:${DB_PORT}/${DB_NAME}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      JWT_SECRET: ${JWT_SECRET}
+      BACKEND_URL: ${BACKEND_URL}
     command: >
       sh -c "
       if [ ! -d /app/.git ]; then
@@ -50,6 +56,8 @@ services:
     working_dir: /app
     volumes:
       - ./frontend:/app
+    environment:
+      API_URL: ${API_URL}
     command: >
       sh -c "
       if [ ! -d /app/.git ]; then
