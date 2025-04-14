@@ -12,8 +12,8 @@ services:
     ports:
       - "${DB_PORT}:${DB_PORT}"
     volumes:
-#      - ./database:/var/lib/postgresql/data
-      - df_postgres_data:/var/lib/postgresql/data
+      - ./database:/var/lib/postgresql/data
+#      - df_postgres_data:/var/lib/postgresql/data
     networks:
       - df-network
     env_file:
