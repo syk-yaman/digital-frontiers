@@ -10,7 +10,6 @@ import {
 import DeckGL from '@deck.gl/react';
 import { GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { Map, MapLayerMouseEvent } from 'react-map-gl/maplibre';
-import { TagsCreatable } from '@/components/TagsCreatable';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { atomOneDark, atomOneLight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { IconAlertCircleOff, IconAlertTriangleOff, IconArrowAutofitRight, IconBlocks, IconBusStop, IconCheck, IconCheckbox, IconCircleX, IconCloudCheck, IconCloudNetwork, IconCopyCheck, IconError404, IconFileCheck, IconHttpConnect, IconLockCheck, IconLockQuestion, IconMapQuestion, IconNetwork, IconNetworkOff, IconPhoto, IconPlugConnected, IconQuestionMark, IconTrash, IconUpload, IconX } from '@tabler/icons-react';
@@ -630,12 +629,6 @@ export function AddDatasetPage() {
                             {...form.getInputProps('datasetTags')}
                             comboboxProps={{ transitionProps: { transition: 'pop', duration: 200 } }}
                         />
-                        {/* <TagsCreatable
-                            availableTags={availableTags}
-                            value={selectedTags}
-                            required
-                            {...form.getInputProps('datasetTags')}
-                        /> */}
                         <Space h="md" />
 
                         <Flex justify="left" align="center" gap="md" wrap="wrap">
