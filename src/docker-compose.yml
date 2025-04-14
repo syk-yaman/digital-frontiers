@@ -12,7 +12,7 @@ services:
     ports:
       - "${DB_PORT}:${DB_PORT}"
     volumes:
-      - ./database:/var/lib/postgresql/data
+      - df_postgres_data:/var/lib/postgresql/data
     networks:
       - df-network
 
@@ -23,7 +23,7 @@ services:
       - postgres
     working_dir: /app
     volumes:
-      - ./backend:/app
+      - df_backend_data:/app
     environment:
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
@@ -49,7 +49,7 @@ services:
       - backend
     working_dir: /app
     volumes:
-      - ./frontend:/app
+      - df_frontend_data:/app
     environment:
       API_URL: ${API_URL}
     command: >
@@ -73,8 +73,8 @@ services:
     ports:
       - "${NGINX_PORT}:80"
     volumes:
-      - ./nginx.conf.template:/etc/nginx/nginx.conf.template:ro
-      - ./docker-entrypoint.sh:/docker-entrypoint.sh:ro
+      - df_nginx_config:/etc/nginx/nginx.conf.template:ro
+      - df_nginx_entrypoint:/docker-entrypoint.sh:ro
     environment:
       FRONTEND_PORT: ${FRONTEND_PORT}
       BACKEND_PORT: ${BACKEND_PORT}
@@ -85,3 +85,13 @@ services:
 networks:
   df-network:
     driver: bridge
+
+volumes:
+  df_postgres_data:
+  df_backend_data:
+  df_frontend_data:
+  df_nginx_config:
+  df_nginx_entrypoint:
+
+  env_file:
+  - .env
