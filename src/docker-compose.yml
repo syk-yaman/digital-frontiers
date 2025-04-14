@@ -93,5 +93,5 @@ volumes:
   df_nginx_config:
   df_nginx_entrypoint:
 
-  env_file:
+env_file:
   - .env
