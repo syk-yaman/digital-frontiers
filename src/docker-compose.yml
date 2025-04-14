@@ -25,6 +25,7 @@ services:
       - postgres
     working_dir: /app
     volumes:
+      - ./backend:/app:ro
       - df_backend_data:/app
     environment:
       DB_HOST: ${DB_HOST}
@@ -53,6 +54,7 @@ services:
       - backend
     working_dir: /app
     volumes:
+      - ./frontend:/app:ro
       - df_frontend_data:/app
     environment:
       API_URL: ${API_URL}
