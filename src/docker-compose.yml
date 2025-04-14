@@ -79,8 +79,8 @@ services:
     ports:
       - "${NGINX_PORT}:80"
     volumes:
-      - df_nginx_config:/etc/nginx/nginx.conf.template:ro
-      - df_nginx_entrypoint:/docker-entrypoint.sh:ro
+      - ./nginx.conf.template:/etc/nginx/nginx.conf.template:ro
+      - ./docker-entrypoint.sh:/docker-entrypoint.sh:ro
     environment:
       FRONTEND_PORT: ${FRONTEND_PORT}
       BACKEND_PORT: ${BACKEND_PORT}
@@ -98,5 +98,3 @@ volumes:
   df_postgres_data:
   df_backend_data:
   df_frontend_data:
-  df_nginx_config:
-  df_nginx_entrypoint:
