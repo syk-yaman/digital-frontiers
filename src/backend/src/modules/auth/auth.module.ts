@@ -12,7 +12,7 @@ import { LocalStrategy } from './local.strategy';
         forwardRef(() => UsersModule), // Use forwardRef to resolve circular dependency
         PassportModule,
         JwtModule.register({
-            secret: process.env.JWT_SECRET || 'defaultSecret', // Use environment variable for production
+            secret: process.env.JWT_SECRET,
             signOptions: { expiresIn: '1h' },
         }),
     ],
