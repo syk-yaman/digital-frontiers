@@ -34,7 +34,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setUser(response.data); // Store user details in state
         } catch (error) {
             console.error('Failed to fetch current user:', error);
-            logout(); // Log out if fetching user details fails
         }
     };
 
