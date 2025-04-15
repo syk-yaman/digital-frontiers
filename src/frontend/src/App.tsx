@@ -17,6 +17,7 @@ import { NavbarNested } from './pages/NavbarNested';
 import { AuthProvider } from './context/AuthContext';
 import { TermsPage } from './pages/Terms.page';
 import { PrivateRoute } from './components/PrivateRoute';
+import { MyDatasetsPage } from './pages/MyDatasets.page';
 
 export default function App() {
   return (
@@ -39,6 +40,7 @@ export default function App() {
             <Route path="/add-dataset" element={<PrivateRoute><AddDatasetPage /></PrivateRoute>} />
             <Route path="/admin" element={<PrivateRoute><NavbarNested /></PrivateRoute>} />
             <Route path="/terms" element={<TermsPage />} />
+            <Route path="/my-datasets" element={<PrivateRoute><MyDatasetsPage /></PrivateRoute>} />
           </Routes>
           <FooterLinks />
         </BrowserRouter>

@@ -362,6 +362,24 @@ export function HeaderMegaMenu() {
               Add dataset
             </Button>)}
 
+            {isAuthenticated && (
+              <Button
+                variant="outline"
+                style={{
+                  color: '#ffffff', // White text
+                  backgroundColor: 'transparent', // Transparent background
+                  border: '1px solid #fff', // White border
+                  fontWeight: 'normal', // Optional: Adjust font weight for visibility
+                  padding: '8px 16px', // Optional: Adjust padding
+                  transition: 'all 0.3s ease', // Optional: Smooth hover transition
+                }}
+                component={NavLink}
+                to="/my-datasets"
+              >
+                My Datasets
+              </Button>
+            )}
+
             {user?.isAdmin && (
               <Button
                 variant="outline"

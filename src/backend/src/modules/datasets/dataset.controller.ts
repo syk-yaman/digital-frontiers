@@ -96,4 +96,12 @@ export class DatasetsController {
         const { mqttAddress, mqttPort, mqttTopic, mqttUsername, mqttPassword } = connectionDto;
         return this.datasetsService.verifyMqttConnection(mqttAddress, mqttPort, mqttTopic, mqttUsername, mqttPassword);
     }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('search/me')
+    @ApiBearerAuth()
+    findMyDatasets(@Request() req) {
+        const userId = req.user.userId;
+        return this.datasetsService.findByUser(userId);
+    }
 }

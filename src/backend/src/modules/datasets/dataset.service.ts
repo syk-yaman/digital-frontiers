@@ -42,6 +42,13 @@ export class DatasetsService {
         });
     }
 
+    findByUser(userId: string): Promise<Dataset[]> {
+        return this.datasetRepository.find({
+            where: { user: { id: userId } },
+            relations: ['links', 'locations', 'sliderImages', 'tags'],
+        });
+    }
+
     async create(createDto: CreateDatasetDto): Promise<Dataset> {
         // Transform plain object into an instance of CreateDatasetDto
         const createDatasetInstance = plainToInstance(CreateDatasetDto, createDto);

@@ -1,0 +1,124 @@
+import { useEffect, useState } from 'react';
+import { DatasetCard } from '@/components/DatasetCard';
+import { Flex, Text, Center, Button, Stack, Breadcrumbs, Space, Container } from '@mantine/core';
+import { Notifications, notifications } from '@mantine/notifications';
+import { IconDatabaseOff } from '@tabler/icons-react';
+import axiosInstance from '@/utils/axiosInstance';
+import { NavLink, Link } from 'react-router-dom';
+
+interface DatasetItem {
+    id: number;
+    name: string;
+    dataOwnerName: string;
+    dataOwnerPhoto: string;
+    description: string;
+    createdAt: string;
+    sliderImages: { id: number; fileName: string }[];
+    tags: { name: string; icon: string }[];
+}
+
+export function MyDatasetsPage() {
+    const [datasets, setDatasets] = useState<DatasetItem[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    const breadcrumbs = [
+        { label: 'Home', path: '/' },
+        { label: 'My Datasets', path: '/my-datasets' },
+    ];
+
+    useEffect(() => {
+        axiosInstance
+            .get('/datasets/search/me')
+            .then((response) => {
+                setDatasets(response.data);
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.error('Error fetching datasets:', error);
+                notifications.show({
+                    title: 'Error',
+                    message: 'Failed to connect to server.',
+                    color: 'red',
+                });
+                setLoading(false);
+            });
+    }, []);
+
+    if (datasets.length === 0) {
+        return (
+            <>
+                <Space h="md" />
+                <Space h="md" />
+                <div style={{ paddingLeft: '40px' }}>
+                    <Breadcrumbs separator=">">
+                        {breadcrumbs.map((crumb) => (
+                            <Link to={crumb.path} key={crumb.path} className="breadcrumb-link">
+                                {crumb.label}
+                            </Link>
+                        ))}
+                    </Breadcrumbs>
+                </div>
+                <Text ta="center" size="xl" c="blue">My Datasets</Text>
+                <Space h="md" />
+                <Center style={{ height: '60vh' }}>
+                    <Stack align="center">
+                        <IconDatabaseOff size={64} color="#FFC747" />
+                        <Text c="white" fz="lg" fw={500}>
+                            No datasets found
+                        </Text>
+                        <Text c="dimmed" fz="sm">
+                            You haven't added any datasets yet. Start by adding your first dataset!
+                        </Text>
+                        <Button variant="light" color="blue" component={NavLink} to="/add-dataset">
+                            Add Dataset
+                        </Button>
+                    </Stack>
+                </Center>
+            </>
+        );
+    }
+
+    return (
+        <>
+
+            <Space h="md" />
+            <Space h="md" />
+            <div style={{ paddingLeft: '40px' }}>
+                <Breadcrumbs separator=">">
+                    {breadcrumbs.map((crumb) => (
+                        <Link to={crumb.path} key={crumb.path} className="breadcrumb-link">
+                            {crumb.label}
+                        </Link>
+                    ))}
+                </Breadcrumbs>
+            </div>
+            <Text ta="center" size="xl" c="blue">My Datasets</Text>
+            <Space h="md" />
+            <Flex
+                gap="xl"
+                justify="center"
+                align="center"
+                style={{ maxWidth: '1600px', margin: '0 auto' }}
+                wrap="wrap"
+                mb={'xl'}
+                mr={'xl'}
+                ml={'xl'}
+            >
+                {datasets.map((dataset) => (
+                    <DatasetCard
+                        key={dataset.id}
+                        id={dataset.id}
+                        name={dataset.name}
+                        dataOwnerName={dataset.dataOwnerName}
+                        dataOwnerPhoto={dataset.dataOwnerPhoto}
+                        description={dataset.description}
+                        createdAt={dataset.createdAt}
+                        sliderImages={dataset.sliderImages}
+                        tags={dataset.tags}
+                    />
+                ))}
+            </Flex>
+        </>
+    );
+}
