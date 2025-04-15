@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { DatasetCard } from '@/components/DatasetCard';
-import { Flex, Text, Center, Button, Stack, Breadcrumbs, Space, Container } from '@mantine/core';
+import { Flex, Text, Center, Button, Stack, Breadcrumbs, Space, Loader } from '@mantine/core';
 import { Notifications, notifications } from '@mantine/notifications';
-import { IconDatabaseOff } from '@tabler/icons-react';
+import { IconDatabaseOff, IconCloudOff } from '@tabler/icons-react';
 import axiosInstance from '@/utils/axiosInstance';
 import { NavLink, Link } from 'react-router-dom';
 
@@ -20,7 +20,7 @@ interface DatasetItem {
 export function MyDatasetsPage() {
     const [datasets, setDatasets] = useState<DatasetItem[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
 
     const breadcrumbs = [
         { label: 'Home', path: '/' },
@@ -32,6 +32,7 @@ export function MyDatasetsPage() {
             .get('/datasets/search/me')
             .then((response) => {
                 setDatasets(response.data);
+                console.log('Fetched datasets:', response.data);
                 setLoading(false);
             })
             .catch((error) => {
@@ -41,9 +42,49 @@ export function MyDatasetsPage() {
                     message: 'Failed to connect to server.',
                     color: 'red',
                 });
+                setError('Failed to connect to the server. Please check your internet connection.');
                 setLoading(false);
             });
     }, []);
+
+    if (loading) {
+        return (
+            <Center style={{ height: '80vh' }}>
+                <Loader size="lg" color="blue" />
+            </Center>
+        );
+    }
+
+    if (error) {
+        return (
+            <>
+                <Space h="md" />
+                <Space h="md" />
+                <div style={{ paddingLeft: '40px' }}>
+                    <Breadcrumbs separator=">">
+                        {breadcrumbs.map((crumb) => (
+                            <Link to={crumb.path} key={crumb.path} className="breadcrumb-link">
+                                {crumb.label}
+                            </Link>
+                        ))}
+                    </Breadcrumbs>
+                </div>
+                <Text ta="center" size="xl" c="blue">My Datasets</Text>
+                <Space h="md" />
+                <Center style={{ height: '60vh' }}>
+                    <Stack align="center">
+                        <IconCloudOff size={64} color="#FFC747" />
+                        <Text c="white" fz="lg" fw={500}>
+                            {error}
+                        </Text>
+                        <Button variant="light" color="blue" onClick={() => window.location.reload()}>
+                            Retry
+                        </Button>
+                    </Stack>
+                </Center>
+            </>
+        );
+    }
 
     if (datasets.length === 0) {
         return (
@@ -81,7 +122,6 @@ export function MyDatasetsPage() {
 
     return (
         <>
-
             <Space h="md" />
             <Space h="md" />
             <div style={{ paddingLeft: '40px' }}>
@@ -94,7 +134,8 @@ export function MyDatasetsPage() {
                 </Breadcrumbs>
             </div>
             <Text ta="center" size="xl" c="blue">My Datasets</Text>
-            <Space h="md" />
+            <Space h="xl" />
+            <Space h="xl" />
             <Flex
                 gap="xl"
                 justify="center"
