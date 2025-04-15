@@ -249,7 +249,6 @@ export function SigninPage() {
                     </Button>
                 </form>
             )}
-            <Notifications />
         </Container>
     );
 }

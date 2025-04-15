@@ -18,6 +18,8 @@ import { AuthProvider } from './context/AuthContext';
 import { TermsPage } from './pages/Terms.page';
 import { PrivateRoute } from './components/PrivateRoute';
 import { MyDatasetsPage } from './pages/MyDatasets.page';
+import { Notifications } from '@mantine/notifications';
+import '@mantine/notifications/styles.css';
 
 export default function App() {
   return (
@@ -31,6 +33,7 @@ export default function App() {
       >
         <BrowserRouter>
           <ScrollToTop />
+          <Notifications />
           <HeaderMegaMenu />
           <Routes>
             <Route path="/" element={<HomePage />} />

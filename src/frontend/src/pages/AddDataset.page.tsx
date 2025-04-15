@@ -980,7 +980,6 @@ export function AddDatasetPage() {
                     {activeStep === 3 ? 'Finish' : 'Next'}
                 </Button>
             </Group>
-            <Notifications />
         </Container>
     );
 }

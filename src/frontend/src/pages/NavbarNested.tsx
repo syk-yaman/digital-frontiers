@@ -196,7 +196,6 @@ export function NavbarNested() {
                         </Table>
                     )}
                 </Container>
-                <Notifications />
             </Container>
         </Flex>
     );

@@ -312,14 +312,9 @@ export function HomePage() {
               ))}
 
             </SimpleGrid>
-            <Notifications />
           </Container>
-
         </div >
       </div >
-
-      {/* <ColorSchemeToggle /> */}
-
     </>
   );
 }

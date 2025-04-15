@@ -374,8 +374,6 @@ export function Datamenu() {
           ))}
         </Flex>
       )}
-      <Notifications />
-
     </>
   );
 }
