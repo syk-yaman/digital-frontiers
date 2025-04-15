@@ -14,4 +14,19 @@ axiosInstance.interceptors.request.use((config) => {
     return config;
 });
 
+// Add a response interceptor to handle 401 Unauthorized
+axiosInstance.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            // Clear the token from localStorage
+            localStorage.removeItem('authToken');
+
+            // Redirect to the sign-in page
+            window.location.href = '/signin';
+        }
+        return Promise.reject(error);
+    }
+);
+
 export default axiosInstance;
