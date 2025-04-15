@@ -198,7 +198,7 @@ export function Dataset() {
           id: item.id,
           name: item.name,
           dataOwnerName: item.dataOwnerName,
-          dataOwnerPhoto: item.dataOwnerPhoto || 'https://via.placeholder.com/100', // Placeholder if missing
+          dataOwnerPhoto: item.dataOwnerPhoto,
           description: item.description,
           createdAt: item.createdAt,
           sliderImages: item.sliderImages,
@@ -460,7 +460,7 @@ export function Dataset() {
                       </Tooltip>
                       <Tooltip
                         color="gray"
-                        label={'Open Link'}
+                        label={'Open link'}
                         position="top"
                         withArrow
                       >

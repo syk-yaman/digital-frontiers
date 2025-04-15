@@ -96,7 +96,7 @@ export function HomePage() {
           createdAt: item.createdAt,
           updatedAt: item.updatedAt,
           dataOwnerName: item.dataOwnerName,
-          dataOwnerPhoto: item.dataOwnerPhoto || 'https://via.placeholder.com/100', // Placeholder if missing
+          dataOwnerPhoto: item.dataOwnerPhoto,
           description: item.description,
           tags: item.tags.map((tag) => ({
             name: tag.name,

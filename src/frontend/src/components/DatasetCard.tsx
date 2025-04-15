@@ -90,7 +90,7 @@ export function DatasetCard({
                     </Group>
                     <Group mt="xs" justify="apart">
                         <Center>
-                            <Avatar src={dataOwnerPhoto} size={30} radius="xl" mr="xs" />
+                            <Avatar size={30} radius="xl" mr="xs" bg={'#1f5754'} />
                             <Text c="white" fz="m" inline>
                                 {dataOwnerName}
                             </Text>

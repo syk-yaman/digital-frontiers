@@ -107,7 +107,6 @@ export function Datamenu() {
         id: item.id,
         position: [location.lon, location.lat], // Longitude, Latitude
         title: item.name,
-        image: item.sliderImages.length > 0 ? item.sliderImages[0].fileName : 'https://via.placeholder.com/150',
         owner: item.dataOwnerName,
         description: item.description,
         tags: item.tags.map((tag) => tag.name), // Extract only tag names
@@ -173,7 +172,7 @@ export function Datamenu() {
           sliderImages: item.sliderImages,
           name: item.name,
           dataOwnerName: item.dataOwnerName,
-          dataOwnerPhoto: item.dataOwnerPhoto || 'https://via.placeholder.com/100', // Placeholder if missing
+          dataOwnerPhoto: item.dataOwnerPhoto,
           description: item.description,
           createdAt: item.createdAt,
           updatedAt: item.updatedAt,
