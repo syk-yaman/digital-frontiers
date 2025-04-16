@@ -1,25 +1,15 @@
-import { HeaderMegaMenu } from '@/components/Header/HeaderMegaMenu';
-import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
-import { Welcome } from '../components/Welcome/Welcome';
-import { FooterLinks } from '@/components/Footer/FooterLinks';
-import { Carousel } from '@mantine/carousel';
 import '@mantine/carousel/styles.css';
 import { Text, Anchor, Breadcrumbs, Image, Center, rem, SegmentedControl, Space, Avatar, Badge, Group, Card, Flex } from '@mantine/core';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import DeckGL from '@deck.gl/react';
-import { DeckProps, MapViewState } from '@deck.gl/core';
 import { GeoJsonLayer, LineLayer, ScatterplotLayer } from '@deck.gl/layers';
 
-import { BASEMAP } from '@deck.gl/carto';
 import { Map, Popup, useControl } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 import '../style.css'
 import './Datamenu.page.css';
 
-// ✅ Types are available here
-import { FeaturesGrid } from '@/components/FeaturesGrid/FeaturesGrid';
 import { MapboxOverlay as DeckOverlay, MapboxOverlayProps } from '@deck.gl/mapbox';
 import { Link } from 'react-router-dom';
 import { IconEye, IconCode, IconExternalLink, IconMap, IconList } from '@tabler/icons-react';
@@ -29,7 +19,6 @@ import { ShapefileLoader } from '@loaders.gl/shapefile';
 import proj4 from 'proj4';
 import { Notifications, notifications } from '@mantine/notifications';
 import axiosInstance from '@/utils/axiosInstance';
-import { API_BASE_URL } from '@/config';
 import { DatasetCard } from '@/components/DatasetCard';
 
 const INITIAL_VIEW_STATE = {

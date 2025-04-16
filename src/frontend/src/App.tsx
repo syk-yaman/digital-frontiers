@@ -13,7 +13,6 @@ import { Dataset } from './pages/Dataset.page';
 import ScrollToTop from './components/ScrollToTop';
 import { SigninPage } from './pages/Signin.page';
 import { AddDatasetPage } from './pages/AddDataset.page';
-import { NavbarNested } from './pages/NavbarNested';
 import { AuthProvider } from './context/AuthContext';
 import { TermsPage } from './pages/Terms.page';
 import { PrivateRoute } from './components/PrivateRoute';
