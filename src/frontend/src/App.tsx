@@ -19,6 +19,7 @@ import { PrivateRoute } from './components/PrivateRoute';
 import { MyDatasetsPage } from './pages/MyDatasets.page';
 import { Notifications } from '@mantine/notifications';
 import '@mantine/notifications/styles.css';
+import { AdminPage } from './pages/Admin.page';
 
 export default function App() {
   return (
@@ -40,7 +41,7 @@ export default function App() {
             <Route path="/dataset/:id" element={<Dataset />} />
             <Route path="/signin" element={<SigninPage />} />
             <Route path="/add-dataset" element={<PrivateRoute><AddDatasetPage /></PrivateRoute>} />
-            <Route path="/admin" element={<PrivateRoute><NavbarNested /></PrivateRoute>} />
+            <Route path="/admin" element={<PrivateRoute><AdminPage /></PrivateRoute>} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/my-datasets" element={<PrivateRoute><MyDatasetsPage /></PrivateRoute>} />
           </Routes>
