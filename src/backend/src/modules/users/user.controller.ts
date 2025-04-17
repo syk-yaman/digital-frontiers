@@ -23,6 +23,6 @@ export class UsersController {
     @UseGuards(JwtAuthGuard)
     @ApiOperation({ summary: 'Get the current signed-in user' })
     async getMe(@Request() req) {
-        return req.user;
+        return this.usersService.findOne(req.user.userId);
     }
 }

@@ -12,9 +12,33 @@ import {
   IconCat,
   IconPower,
   IconSunElectricity,
+  IconHeart,
+  IconMenu,
+  IconMenu2,
+  IconMenu3,
+  IconCategory,
+  IconLayoutDashboard,
+  IconLayoutDashboardFilled,
+  IconPhoto,
+  IconMessageCircle,
+  IconSearch,
+  IconSettings,
+  IconDatabase,
+  IconHome,
+  IconNews,
+  IconLockAccess,
+  IconCircleDashedCheck,
+  IconLogout,
+  IconUser,
+  IconPassword,
+  IconLock,
+  IconUserCircle,
+  IconList,
 } from '@tabler/icons-react';
 import {
+  ActionIcon,
   Anchor,
+  Avatar,
   Box,
   Breadcrumbs,
   Burger,
@@ -25,6 +49,7 @@ import {
   Drawer,
   Group,
   HoverCard,
+  Menu,
   Modal,
   ScrollArea,
   SimpleGrid,
@@ -35,10 +60,12 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { NavLink, useLocation } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { AuthContext } from '@/context/AuthContext';
 import classes from './HeaderMegaMenu.module.css';
 import { changelog, version } from './changelog';
+import cx from 'clsx';
+import IconManager from '@deck.gl/layers/dist/icon-layer/icon-manager';
 
 const mockdata = [
   {
@@ -62,14 +89,13 @@ const mockdata = [
     description: 'Discover visitor trends and demographic insights in the park.',
   },
   {
-    icon: IconChartPie3,
-    title: 'Analytics',
+    icon: IconSunElectricity,
+    title: 'Solar Power',
     description: 'Comprehensive analytics and visualizations of park data.',
   },
   {
-    icon: IconSunElectricity,
-    title: 'Solar Power',
-    description: 'Monitor solar energy generation and usage in the park.',
+    icon: IconList,
+    title: 'Show all',
   }
 ];
 
@@ -77,6 +103,9 @@ export function HeaderMegaMenu() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
   const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
   const [modalOpened, { open: openModal, close: closeModal }] = useDisclosure(false);
+  const [userMenuOpened, setUserMenuOpened] = useState(false);
+  const [dashboardMenuOpened, setDashboardMenuOpened] = useState(false);
+  const [adminMenuOpened, setAdminMenuOpened] = useState(false);
 
   const theme = useMantineTheme();
 
@@ -92,21 +121,49 @@ export function HeaderMegaMenu() {
 
   const links = mockdata.map((item) => (
     <UnstyledButton className={classes.subLink} key={item.title}>
-      <Group wrap="nowrap" align="flex-start">
+      <Group wrap="nowrap" >
         <ThemeIcon size={34} variant="default" radius="md">
           <item.icon size={22} color={'#FFC747'} />
         </ThemeIcon>
-        <div>
-          <Text size="sm" fw={500}>
-            {item.title}
-          </Text>
-          <Text size="xs" c="dimmed">
-            {item.description}
-          </Text>
-        </div>
+        <Text size="sm"  {...item.title.includes('all') ? { color: '#FFC747', fw: 500, td: 'underline' } : { fw: 500 }}>
+          {item.title}
+        </Text>
       </Group>
     </UnstyledButton>
   ));
+
+  const myDashboardMenuItems = (
+    <>
+      <Menu.Item leftSection={<IconHome size={18} />}>
+        Home
+      </Menu.Item>
+      <Menu.Item component={NavLink}
+        to="/my-datasets" leftSection={<IconDatabase size={18} />}>
+        My datasets
+      </Menu.Item>
+      <Menu.Item leftSection={<IconNews size={18} />}>
+        My showcases
+      </Menu.Item>
+      <Menu.Item leftSection={<IconCircleDashedCheck size={18} />}>
+        My access requests
+      </Menu.Item>
+    </>
+  );
+
+  const userMenuItems = (
+    <>
+      <Menu.Item leftSection={<IconUser size={18} />}>
+        Profile
+      </Menu.Item>
+      <Menu.Item leftSection={<IconLock size={18} />}>
+        Change password
+      </Menu.Item>
+      <Menu.Item component={NavLink}
+        onClick={logout} to={''} leftSection={<IconLogout size={18} />}>
+        Sign out
+      </Menu.Item>
+    </>
+  );
 
   return (
     <Box
@@ -182,7 +239,13 @@ export function HeaderMegaMenu() {
               Home
             </NavLink>
 
-            <HoverCard width={600} position="bottom" radius="md" shadow="md" withinPortal>
+            <HoverCard
+              openDelay={100} closeDelay={400}
+              width={600} position="bottom"
+              radius="md" shadow="md"
+              transitionProps={{ transition: 'fade-down' }}
+              offset={20}
+              withinPortal>
               <HoverCard.Target>
                 <NavLink to="/data-menu" className={classes.link}>
                   <Center inline>
@@ -196,38 +259,12 @@ export function HeaderMegaMenu() {
 
               <HoverCard.Dropdown style={{ overflow: 'hidden' }}>
                 <Group justify="space-between" px="md">
-                  <Text fw={500}>Latest added tags</Text>
-                  <NavLink to="/data-menu" className={classes.link}>
-                    <Anchor c='#FFC747' component={NavLink} to="/data-menu" fz="xs">
-                      View all
-                    </Anchor>
-                  </NavLink>
+                  <Text fw={500}>Available tags</Text>
                 </Group>
-
-                <Divider my="sm" />
-
+                <Divider color={'#888888'} my="xs" size={'xs'} />
                 <SimpleGrid cols={2} spacing={0}>
                   {links}
                 </SimpleGrid>
-
-                <div className={classes.dropdownFooter}>
-                  <Group justify="space-between">
-                    <div>
-                      <Text fw={500} fz="sm">
-                        Add your dataset now
-                      </Text>
-                      <Text size="xs" c="dimmed">
-                        Your dataset will be shown here so people can use it too
-                      </Text>
-                    </div>
-                    <Button variant="default" component={NavLink} to="/add-dataset">
-                      Add dataset
-                    </Button>
-                    <Button variant="default" component={NavLink} to="/admin">
-                      Admin
-                    </Button>
-                  </Group>
-                </div>
               </HoverCard.Dropdown>
             </HoverCard>
 
@@ -239,79 +276,83 @@ export function HeaderMegaMenu() {
             </NavLink>
           </Group>
 
-          <Group visibleFrom="sm">
+          <Group >
             <Button
               variant="outline"
               style={{
-                color: '#ffffffdd', // White text
-                backgroundColor: 'transparent', // Transparent background
-                border: '1px solid #ffffff00', // White border
-                fontWeight: 'normal', // Optional: Adjust font weight for visibility
-                padding: '2px 0px', // Optional: Adjust padding
-                transition: 'all 0.3s ease', // Optional: Smooth hover transition
+                color: '#ffffffdd',
+                backgroundColor: 'transparent',
+                border: '1px solid #ffffff00',
+                fontWeight: 'normal',
+                padding: '2px 0px',
+                transition: 'all 0.3s ease',
                 fontSize: '13px'
               }}
               onClick={openModal}>
               {version}
             </Button>
-
-            {isAuthenticated && (<Button variant="outline"
-              style={{
-                color: '#ffffff', // White text
-                backgroundColor: 'transparent', // Transparent background
-                border: '1px solid #fff', // White border
-                fontWeight: 'normal', // Optional: Adjust font weight for visibility
-                padding: '8px 16px', // Optional: Adjust padding
-                transition: 'all 0.3s ease', // Optional: Smooth hover transition
-              }}
-              component={NavLink} to="/add-dataset">
-              Add dataset
-            </Button>)}
-
-            {isAuthenticated && (
-              <Button
-                variant="outline"
-                style={{
-                  color: '#ffffff', // White text
-                  backgroundColor: 'transparent', // Transparent background
-                  border: '1px solid #fff', // White border
-                  fontWeight: 'normal', // Optional: Adjust font weight for visibility
-                  padding: '8px 16px', // Optional: Adjust padding
-                  transition: 'all 0.3s ease', // Optional: Smooth hover transition
-                }}
-                component={NavLink}
-                to="/my-datasets"
-              >
-                My Datasets
-              </Button>
-            )}
-
-            {user?.isAdmin && (
-              <Button
-                variant="outline"
-                style={{
-                  color: '#ffffff', // White text
-                  backgroundColor: 'transparent', // Transparent background
-                  border: '1px solid #fff', // White border
-                  fontWeight: 'normal', // Optional: Adjust font weight for visibility
-                  padding: '8px 16px', // Optional: Adjust padding
-                  transition: 'all 0.3s ease', // Optional: Smooth hover transition
-                }}
-                component={NavLink}
-                to="/admin"
-              >
-                Admin
-              </Button>
-            )}
-
+            {isAuthenticated && user?.isAdmin && (<UnstyledButton component={NavLink}
+              to="/admin"
+              className={cx(classes.menu, { [classes.menuActive]: adminMenuOpened })}
+            >
+              <Group gap={7}>
+                <IconSettings radius="xl" size={24} />
+                <Text fw={500} size="sm" lh={1} mr={3}>
+                  Admin
+                </Text>
+              </Group>
+            </UnstyledButton>)}
+            {isAuthenticated && (<Menu
+              width={260}
+              position="bottom-end"
+              transitionProps={{ transition: 'pop-top-right' }}
+              onClose={() => setDashboardMenuOpened(false)}
+              onOpen={() => setDashboardMenuOpened(true)}
+              withinPortal
+              offset={20}
+              trigger="hover" openDelay={100} closeDelay={100}
+            >
+              <Menu.Target>
+                <UnstyledButton
+                  className={cx(classes.menu, { [classes.menuActive]: dashboardMenuOpened })}
+                >
+                  <Group gap={7}>
+                    <IconLayoutDashboardFilled radius="xl" size={24} />
+                    <Text fw={500} size="sm" lh={1} mr={3}>
+                      My dashboard
+                    </Text>
+                    <IconChevronDown size={12} stroke={1.5} />
+                  </Group>
+                </UnstyledButton>
+              </Menu.Target>
+              <Menu.Dropdown >{myDashboardMenuItems}</Menu.Dropdown>
+            </Menu>)}
             {isAuthenticated ? (
-              <Button
-                variant="outline"
-                style={{ color: '#ffffff', border: '1px solid #fff' }}
-                component={NavLink}
-                onClick={logout} to={''} >
-                Sign Out
-              </Button>
+              <Menu
+                width={260}
+                position="bottom-end"
+                transitionProps={{ transition: 'pop-top-right' }}
+                onClose={() => setUserMenuOpened(false)}
+                onOpen={() => setUserMenuOpened(true)}
+                trigger="hover" openDelay={100} closeDelay={100}
+                offset={20}
+                withinPortal
+              >
+                <Menu.Target>
+                  <UnstyledButton
+                    className={cx(classes.menu, { [classes.menuActive]: userMenuOpened })}
+                  >
+                    <Group gap={7}>
+                      <IconUserCircle radius="xl" size={24} />
+                      <Text fw={500} size="sm" lh={1} mr={3}>
+                        {user?.firstName ? user.firstName : 'User'}
+                      </Text>
+                      <IconChevronDown size={12} stroke={1.5} />
+                    </Group>
+                  </UnstyledButton>
+                </Menu.Target>
+                <Menu.Dropdown >{userMenuItems}</Menu.Dropdown>
+              </Menu>
             ) : (
               <Button
                 variant="outline"
@@ -322,9 +363,8 @@ export function HeaderMegaMenu() {
                 Sign In
               </Button>
             )}
-          </Group>
 
-          <Burger opened={drawerOpened} onClick={toggleDrawer} />
+          </Group>
         </Group>
       </header>
       <Modal opened={modalOpened} onClose={closeModal} c='#FFC747' className={classes.modalcustom} // Use the custom class here

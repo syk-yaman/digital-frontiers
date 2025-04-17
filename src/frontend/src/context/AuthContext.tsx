@@ -5,6 +5,8 @@ interface User {
     isAdmin: boolean;
     email: string;
     userId: string;
+    firstName: string;
+    lastName: string;
 }
 
 interface AuthContextType {
@@ -32,6 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
             const response = await axiosInstance.get(`/users/me`);
             setUser(response.data); // Store user details in state
+            console.log('Current user:', response.data);
         } catch (error) {
             console.error('Failed to fetch current user:', error);
         }
