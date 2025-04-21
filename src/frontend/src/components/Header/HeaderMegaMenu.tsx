@@ -134,9 +134,6 @@ export function HeaderMegaMenu() {
 
   const myDashboardMenuItems = (
     <>
-      <Menu.Item leftSection={<IconHome size={18} />}>
-        Home
-      </Menu.Item>
       <Menu.Item component={NavLink}
         to="/my-datasets" leftSection={<IconDatabase size={18} />}>
         My datasets
