@@ -136,13 +136,13 @@ export function HeaderMegaMenu() {
     <>
       <Menu.Item component={NavLink}
         to="/my-datasets" leftSection={<IconDatabase size={18} />}>
-        My datasets
+        Datasets
       </Menu.Item>
-      <Menu.Item leftSection={<IconNews size={18} />}>
-        My showcases
+      <Menu.Item style={{ cursor: 'not-allowed' }} leftSection={<IconNews size={18} />}>
+        Showcases
       </Menu.Item>
-      <Menu.Item leftSection={<IconCircleDashedCheck size={18} />}>
-        My access requests
+      <Menu.Item style={{ cursor: 'not-allowed' }} leftSection={<IconCircleDashedCheck size={18} />}>
+        Access requests
       </Menu.Item>
     </>
   );
@@ -307,7 +307,7 @@ export function HeaderMegaMenu() {
               onOpen={() => setDashboardMenuOpened(true)}
               withinPortal
               offset={20}
-              trigger="hover" openDelay={100} closeDelay={100}
+              trigger="hover" openDelay={100} closeDelay={300}
             >
               <Menu.Target>
                 <UnstyledButton
@@ -316,7 +316,7 @@ export function HeaderMegaMenu() {
                   <Group gap={7}>
                     <IconLayoutDashboardFilled radius="xl" size={24} />
                     <Text fw={500} size="sm" lh={1} mr={3}>
-                      My dashboard
+                      My items
                     </Text>
                     <IconChevronDown size={12} stroke={1.5} />
                   </Group>

@@ -142,13 +142,9 @@ button:hover {
 
 .hoverCardDropdown {
   background-color: rgba(255, 255, 255, 0.3);
-  /* Transparent background */
   backdrop-filter: blur(10px);
-  /* Blur effect */
   border-radius: var(--mantine-radius-md);
-  /* Optional: Rounded corners */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  /* Optional: Subtle shadow */
   border: 1px solid rgba(255, 255, 255, 0.2);
-  /* Optional: Border for better visibility */
+
 }
