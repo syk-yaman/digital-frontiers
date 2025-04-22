@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { IconCalendarStats, IconChevronRight } from '@tabler/icons-react';
 import { Box, Collapse, Group, Text, ThemeIcon, UnstyledButton } from '@mantine/core';
+import { NavLink } from 'react-router-dom'; // Import NavLink
 import classes from './NavbarLinksGroup.module.css';
 
 interface LinksGroupProps {
@@ -14,15 +15,15 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links }: LinksG
   const hasLinks = Array.isArray(links);
   const [opened, setOpened] = useState(initiallyOpened || false);
   const items = (hasLinks ? links : []).map((link) => (
-    <Text<'a'>
-      component="a"
-      className={classes.link}
-      href={link.link}
+    <NavLink
+      to={link.link}
       key={link.label}
-      onClick={(event) => event.preventDefault()}
+      className={({ isActive }) =>
+        isActive ? `${classes.link} ${classes.activeLink}` : classes.link
+      } // Optional: Add active link styling
     >
       {link.label}
-    </Text>
+    </NavLink>
   ));
 
   return (

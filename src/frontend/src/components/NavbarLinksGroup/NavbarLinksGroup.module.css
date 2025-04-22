@@ -32,3 +32,9 @@
 .chevron {
   transition: transform 200ms ease;
 }
+
+.activeLink {
+  font-weight: bold;
+  color: var(--mantine-color-blue-6);
+  background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-7));
+}

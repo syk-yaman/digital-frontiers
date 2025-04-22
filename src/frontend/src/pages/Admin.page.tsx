@@ -1,54 +1,44 @@
 import {
     IconAdjustments,
-    IconCalendarStats,
     IconDatabase,
-    IconFileAnalytics,
-    IconGauge,
     IconHome,
-    IconLock,
-    IconNotes,
-    IconPresentationAnalytics,
     IconTag,
     IconUser,
 } from '@tabler/icons-react';
 import { Box, Code, Group, Modal, ScrollArea, Text } from '@mantine/core';
 import classes from './Admin.page.module.css';
-import { MantineLogo } from '@mantinex/mantine-logo';
-import { useState } from 'react';
 import { LinksGroup } from '@/components/NavbarLinksGroup/NavbarLinksGroup';
 import { changelog, version } from '@/components/Header/changelog';
 import { useDisclosure } from '@mantine/hooks';
-import { Routes, Route } from 'react-router-dom';
-import { AdminHome } from './AdminHome.page';
-import { AdminDatasets } from './AdminDatasets.page';
+import { Outlet, NavLink } from 'react-router-dom';
 
 const menuData = [
-    { label: 'Home', icon: IconHome, link: '/' }, // Add the link property for Home
+    { label: 'Home', icon: IconHome, link: '/admin' },
     {
         label: 'Datasets',
         icon: IconDatabase,
         initiallyOpened: true,
         links: [
-            { label: 'View all', link: '/datasets' }, // Ensure the link matches the route path
-            { label: 'Incoming add requests', link: '/datasets/requests' }, // Example for another sub-page
+            { label: 'View all', link: '/admin/datasets' },
+            { label: 'Incoming add requests', link: '/admin/datasets/requests' },
         ],
     },
     {
         label: 'Tags',
         icon: IconTag,
         links: [
-            { label: 'View all', link: '/tags' },
-            { label: 'Incoming add requests', link: '/tags/requests' },
+            { label: 'View all', link: '/admin/tags' },
+            { label: 'Incoming add requests', link: '/admin/tags/requests' },
         ],
     },
     {
         label: 'Users',
         icon: IconUser,
         links: [
-            { label: 'View all', link: '/users' },
+            { label: 'View all', link: '/admin/users' },
         ],
     },
-    { label: 'Settings', icon: IconAdjustments, link: '/settings' }, // Add the link property for Settings
+    { label: 'Settings', icon: IconAdjustments, link: '/admin/settings' },
 ];
 
 export function AdminPage() {
@@ -97,11 +87,7 @@ export function AdminPage() {
             </nav>
 
             <main style={{ flex: 1, padding: '20px' }}>
-                <Routes>
-                    <Route path="/" element={<AdminHome />} /> {/* Home sub-page */}
-                    <Route path="/datasets" element={<AdminDatasets />} /> {/* View All Datasets sub-page */}
-                    {/* Add other sub-page routes here */}
-                </Routes>
+                <Outlet /> {/* Rendering child routes here */}
             </main>
         </div>
     );
