@@ -23,7 +23,7 @@ const menuData = [
         icon: IconDatabase,
         initiallyOpened: true,
         links: [
-            { label: 'View all', link: '/admin/datasets' },
+            { label: 'Manage all', link: '/admin/datasets' },
             { label: 'Incoming add requests', link: '/admin/datasets/requests' },
         ],
     },
@@ -31,7 +31,7 @@ const menuData = [
         label: 'Tags',
         icon: IconTag,
         links: [
-            { label: 'View all', link: '/admin/tags' },
+            { label: 'Manage all', link: '/admin/tags' },
             { label: 'Incoming add requests', link: '/admin/tags/requests' },
         ],
     },
@@ -39,7 +39,7 @@ const menuData = [
         label: 'Users',
         icon: IconUser,
         links: [
-            { label: 'View all', link: '/admin/users' },
+            { label: 'Manage all', link: '/admin/users' },
         ],
     },
     { label: 'Settings', icon: IconAdjustments, link: '/admin/settings' },
