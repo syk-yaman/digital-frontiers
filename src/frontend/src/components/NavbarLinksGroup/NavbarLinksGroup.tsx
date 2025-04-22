@@ -8,10 +8,11 @@ interface LinksGroupProps {
   icon: React.FC<any>;
   label: string;
   initiallyOpened?: boolean;
+  link?: string;
   links?: { label: string; link: string }[];
 }
 
-export function LinksGroup({ icon: Icon, label, initiallyOpened, links }: LinksGroupProps) {
+export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link }: LinksGroupProps) {
   const hasLinks = Array.isArray(links);
   const [opened, setOpened] = useState(initiallyOpened || false);
   const items = (hasLinks ? links : []).map((link) => (
@@ -20,7 +21,7 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links }: LinksG
       key={link.label}
       className={({ isActive }) =>
         isActive ? `${classes.link} ${classes.activeLink}` : classes.link
-      } // Optional: Add active link styling
+      }
     >
       {link.label}
     </NavLink>
@@ -28,7 +29,13 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links }: LinksG
 
   return (
     <>
-      <UnstyledButton onClick={() => setOpened((o) => !o)} className={classes.control}>
+      <NavLink onClick={() => setOpened((o) => !o)}
+        className={({ isActive }) =>
+          isActive && link != null ? `${classes.controlActive}` : `${classes.control}`
+        }
+        to={link == null ? '#' : link}
+        end
+      >
         <Group justify="space-between" gap={0}>
           <Box style={{ display: 'flex', alignItems: 'center' }}>
             <ThemeIcon variant="light" size={30}>
@@ -45,26 +52,8 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links }: LinksG
             />
           )}
         </Group>
-      </UnstyledButton>
+      </NavLink>
       {hasLinks ? <Collapse in={opened}>{items}</Collapse> : null}
     </>
-  );
-}
-
-const mockdata = {
-  label: 'Releases',
-  icon: IconCalendarStats,
-  links: [
-    { label: 'Upcoming releases', link: '/' },
-    { label: 'Previous releases', link: '/' },
-    { label: 'Releases schedule', link: '/' },
-  ],
-};
-
-export function NavbarLinksGroup() {
-  return (
-    <Box mih={220} p="md">
-      <LinksGroup {...mockdata} />
-    </Box>
   );
 }

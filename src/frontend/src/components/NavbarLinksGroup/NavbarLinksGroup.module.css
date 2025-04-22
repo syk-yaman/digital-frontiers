@@ -5,6 +5,7 @@
   padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
   color: var(--mantine-color-text);
   font-size: var(--mantine-font-size-sm);
+  text-decoration: none;
 
   @mixin hover {
     background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-7));
@@ -31,6 +32,23 @@
 
 .chevron {
   transition: transform 200ms ease;
+}
+
+.controlActive {
+  font-weight: 500;
+  display: block;
+  width: 100%;
+  text-decoration: none;
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+  color: var(--mantine-color-text);
+  font-size: var(--mantine-font-size-sm);
+  background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-7));
+  font-weight: bold;
+
+  @mixin hover {
+    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-7));
+    color: light-dark(var(--mantine-color-black), var(--mantine-color-dark-0));
+  }
 }
 
 .activeLink {

@@ -13,7 +13,11 @@ import { useDisclosure } from '@mantine/hooks';
 import { Outlet, NavLink } from 'react-router-dom';
 
 const menuData = [
-    { label: 'Home', icon: IconHome, link: '/admin' },
+    {
+        label: 'Home',
+        icon: IconHome,
+        link: '/admin'
+    },
     {
         label: 'Datasets',
         icon: IconDatabase,
