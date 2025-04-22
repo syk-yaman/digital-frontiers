@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import {
     Table,
     Pagination,
@@ -10,9 +9,14 @@ import {
     Loader,
     Center,
     Space,
+    ScrollArea,
+    Progress,
+    Anchor,
 } from '@mantine/core';
+import { useEffect, useState } from 'react';
 import axiosInstance from '@/utils/axiosInstance';
 import { notifications } from '@mantine/notifications';
+import classes from './AdminDatasets.module.css';
 
 interface DatasetItem {
     id: number;
@@ -21,6 +25,7 @@ interface DatasetItem {
     createdAt: string;
     tags: { id: number; name: string; colour: string }[];
     locations: { id: number }[];
+    reviews: { positive: number; negative: number };
 }
 
 export function AdminDatasets() {
@@ -81,6 +86,56 @@ export function AdminDatasets() {
         new Set(datasets.flatMap((dataset) => dataset.tags.map((tag) => tag.name)))
     );
 
+    const rows = paginatedDatasets.map((dataset) => {
+
+        return (
+            <Table.Tr key={dataset.id}>
+                <Table.Td>
+                    <Anchor component="button" fz="sm">
+                        {dataset.name}
+                    </Anchor>
+                </Table.Td>
+                <Table.Td>{dataset.dataOwnerName}</Table.Td>
+                <Table.Td>{new Date(dataset.createdAt).toLocaleDateString()}</Table.Td>
+                <Table.Td>
+                    <Group >
+                        {dataset.tags.map((tag) => (
+                            <Badge
+                                key={tag.id}
+                                color={tag.colour === '#000000' ? 'gray' : tag.colour}
+                            >
+                                {tag.name}
+                            </Badge>
+                        ))}
+                    </Group>
+                </Table.Td>
+                <Table.Td>{dataset.locations.length}</Table.Td>
+                <Table.Td>
+                    <Group justify="space-between">
+                        <Text fz="xs" c="teal" fw={700}>
+                            {1}%
+                        </Text>
+                        <Text fz="xs" c="red" fw={700}>
+                            {1}%
+                        </Text>
+                    </Group>
+                    <Progress.Root>
+                        <Progress.Section
+                            className={classes.progressSection}
+                            value={1}
+                            color="teal"
+                        />
+                        <Progress.Section
+                            className={classes.progressSection}
+                            value={1}
+                            color="red"
+                        />
+                    </Progress.Root>
+                </Table.Td>
+            </Table.Tr>
+        );
+    });
+
     return (
         <Container>
             <Text size="xl" fw={700} mb="lg">
@@ -95,39 +150,23 @@ export function AdminDatasets() {
                 mb="lg"
             />
 
-            <Table highlightOnHover>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Owner</th>
-                        <th>Created At</th>
-                        <th>Tags</th>
-                        <th>Locations</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {paginatedDatasets.map((dataset) => (
-                        <tr key={dataset.id}>
-                            <td>{dataset.name}</td>
-                            <td>{dataset.dataOwnerName}</td>
-                            <td>{new Date(dataset.createdAt).toLocaleDateString()}</td>
-                            <td>
-                                <Group>
-                                    {dataset.tags.map((tag) => (
-                                        <Badge
-                                            key={tag.id}
-                                            color={tag.colour === '#000000' ? 'gray' : tag.colour}
-                                        >
-                                            {tag.name}
-                                        </Badge>
-                                    ))}
-                                </Group>
-                            </td>
-                            <td>{dataset.locations.length}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </Table>
+            <ScrollArea>
+                <Table.ScrollContainer minWidth={800}>
+                    <Table verticalSpacing="xs">
+                        <Table.Thead>
+                            <Table.Tr>
+                                <Table.Th>Name</Table.Th>
+                                <Table.Th>Owner</Table.Th>
+                                <Table.Th>Created At</Table.Th>
+                                <Table.Th>Tags</Table.Th>
+                                <Table.Th>Locations</Table.Th>
+                                <Table.Th>Reviews Distribution</Table.Th>
+                            </Table.Tr>
+                        </Table.Thead>
+                        <Table.Tbody>{rows}</Table.Tbody>
+                    </Table>
+                </Table.ScrollContainer>
+            </ScrollArea>
 
             <Space h="md" />
 
