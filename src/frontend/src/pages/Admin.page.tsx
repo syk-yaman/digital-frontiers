@@ -18,37 +18,37 @@ import { useState } from 'react';
 import { LinksGroup } from '@/components/NavbarLinksGroup/NavbarLinksGroup';
 import { changelog, version } from '@/components/Header/changelog';
 import { useDisclosure } from '@mantine/hooks';
-import { Routes, Route } from 'react-router-dom'; // Import routing components
+import { Routes, Route } from 'react-router-dom';
 import { AdminHome } from './AdminHome.page';
+import { AdminDatasets } from './AdminDatasets.page';
 
 const menuData = [
-    { label: 'Home', icon: IconHome },
+    { label: 'Home', icon: IconHome, link: '/' }, // Add the link property for Home
     {
         label: 'Datasets',
         icon: IconDatabase,
         initiallyOpened: true,
         links: [
-            { label: 'View all', link: '/' },
-            { label: 'Incoming add requests', link: '/' },
+            { label: 'View all', link: '/datasets' }, // Ensure the link matches the route path
+            { label: 'Incoming add requests', link: '/datasets/requests' }, // Example for another sub-page
         ],
     },
     {
         label: 'Tags',
         icon: IconTag,
         links: [
-            { label: 'View all', link: '/' },
-            { label: 'Incoming add requests', link: '/' },
+            { label: 'View all', link: '/tags' },
+            { label: 'Incoming add requests', link: '/tags/requests' },
         ],
     },
     {
         label: 'Users',
         icon: IconUser,
         links: [
-            { label: 'View all', link: '/' },
+            { label: 'View all', link: '/users' },
         ],
     },
-    { label: 'Settings', icon: IconAdjustments },
-
+    { label: 'Settings', icon: IconAdjustments, link: '/settings' }, // Add the link property for Settings
 ];
 
 export function AdminPage() {
@@ -98,7 +98,8 @@ export function AdminPage() {
 
             <main style={{ flex: 1, padding: '20px' }}>
                 <Routes>
-                    <Route path="/" element={<AdminHome />} /> {/* Route for the Home sub-page */}
+                    <Route path="/" element={<AdminHome />} /> {/* Home sub-page */}
+                    <Route path="/datasets" element={<AdminDatasets />} /> {/* View All Datasets sub-page */}
                     {/* Add other sub-page routes here */}
                 </Routes>
             </main>
