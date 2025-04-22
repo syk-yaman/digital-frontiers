@@ -1,95 +1,88 @@
-import { useState } from 'react';
 import {
+    IconAdjustments,
     IconCalendarStats,
-    IconDeviceDesktopAnalytics,
-    IconFingerprint,
+    IconDatabase,
+    IconFileAnalytics,
     IconGauge,
-    IconHome2,
-    IconSettings,
+    IconHome,
+    IconLock,
+    IconNotes,
+    IconPresentationAnalytics,
+    IconTag,
     IconUser,
 } from '@tabler/icons-react';
-import { Title, Tooltip, UnstyledButton } from '@mantine/core';
-import { MantineLogo } from '@mantinex/mantine-logo';
+import { Box, Code, Group, Modal, ScrollArea, Text } from '@mantine/core';
 import classes from './Admin.page.module.css';
+import { MantineLogo } from '@mantinex/mantine-logo';
+import { useState } from 'react';
+import { LinksGroup } from '@/components/NavbarLinksGroup/NavbarLinksGroup';
+import { changelog, version } from '@/components/Header/changelog';
+import { useDisclosure } from '@mantine/hooks';
 
-const mainLinksMockdata = [
-    { icon: IconHome2, label: 'Home' },
-    { icon: IconGauge, label: 'Dashboard' },
-    { icon: IconDeviceDesktopAnalytics, label: 'Analytics' },
-    { icon: IconCalendarStats, label: 'Releases' },
-    { icon: IconUser, label: 'Account' },
-    { icon: IconFingerprint, label: 'Security' },
-    { icon: IconSettings, label: 'Settings' },
-];
+const menuData = [
+    { label: 'Home', icon: IconHome },
+    {
+        label: 'Datasets',
+        icon: IconDatabase,
+        initiallyOpened: true,
+        links: [
+            { label: 'View all', link: '/' },
+            { label: 'Incoming add requests', link: '/' },
+        ],
+    },
+    {
+        label: 'Tags',
+        icon: IconTag,
+        links: [
+            { label: 'View all', link: '/' },
+            { label: 'Incoming add requests', link: '/' },
+        ],
+    },
+    {
+        label: 'Users',
+        icon: IconUser,
+        links: [
+            { label: 'View all', link: '/' },
+        ],
+    },
+    { label: 'Settings', icon: IconAdjustments },
 
-const linksMockdata = [
-    'Security',
-    'Settings',
-    'Dashboard',
-    'Releases',
-    'Account',
-    'Orders',
-    'Clients',
-    'Databases',
-    'Pull Requests',
-    'Open Issues',
-    'Wiki pages',
 ];
 
 export function AdminPage() {
-    const [active, setActive] = useState('Releases');
-    const [activeLink, setActiveLink] = useState('Settings');
-
-    const mainLinks = mainLinksMockdata.map((link) => (
-        <Tooltip
-            label={link.label}
-            position="right"
-            withArrow
-            transitionProps={{ duration: 0 }}
-            key={link.label}
-        >
-            <UnstyledButton
-                onClick={() => setActive(link.label)}
-                className={classes.mainLink}
-                data-active={link.label === active || undefined}
-            >
-                <link.icon size={22} stroke={1.5} />
-            </UnstyledButton>
-        </Tooltip>
-    ));
-
-    const links = linksMockdata.map((link) => (
-        <a
-            className={classes.link}
-            data-active={activeLink === link || undefined}
-            href="#"
-            onClick={(event) => {
-                event.preventDefault();
-                setActiveLink(link);
-            }}
-            key={link}
-        >
-            {link}
-        </a>
-    ));
+    const links = menuData.map((item) => <LinksGroup {...item} key={item.label} />);
+    const [modalOpened, { open: openModal, close: closeModal }] = useDisclosure(false);
 
     return (
         <nav className={classes.navbar}>
-            <div className={classes.wrapper}>
-                <div className={classes.aside}>
-                    <div className={classes.logo}>
-                        <MantineLogo type="mark" size={30} />
-                    </div>
-                    {mainLinks}
-                </div>
-                <div className={classes.main}>
-                    <Title order={4} className={classes.title}>
-                        {active}
-                    </Title>
-
-                    {links}
-                </div>
+            <div className={classes.header}>
+                <Group justify="space-between">
+                    <Text size="lg">Admin dashboard</Text>
+                    <Code style={{ cursor: 'pointer' }} onClick={openModal} fw={700}>{version}</Code>
+                </Group>
             </div>
+
+            <ScrollArea className={classes.links}>
+                <div className={classes.linksInner}>{links}</div>
+            </ScrollArea>
+
+            <Modal opened={modalOpened} onClose={closeModal} c='#FFC747' className={classes.modalcustom} // Use the custom class here
+                title="Changelog" size="md" zIndex={999999} centered>
+                {changelog.map((log) => (
+                    <Box key={log.version} mb="sm">
+                        <Text c='white' fw={700} mb="xs">
+                            {log.version}
+                        </Text>
+                        <ul>
+                            {log.changes.map((change, index) => (
+                                <li key={index}>
+                                    <Text c='white' size="sm">{change}</Text>
+                                </li>
+                            ))}
+                        </ul>
+                    </Box>
+                ))}
+            </Modal>
         </nav>
     );
 }
