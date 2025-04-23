@@ -26,11 +26,26 @@ interface DatasetItem {
     id: number;
     name: string;
     dataOwnerName: string;
-    createdAt: string;
-    tags: { id: number; name: string; colour: string }[];
-    locations: { id: number }[];
-    reviews: { positive: number; negative: number };
+    dataOwnerEmail: string;
+    dataOwnerPhoto: string;
+    datasetType: string;
     description: string;
+    updateFrequency: number;
+    updateFrequencyUnit: string;
+    dataExample: string;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string | null;
+    links: { id: number; title: string; url: string }[]; // Replace 'any' with a more specific type if possible
+    locations: any[];
+    sliderImages: { id: number; fileName: string }[];
+    tags: { id: number; name: string; colour: string; icon: string }[];
+    lastReading: string;
+    mqttAddress: string,
+    mqttPort: number,
+    mqttTopic: string,
+    mqttUsername: string,
+    mqttPassword: string,
 }
 
 export function AdminDatasets() {
@@ -116,14 +131,24 @@ export function AdminDatasets() {
                         render: (record) => <Text fw={500}>{record.name}</Text>,
                     },
                     {
+                        accessor: 'datasetType',
+                        title: 'Access mode',
+                        render: (record) => (<Text
+                            size="sm"
+                            style={{ color: record.datasetType == 'open' ? '#6ea96e' : '#ffa392' }}
+                        >
+                            {record.datasetType == 'open' ? 'Open' : 'Controlled'}
+                        </Text>)
+                    },
+                    {
                         accessor: 'dataOwnerName',
                         title: 'Owner',
                     },
                     {
-                        accessor: 'createdAt',
-                        title: 'Created At',
+                        accessor: 'updateFrequency',
+                        title: 'Type',
                         render: (record) =>
-                            new Date(record.createdAt).toLocaleDateString(),
+                            record.updateFrequency == 0 ? 'Static' : 'Live',
                     },
                     {
                         accessor: 'tags',
@@ -193,14 +218,10 @@ export function AdminDatasets() {
                     content: ({ record }) => (
                         <Stack className={classes.details} p="xs" gap={6}>
                             <Group gap={6}>
-                                <div className={classes.label}>Postal address:</div>
+                                <div className={classes.label}>Description:</div>
                                 <div>
-                                    {record.description}, {record.dataOwnerName}, {record.createdAt}
+                                    {record.description}
                                 </div>
-                            </Group>
-                            <Group gap={6}>
-                                <div className={classes.label}>Mission statement:</div>
-                                <Box fs="italic">“{record.id}”</Box>
                             </Group>
                         </Stack>
                     ),
