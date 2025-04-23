@@ -1,22 +1,26 @@
 import {
-    Table,
-    Pagination,
-    Text,
-    Badge,
-    Group,
-    MultiSelect,
     Container,
-    Loader,
+    Text,
+    MultiSelect,
     Center,
+    Loader,
     Space,
-    ScrollArea,
-    Progress,
-    Anchor,
+    Button,
+    Group,
+    Badge,
+    Modal,
+    Stack,
+    Box,
+    ActionIcon,
 } from '@mantine/core';
+import { DataTable } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
 import axiosInstance from '@/utils/axiosInstance';
 import { notifications } from '@mantine/notifications';
+import '@mantine/core/styles.layer.css';
+import 'mantine-datatable/styles.layer.css';
 import classes from './AdminDatasets.module.css';
+import { IconEye, IconEdit, IconTrash } from '@tabler/icons-react';
 
 interface DatasetItem {
     id: number;
@@ -26,6 +30,7 @@ interface DatasetItem {
     tags: { id: number; name: string; colour: string }[];
     locations: { id: number }[];
     reviews: { positive: number; negative: number };
+    description: string;
 }
 
 export function AdminDatasets() {
@@ -34,6 +39,8 @@ export function AdminDatasets() {
     const [error, setError] = useState<string | null>(null);
     const [activePage, setActivePage] = useState(1);
     const [filteredTags, setFilteredTags] = useState<string[]>([]);
+    const [expandedRow, setExpandedRow] = useState<number | null>(null);
+    const [modalOpened, setModalOpened] = useState(false);
 
     const itemsPerPage = 10;
 
@@ -86,56 +93,6 @@ export function AdminDatasets() {
         new Set(datasets.flatMap((dataset) => dataset.tags.map((tag) => tag.name)))
     );
 
-    const rows = paginatedDatasets.map((dataset) => {
-
-        return (
-            <Table.Tr key={dataset.id}>
-                <Table.Td>
-                    <Anchor component="button" fz="sm">
-                        {dataset.name}
-                    </Anchor>
-                </Table.Td>
-                <Table.Td>{dataset.dataOwnerName}</Table.Td>
-                <Table.Td>{new Date(dataset.createdAt).toLocaleDateString()}</Table.Td>
-                <Table.Td>
-                    <Group >
-                        {dataset.tags.map((tag) => (
-                            <Badge
-                                key={tag.id}
-                                color={tag.colour === '#000000' ? 'gray' : tag.colour}
-                            >
-                                {tag.name}
-                            </Badge>
-                        ))}
-                    </Group>
-                </Table.Td>
-                <Table.Td>{dataset.locations.length}</Table.Td>
-                <Table.Td>
-                    <Group justify="space-between">
-                        <Text fz="xs" c="teal" fw={700}>
-                            {1}%
-                        </Text>
-                        <Text fz="xs" c="red" fw={700}>
-                            {1}%
-                        </Text>
-                    </Group>
-                    <Progress.Root>
-                        <Progress.Section
-                            className={classes.progressSection}
-                            value={1}
-                            color="teal"
-                        />
-                        <Progress.Section
-                            className={classes.progressSection}
-                            value={1}
-                            color="red"
-                        />
-                    </Progress.Root>
-                </Table.Td>
-            </Table.Tr>
-        );
-    });
-
     return (
         <Container>
             <Text size="xl" fw={700} mb="lg">
@@ -150,33 +107,113 @@ export function AdminDatasets() {
                 mb="lg"
             />
 
-            <ScrollArea>
-                <Table.ScrollContainer minWidth={800}>
-                    <Table verticalSpacing="xs">
-                        <Table.Thead>
-                            <Table.Tr>
-                                <Table.Th>Name</Table.Th>
-                                <Table.Th>Owner</Table.Th>
-                                <Table.Th>Created At</Table.Th>
-                                <Table.Th>Tags</Table.Th>
-                                <Table.Th>Locations</Table.Th>
-                                <Table.Th>Reviews Distribution</Table.Th>
-                            </Table.Tr>
-                        </Table.Thead>
-                        <Table.Tbody>{rows}</Table.Tbody>
-                    </Table>
-                </Table.ScrollContainer>
-            </ScrollArea>
+            <DataTable
+                withTableBorder
+                columns={[
+                    {
+                        accessor: 'name',
+                        title: 'Name',
+                        render: (record) => <Text fw={500}>{record.name}</Text>,
+                    },
+                    {
+                        accessor: 'dataOwnerName',
+                        title: 'Owner',
+                    },
+                    {
+                        accessor: 'createdAt',
+                        title: 'Created At',
+                        render: (record) =>
+                            new Date(record.createdAt).toLocaleDateString(),
+                    },
+                    {
+                        accessor: 'tags',
+                        title: 'Tags',
+                        render: (record) => (
+                            <Group >
+                                {record.tags.map((tag) => (
+                                    <Badge
+                                        key={tag.id}
+                                        color={tag.colour === '#000000' ? 'gray' : tag.colour}
+                                    >
+                                        {tag.name}
+                                    </Badge>
+                                ))}
+                            </Group>
+                        ),
+                    },
+                    {
+                        accessor: 'locations',
+                        title: 'Locations',
+                        render: (record) => record.locations.length,
+                    },
+                    {
+                        accessor: 'actions',
+                        title: 'Actions',
+                        render: (record) => (
+                            <Group gap={4} justify="right" wrap="nowrap">
+                                <ActionIcon
+                                    size="sm"
+                                    variant="subtle"
+                                    color="green"
+                                //onClick={() => }
+                                >
+                                    <IconEye size={16} />
+                                </ActionIcon>
+                                <ActionIcon
+                                    size="sm"
+                                    variant="subtle"
+                                    color="blue"
+                                // onClick={() => showModal({ company, action: 'edit' })}
+                                >
+                                    <IconEdit size={16} />
+                                </ActionIcon>
+                                <ActionIcon
+                                    size="sm"
+                                    variant="subtle"
+                                    color="red"
+                                // onClick={() => showModal({ company, action: 'delete' })}
+                                >
+                                    <IconTrash size={16} />
+                                </ActionIcon>
+                            </Group>
+                        ),
+                    },
+                ]}
+                records={paginatedDatasets}
+                totalRecords={filteredDatasets.length}
+                recordsPerPage={itemsPerPage}
+                page={activePage}
+                onPageChange={setActivePage}
+                emptyState={
+                    <Text ta="center" c="dimmed">
+                        No datasets found
+                    </Text>
+                }
+                rowExpansion={{
+                    content: ({ record }) => (
+                        <Stack className={classes.details} p="xs" gap={6}>
+                            <Group gap={6}>
+                                <div className={classes.label}>Postal address:</div>
+                                <div>
+                                    {record.description}, {record.dataOwnerName}, {record.createdAt}
+                                </div>
+                            </Group>
+                            <Group gap={6}>
+                                <div className={classes.label}>Mission statement:</div>
+                                <Box fs="italic">“{record.id}”</Box>
+                            </Group>
+                        </Stack>
+                    ),
+                }}
+            />
 
-            <Space h="md" />
-
-            <Center>
-                <Pagination
-                    total={Math.ceil(filteredDatasets.length / itemsPerPage)}
-                    value={activePage}
-                    onChange={setActivePage}
-                />
-            </Center>
+            <Modal
+                opened={modalOpened}
+                onClose={() => setModalOpened(false)}
+                title="Dataset Details"
+            >
+                <Text>Details of the selected dataset will go here.</Text>
+            </Modal>
         </Container>
     );
 }
