@@ -5,22 +5,22 @@ import {
     Center,
     Loader,
     Space,
-    Button,
     Group,
     Badge,
-    Modal,
-    Stack,
-    Box,
     ActionIcon,
+    Modal,
+    Button,
+    Stack,
 } from '@mantine/core';
 import { DataTable } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
 import axiosInstance from '@/utils/axiosInstance';
 import { notifications } from '@mantine/notifications';
+import { IconEye, IconEdit, IconTrash } from '@tabler/icons-react';
+import { useNavigate } from 'react-router-dom';
 import '@mantine/core/styles.layer.css';
 import 'mantine-datatable/styles.layer.css';
 import classes from './AdminDatasets.module.css';
-import { IconEye, IconEdit, IconTrash } from '@tabler/icons-react';
 
 interface DatasetItem {
     id: number;
@@ -54,10 +54,11 @@ export function AdminDatasets() {
     const [error, setError] = useState<string | null>(null);
     const [activePage, setActivePage] = useState(1);
     const [filteredTags, setFilteredTags] = useState<string[]>([]);
-    const [expandedRow, setExpandedRow] = useState<number | null>(null);
-    const [modalOpened, setModalOpened] = useState(false);
+    const [deleteModalOpened, setDeleteModalOpened] = useState(false);
+    const [datasetToDelete, setDatasetToDelete] = useState<DatasetItem | null>(null);
 
     const itemsPerPage = 10;
+    const navigate = useNavigate();
 
     useEffect(() => {
         axiosInstance
@@ -77,6 +78,31 @@ export function AdminDatasets() {
                 setLoading(false);
             });
     }, []);
+
+    const handleDeleteDataset = () => {
+        if (!datasetToDelete) return;
+
+        axiosInstance
+            .delete(`/datasets/${datasetToDelete.id}`)
+            .then(() => {
+                notifications.show({
+                    title: 'Success',
+                    message: `Dataset "${datasetToDelete.name}" deleted successfully.`,
+                    color: 'green',
+                });
+                setDatasets((prev) => prev.filter((dataset) => dataset.id !== datasetToDelete.id));
+                setDeleteModalOpened(false);
+                setDatasetToDelete(null);
+            })
+            .catch((error) => {
+                console.error('Error deleting dataset:', error);
+                notifications.show({
+                    title: 'Error',
+                    message: 'Failed to delete dataset.',
+                    color: 'red',
+                });
+            });
+    };
 
     const filteredDatasets = datasets.filter((dataset) =>
         filteredTags.length === 0 ||
@@ -124,6 +150,7 @@ export function AdminDatasets() {
 
             <DataTable
                 withTableBorder
+                textSelectionDisabled
                 columns={[
                     {
                         accessor: 'name',
@@ -133,12 +160,14 @@ export function AdminDatasets() {
                     {
                         accessor: 'datasetType',
                         title: 'Access mode',
-                        render: (record) => (<Text
-                            size="sm"
-                            style={{ color: record.datasetType == 'open' ? '#6ea96e' : '#ffa392' }}
-                        >
-                            {record.datasetType == 'open' ? 'Open' : 'Controlled'}
-                        </Text>)
+                        render: (record) => (
+                            <Text
+                                size="sm"
+                                style={{ color: record.datasetType === 'open' ? '#6ea96e' : '#ffa392' }}
+                            >
+                                {record.datasetType === 'open' ? 'Open' : 'Controlled'}
+                            </Text>
+                        ),
                     },
                     {
                         accessor: 'dataOwnerName',
@@ -180,7 +209,7 @@ export function AdminDatasets() {
                                     size="sm"
                                     variant="subtle"
                                     color="green"
-                                //onClick={() => }
+                                    onClick={() => navigate(`/dataset/${record.id}`)} // Navigate to dataset page
                                 >
                                     <IconEye size={16} />
                                 </ActionIcon>
@@ -196,7 +225,10 @@ export function AdminDatasets() {
                                     size="sm"
                                     variant="subtle"
                                     color="red"
-                                // onClick={() => showModal({ company, action: 'delete' })}
+                                    onClick={() => {
+                                        setDatasetToDelete(record);
+                                        setDeleteModalOpened(true);
+                                    }}
                                 >
                                     <IconTrash size={16} />
                                 </ActionIcon>
@@ -214,26 +246,29 @@ export function AdminDatasets() {
                         No datasets found
                     </Text>
                 }
-                rowExpansion={{
-                    content: ({ record }) => (
-                        <Stack className={classes.details} p="xs" gap={6}>
-                            <Group gap={6}>
-                                <div className={classes.label}>Description:</div>
-                                <div>
-                                    {record.description}
-                                </div>
-                            </Group>
-                        </Stack>
-                    ),
-                }}
             />
 
             <Modal
-                opened={modalOpened}
-                onClose={() => setModalOpened(false)}
-                title="Dataset Details"
+                opened={deleteModalOpened}
+                onClose={() => setDeleteModalOpened(false)}
+                title="Confirm Deletion"
+                centered
             >
-                <Text>Details of the selected dataset will go here.</Text>
+                <Text>
+                    Are you sure you want to delete the dataset{' '}
+                    <Text fw={700} component="span">
+                        {datasetToDelete?.name}
+                    </Text>
+                    ?
+                </Text>
+                <Group justify="right" mt="md">
+                    <Button variant="default" onClick={() => setDeleteModalOpened(false)}>
+                        Cancel
+                    </Button>
+                    <Button color="red" onClick={handleDeleteDataset}>
+                        Delete
+                    </Button>
+                </Group>
             </Modal>
         </Container>
     );
