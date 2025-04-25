@@ -90,6 +90,11 @@ export class DatasetsService {
 
         console.log(createDatasetInstance);
         const newDataset = this.datasetRepository.create({ ...createDatasetInstance, tags, user });
+
+        if (user.isAdmin) { //Auto approve if user is admin
+            newDataset.approvedAt = new Date();
+        }
+
         return this.datasetRepository.save(newDataset);
     }
 
@@ -190,6 +195,7 @@ export class DatasetsService {
             sliderImages.push(savedImage);
         }
         existingDataset.sliderImages = sliderImages;
+        existingDataset.approvedAt = null; // Needs admin approval again
 
         // Save the updated dataset
         await this.datasetRepository.save(existingDataset);
