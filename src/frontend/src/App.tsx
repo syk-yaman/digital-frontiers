@@ -23,6 +23,7 @@ import { AdminPage } from './pages/Admin.page';
 import { AdminHome } from './pages/AdminHome.page';
 import { AdminDatasets } from './pages/AdminDatasets.page';
 import { AdminDatasetRequests } from './pages/AdminDatasetRequests.page';
+import { TagDatasets } from './pages/TagDatasets.page';
 
 export default function App() {
   return (
@@ -41,6 +42,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/data-menu" element={<Datamenu />} />
+            <Route path="/data-menu/tag/:tagId" element={<TagDatasets />} />
             <Route path="/dataset/:id" element={<Dataset />} />
             <Route path="/signin" element={<SigninPage />} />
             <Route path="/add-dataset" element={<PrivateRoute><AddDatasetPage /></PrivateRoute>} />
