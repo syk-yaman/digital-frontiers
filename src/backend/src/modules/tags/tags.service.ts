@@ -41,4 +41,11 @@ export class TagsService {
     search(name: string): Promise<DatasetTag[]> {
         return this.tagRepository.find({ where: { name: Like(`%${name}%`) } });
     }
+
+    async getTopTags(): Promise<DatasetTag[]> {
+        return this.tagRepository.find({
+            order: { createdAt: 'DESC' }, // Order by creation date in descending order
+            take: 5, // Limit to the last 5 created tags
+        });
+    }
 }

@@ -60,7 +60,8 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { NavLink, useLocation } from 'react-router-dom';
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
+import axiosInstance from '@/utils/axiosInstance';
 import { AuthContext } from '@/context/AuthContext';
 import classes from './HeaderMegaMenu.module.css';
 import { changelog, version } from './changelog';
@@ -106,6 +107,7 @@ export function HeaderMegaMenu() {
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const [dashboardMenuOpened, setDashboardMenuOpened] = useState(false);
   const [adminMenuOpened, setAdminMenuOpened] = useState(false);
+  const [latestTags, setLatestTags] = useState<{ icon: any; title: string; description?: string }[]>([]);
 
   const theme = useMantineTheme();
 
@@ -119,7 +121,24 @@ export function HeaderMegaMenu() {
   const user = authContext?.user;
   const logout = authContext?.logout;
 
-  const links = mockdata.map((item) => (
+  useEffect(() => {
+    // Fetch the latest tags from the backend using the general axios instance
+    axiosInstance.get('/tags/top')
+      .then((response) => {
+        const fetchedTags = response.data.map((tag: any) => ({
+          icon: IconCategory, // Replace with a dynamic icon if available
+          title: tag.name,
+          description: `Explore datasets tagged with "${tag.name}".`,
+        }));
+        // Add the "Show all" item at the end
+        setLatestTags([...fetchedTags, { icon: IconList, title: 'Show all' }]);
+      })
+      .catch((error) => {
+        console.error('Error fetching latest tags:', error);
+      });
+  }, []);
+
+  const links = latestTags.map((item) => (
     <UnstyledButton className={classes.subLink} key={item.title}>
       <Group wrap="nowrap" >
         <ThemeIcon size={34} variant="default" radius="md">
@@ -237,7 +256,7 @@ export function HeaderMegaMenu() {
             </NavLink>
 
             <HoverCard
-              openDelay={100} closeDelay={400}
+              openDelay={100} closeDelay={300}
               width={600} position="bottom"
               radius="md" shadow="md"
               transitionProps={{ transition: 'fade-down' }}
@@ -256,7 +275,7 @@ export function HeaderMegaMenu() {
 
               <HoverCard.Dropdown style={{ overflow: 'hidden' }}>
                 <Group justify="space-between" px="md">
-                  <Text fw={500}>Available tags</Text>
+                  <Text fw={500}>Latest tags</Text>
                 </Group>
                 <Divider color={'#888888'} my="xs" size={'xs'} />
                 <SimpleGrid cols={2} spacing={0}>

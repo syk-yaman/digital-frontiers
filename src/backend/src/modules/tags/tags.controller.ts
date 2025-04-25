@@ -26,6 +26,13 @@ export class TagsController {
         return this.tagsService.search(name);
     }
 
+    @Get('top')
+    @ApiOperation({ summary: 'Get the last 5 created tags' })
+    @ApiResponse({ status: 200, description: 'Returns the last 5 most recently created tags.' })
+    getTopTags() {
+        return this.tagsService.getTopTags();
+    }
+
     @Get(':id') //TODO: discuss if it doesn't exist
     @ApiOperation({ summary: 'Get a single tag by ID' })
     @ApiResponse({ status: 200, description: 'Returns the tag with the specified ID.' })
