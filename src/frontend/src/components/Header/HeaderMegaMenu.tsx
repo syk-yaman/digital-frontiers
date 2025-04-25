@@ -174,10 +174,10 @@ export function HeaderMegaMenu() {
 
   const userMenuItems = (
     <>
-      <Menu.Item leftSection={<IconUser size={18} />}>
+      <Menu.Item style={{ cursor: 'not-allowed' }} leftSection={<IconUser size={18} />}>
         Profile
       </Menu.Item>
-      <Menu.Item leftSection={<IconLock size={18} />}>
+      <Menu.Item style={{ cursor: 'not-allowed' }} leftSection={<IconLock size={18} />}>
         Change password
       </Menu.Item>
       <Menu.Item component={NavLink}

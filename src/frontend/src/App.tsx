@@ -25,6 +25,7 @@ import { AdminDatasets } from './pages/AdminDatasets.page';
 import { AdminDatasetRequests } from './pages/AdminDatasetRequests.page';
 import { TagDatasets } from './pages/TagDatasets.page';
 import { AdminTags } from './pages/AdminTags.page';
+import { AdminUsers } from './pages/AdminUsers.page';
 
 export default function App() {
   return (
@@ -52,7 +53,8 @@ export default function App() {
               <Route index element={<AdminHome />} />
               <Route path="datasets" element={<AdminDatasets />} />
               <Route path="datasets/requests" element={<AdminDatasetRequests />} />
-              <Route path="tags" element={<AdminTags />} /> {/* New route for tags management */}
+              <Route path="tags" element={<AdminTags />} />
+              <Route path="users" element={<AdminUsers />} /> {/* New route for users management */}
             </Route>
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/my-datasets" element={<PrivateRoute><MyDatasetsPage /></PrivateRoute>} />
