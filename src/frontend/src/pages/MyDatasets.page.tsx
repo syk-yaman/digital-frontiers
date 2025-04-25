@@ -4,7 +4,8 @@ import { Flex, Text, Center, Button, Stack, Breadcrumbs, Space, Loader } from '@
 import { Notifications, notifications } from '@mantine/notifications';
 import { IconDatabaseOff, IconCloudOff } from '@tabler/icons-react';
 import axiosInstance from '@/utils/axiosInstance';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
+import { DatasetCardActionable } from '@/components/DatasetCardActionable';
 
 interface DatasetItem {
     id: number;
@@ -21,6 +22,7 @@ export function MyDatasetsPage() {
     const [datasets, setDatasets] = useState<DatasetItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     const breadcrumbs = [
         { label: 'Home', path: '/' },
@@ -133,7 +135,19 @@ export function MyDatasetsPage() {
                     ))}
                 </Breadcrumbs>
             </div>
-            <Text ta="center" size="xl" c="blue">My Datasets</Text>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
+                <Text ta="center" size="xl" c="blue" style={{ flex: 1 }}>
+                    My Datasets
+                </Text>
+                <Button
+                    variant="light"
+                    color="blue"
+                    onClick={() => navigate('/add-dataset')}
+                    style={{ position: 'absolute', right: '40px' }}
+                >
+                    Add Dataset
+                </Button>
+            </div>
             <Space h="xl" />
             <Space h="xl" />
             <Flex
@@ -147,7 +161,7 @@ export function MyDatasetsPage() {
                 ml={'xl'}
             >
                 {datasets.map((dataset) => (
-                    <DatasetCard
+                    <DatasetCardActionable
                         key={dataset.id}
                         id={dataset.id}
                         name={dataset.name}
@@ -156,7 +170,10 @@ export function MyDatasetsPage() {
                         description={dataset.description}
                         createdAt={dataset.createdAt}
                         sliderImages={dataset.sliderImages}
-                        tags={dataset.tags}
+                        tags={dataset.tags.map((tag) => ({
+                            name: tag.name,
+                            icon: '',
+                        }))}
                     />
                 ))}
             </Flex>
