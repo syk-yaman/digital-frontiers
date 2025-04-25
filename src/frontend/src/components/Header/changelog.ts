@@ -1,5 +1,18 @@
-export const version = 'v0.2.5'
+export const version = 'v0.3.1'
 export const changelog = [
+    {
+        version: 'v0.3.1',
+        changes: [
+            "Major version update, including admin page and dataset management.",
+            "Approval workflow for datasets.",
+            "Added a new admin page for users and tags– not all features are implemented yet",
+            "Enhanced tag navigation in navbar, dataset page and admin page.",
+            "Dataset can be edited with and its permission checks.",
+            "Search engine bots crawling is disabled temporarily.",
+            "Major security updates and code maintenance.",
+            "New server is in use now with 4x resources.",
+        ],
+    },
     {
         version: 'v0.2.5',
         changes: [
