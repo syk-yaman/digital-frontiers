@@ -293,4 +293,15 @@ export class DatasetsService {
             }, 5000); // 5 seconds timeout (adjust as needed)
         });
     }
+
+    async findByTagId(tagId: number): Promise<Dataset[]> {
+        return this.datasetRepository.find({
+            where: {
+                tags: { id: tagId },
+                approvedAt: Not(IsNull()) // Only return approved datasets
+            },
+            relations: ['links', 'locations', 'sliderImages', 'tags'],
+            order: { createdAt: 'DESC' },
+        });
+    }
 }

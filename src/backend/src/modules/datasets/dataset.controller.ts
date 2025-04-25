@@ -121,4 +121,9 @@ export class DatasetsController {
     approveDataset(@Param('id') id: number) {
         return this.datasetsService.approveDataset(id);
     }
+
+    @Get('search/tag/:tagId')
+    findByTagId(@Param('tagId') tagId: number) {
+        return this.datasetsService.findByTagId(tagId);
+    }
 }
