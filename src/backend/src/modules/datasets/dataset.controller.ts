@@ -44,14 +44,15 @@ export class DatasetsController {
     create(@Body() createDto: CreateDatasetDto, @Request() req) {
         const userId = req.user.userId;
         createDto.userId = userId;
-        return this.datasetsService.create(createDto); // Pass the user ID to the service
+        return this.datasetsService.create(createDto);
     }
 
     @UseGuards(JwtAuthGuard)
     @Put(':id')
     @ApiBearerAuth()
-    update(@Param('id') id: number, @Body() updateDto: UpdateDatasetDto) {
-        return this.datasetsService.update(id, updateDto);
+    update(@Param('id') id: number, @Body() updateDto: UpdateDatasetDto, @Request() req) {
+        const currentUserId = req.user.userId;
+        return this.datasetsService.update(id, updateDto, currentUserId);
     }
 
     @Delete(':id')

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Dataset, DatasetTag } from './dataset.entity';
+import { Dataset, DatasetLink, DatasetLocation, DatasetSliderImage, DatasetTag } from './dataset.entity';
 import { CreateDatasetDto, UpdateDatasetDto } from './dataset.dto';
 import { User } from '../users/user.entity';
 import { plainToInstance } from 'class-transformer';
@@ -24,7 +24,10 @@ export class DatasetsService {
     ) { }
 
     findAll(): Promise<Dataset[]> {
-        return this.datasetRepository.find({ relations: ['links', 'locations', 'sliderImages', 'tags'] });
+        return this.datasetRepository.find({
+            relations: ['links', 'locations', 'sliderImages', 'tags'],
+            order: { createdAt: 'DESC' },
+        });
     }
 
     findOne(id: number): Promise<Dataset | null> {
@@ -53,6 +56,11 @@ export class DatasetsService {
         // Transform plain object into an instance of CreateDatasetDto
         const createDatasetInstance = plainToInstance(CreateDatasetDto, createDto);
 
+        const user = await this.usersRepository.findOne({ where: { id: createDatasetInstance.userId } });
+        if (!user) {
+            throw new Error('User not found');
+        }
+
         // Validation
         createDatasetInstance.validateTags();
         createDatasetInstance.validateMqttData();
@@ -80,29 +88,117 @@ export class DatasetsService {
             }),
         );
 
-        const user = await this.usersRepository.findOne({ where: { id: createDatasetInstance.userId } });
-        if (!user) {
-            throw new Error('User not found');
-        }
-
         console.log(createDatasetInstance);
         const newDataset = this.datasetRepository.create({ ...createDatasetInstance, tags, user });
         return this.datasetRepository.save(newDataset);
     }
 
-    async update(id: number, updateDto: UpdateDatasetDto): Promise<Dataset> {
+    async update(id: number, updateDto: UpdateDatasetDto, currentUserId: string): Promise<Dataset> {
         const editDatasetInstance = plainToInstance(UpdateDatasetDto, updateDto);
 
+        const currentUser = await this.usersRepository.findOne({ where: { id: currentUserId } });
+        if (!currentUser) {
+            throw new Error('User not found');
+        }
+
+        // Fetch the existing dataset with user and links
+        const existingDataset = await this.datasetRepository.findOne({
+            where: { id },
+            relations: ['user', 'links', 'locations', 'sliderImages', 'tags'],
+        });
+
+        if (!existingDataset) {
+            throw new HttpException('Dataset not found', HttpStatus.NOT_FOUND);
+        }
+
+        // Check if the current user is allowed to edit the dataset
+        if (existingDataset.user.id !== currentUser.id && !currentUser.isAdmin) {
+            throw new HttpException('You are not authorised to edit this dataset.', HttpStatus.FORBIDDEN);
+        }
+
+        // Validate tags and MQTT data
         editDatasetInstance.validateTags();
         editDatasetInstance.validateMqttData();
-        this.verifyMqttConnection(updateDto.mqttAddress,
+        this.verifyMqttConnection(
+            editDatasetInstance.mqttAddress,
             editDatasetInstance.mqttPort,
             editDatasetInstance.mqttTopic,
             editDatasetInstance.mqttUsername,
-            editDatasetInstance.mqttPassword);
+            editDatasetInstance.mqttPassword,
+        );
 
-        await this.datasetRepository.update(id, editDatasetInstance);
-        return this.findOne(id);
+        // Update scalar fields
+        Object.assign(existingDataset, {
+            name: editDatasetInstance.name,
+            dataOwnerName: editDatasetInstance.dataOwnerName,
+            dataOwnerEmail: editDatasetInstance.dataOwnerEmail,
+            datasetType: editDatasetInstance.datasetType,
+            description: editDatasetInstance.description,
+            updateFrequency: editDatasetInstance.updateFrequency,
+            updateFrequencyUnit: editDatasetInstance.updateFrequencyUnit,
+            dataExample: editDatasetInstance.dataExample,
+            mqttAddress: editDatasetInstance.mqttAddress,
+            mqttPort: editDatasetInstance.mqttPort,
+            mqttTopic: editDatasetInstance.mqttTopic,
+            mqttUsername: editDatasetInstance.mqttUsername,
+            mqttPassword: editDatasetInstance.mqttPassword,
+        });
+
+        // Handle tags
+        const tags = await Promise.all(
+            editDatasetInstance.tags.map(async (tagDto) => {
+                if (tagDto.id) {
+                    const existingTag = await this.tagRepository.findOne({ where: { id: tagDto.id } });
+                    if (existingTag) {
+                        return existingTag;
+                    }
+                }
+                tagDto.colour = tagDto.colour || `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
+                tagDto.icon = tagDto.icon || '🏷️';
+                const newTag = this.tagRepository.create(tagDto);
+                return this.tagRepository.save(newTag);
+            }),
+        );
+        existingDataset.tags = tags;
+
+        // Handle links: Delete old links and create new ones
+        await this.datasetRepository.manager.delete(DatasetLink, { dataset: { id } });
+        const links = [];
+        for (const linkDto of editDatasetInstance.links) {
+            const newLink = this.datasetRepository.manager.create(DatasetLink, { ...linkDto, dataset: existingDataset });
+            const savedLink = await this.datasetRepository.manager.save(newLink); // Save sequentially to preserve order
+            links.push(savedLink);
+        }
+        existingDataset.links = links;
+
+        // Handle locations: Delete old locations and create new ones
+        await this.datasetRepository.manager.delete(DatasetLocation, { dataset: { id } });
+        const locations = [];
+        for (const locationDto of editDatasetInstance.locations) {
+            const newLocation = this.datasetRepository.manager.create(DatasetLocation, { ...locationDto, dataset: existingDataset });
+            const savedLocation = await this.datasetRepository.manager.save(newLocation); // Save sequentially to preserve order
+            locations.push(savedLocation);
+        }
+        existingDataset.locations = locations;
+
+        // Handle slider images: Delete old slider images and create new ones
+        await this.datasetRepository.manager.delete(DatasetSliderImage, { dataset: { id } });
+        const sliderImages = [];
+        for (const imageDto of editDatasetInstance.sliderImages) {
+            const newImage = this.datasetRepository.manager.create(DatasetSliderImage, { ...imageDto, dataset: existingDataset });
+            const savedImage = await this.datasetRepository.manager.save(newImage); // Save sequentially to preserve order
+            sliderImages.push(savedImage);
+        }
+        existingDataset.sliderImages = sliderImages;
+
+        // Save the updated dataset
+        await this.datasetRepository.save(existingDataset);
+
+        // Fetch only the required fields and relations after saving
+        return this.datasetRepository.findOne({
+            where: { id },
+            relations: ['links', 'locations', 'sliderImages', 'tags'], // Include only necessary relations
+        });
     }
 
     async remove(id: number): Promise<void> {
