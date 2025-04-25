@@ -188,6 +188,8 @@ export function AdminDatasets() {
                                     <Badge
                                         key={tag.id}
                                         color={tag.colour === '#000000' ? 'gray' : tag.colour}
+                                        style={{ cursor: 'pointer' }}
+                                        onClick={() => navigate(`/data-menu/tag/${tag.id}`)}
                                     >
                                         {tag.name}
                                     </Badge>

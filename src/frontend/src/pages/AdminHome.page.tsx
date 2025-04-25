@@ -15,7 +15,7 @@ export function AdminHome() {
                         </Badge>
                     </Group>
                     <Text size="xl" w={700}>
-                        1,245
+                        145
                     </Text>
                 </Card>
 
@@ -33,7 +33,7 @@ export function AdminHome() {
 
                 <Card shadow="sm" padding="lg">
                     <Group justify="space-between" mb="xs">
-                        <Text >Active Subscriptions</Text>
+                        <Text >Live datasets</Text>
                         <Badge color="red" variant="light">
                             -3% this month
                         </Badge>
@@ -45,12 +45,12 @@ export function AdminHome() {
             </SimpleGrid>
 
             <Text size="xl" fw={700} mt="xl" mb="lg">
-                Trends
+                Statistics
             </Text>
             <SimpleGrid cols={2} spacing="lg" >
                 <Card shadow="sm" padding="lg">
                     <Text mb="xs">
-                        User Growth
+                        User activated
                     </Text>
                     <RingProgress
                         sections={[{ value: 75, color: 'blue' }]}
@@ -64,11 +64,11 @@ export function AdminHome() {
 
                 <Card shadow="sm" padding="lg">
                     <Text mb="xs">
-                        Dataset Upload Progress
+                        Dataset approved
                     </Text>
                     <Progress value={60} color="green" size="lg" />
                     <Text size="sm" mt="xs">
-                        60% of target achieved
+                        65% of total datasets added
                     </Text>
                 </Card>
             </SimpleGrid>
