@@ -19,6 +19,7 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link }: 
     <NavLink
       to={link.link}
       key={link.label}
+      end // Ensure only exact matches are highlighted
       className={({ isActive }) =>
         isActive ? `${classes.link} ${classes.activeLink}` : classes.link
       }
@@ -29,12 +30,13 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link }: 
 
   return (
     <>
-      <NavLink onClick={() => setOpened((o) => !o)}
+      <NavLink
+        onClick={() => setOpened((o) => !o)}
         className={({ isActive }) =>
           isActive && link != null ? `${classes.controlActive}` : `${classes.control}`
         }
         to={link == null ? '#' : link}
-        end
+        end // Ensure only exact matches are highlighted for parent links
       >
         <Group justify="space-between" gap={0}>
           <Box style={{ display: 'flex', alignItems: 'center' }}>

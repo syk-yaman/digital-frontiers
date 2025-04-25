@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Not, IsNull } from 'typeorm';
 import { Dataset, DatasetLink, DatasetLocation, DatasetSliderImage, DatasetTag } from './dataset.entity';
 import { CreateDatasetDto, UpdateDatasetDto } from './dataset.dto';
 import { User } from '../users/user.entity';
@@ -30,15 +30,45 @@ export class DatasetsService {
         });
     }
 
-    findOne(id: number): Promise<Dataset | null> {
-        return this.datasetRepository.findOne({
+    findAllApproved(): Promise<Dataset[]> {
+        return this.datasetRepository.find({
+            where: { approvedAt: Not(IsNull()) }, // Only fetch datasets with approvedAt not null
+            relations: ['links', 'locations', 'sliderImages', 'tags'],
+            order: { createdAt: 'DESC' },
+        });
+    }
+
+    async findOne(id: number): Promise<Dataset | null> {
+        var dataset = await this.datasetRepository.findOne({
             where: { id },
             relations: ['links', 'locations', 'sliderImages', 'tags'],
         });
+
+        if (!dataset) {
+            throw new HttpException('Dataset not found', HttpStatus.NOT_FOUND);
+        }
+
+        return dataset;
+        // if (dataset.approvedAt !== null) {
+        //     return dataset;
+        // } else {
+        //     console.log(currentUserId);
+        //     const currentUser = await this.usersRepository.findOne({ where: { id: currentUserId } });
+        //     if (!currentUser) {
+        //         throw new Error('User not found');
+        //     }
+
+        //     if (!currentUser.isAdmin) {
+        //         throw new HttpException('Dataset not found.', HttpStatus.NOT_FOUND);
+        //     } else {
+        //         return dataset;
+        //     }
+        // }
     }
 
     findRecent(): Promise<Dataset[]> {
         return this.datasetRepository.find({
+            where: { approvedAt: Not(IsNull()) },
             order: { createdAt: 'DESC' },
             take: 3,
             relations: ['links', 'locations', 'sliderImages', 'tags'],
@@ -50,6 +80,23 @@ export class DatasetsService {
             where: { user: { id: userId } },
             relations: ['links', 'locations', 'sliderImages', 'tags'],
         });
+    }
+
+    findPendingApproval(): Promise<Dataset[]> {
+        return this.datasetRepository.find({
+            where: { approvedAt: IsNull() },
+            relations: ['links', 'locations', 'sliderImages', 'tags'],
+            order: { createdAt: 'DESC' },
+        });
+    }
+
+    async approveDataset(id: number): Promise<Dataset> {
+        const dataset = await this.datasetRepository.findOne({ where: { id } });
+        if (!dataset) {
+            throw new HttpException('Dataset not found', HttpStatus.NOT_FOUND);
+        }
+        dataset.approvedAt = new Date();
+        return this.datasetRepository.save(dataset);
     }
 
     async create(createDto: CreateDatasetDto): Promise<Dataset> {

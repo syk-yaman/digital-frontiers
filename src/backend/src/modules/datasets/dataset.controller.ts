@@ -25,7 +25,15 @@ export class DatasetsController {
 
     @Get()
     findAll() {
-        return this.datasetsService.findAll();
+        return this.datasetsService.findAllApproved();
+    }
+
+    @Get('requests')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin')
+    @ApiBearerAuth()
+    findPendingApproval() {
+        return this.datasetsService.findPendingApproval();
     }
 
     @Get('recent')
@@ -104,5 +112,13 @@ export class DatasetsController {
     findMyDatasets(@Request() req) {
         const userId = req.user.userId;
         return this.datasetsService.findByUser(userId);
+    }
+
+    @Put(':id/approve')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin')
+    @ApiBearerAuth()
+    approveDataset(@Param('id') id: number) {
+        return this.datasetsService.approveDataset(id);
     }
 }

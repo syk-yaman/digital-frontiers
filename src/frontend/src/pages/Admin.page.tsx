@@ -24,7 +24,7 @@ const menuData = [
         initiallyOpened: true,
         links: [
             { label: 'Manage all', link: '/admin/datasets' },
-            { label: 'Incoming add requests', link: '/admin/datasets/requests' },
+            { label: 'Incoming requests', link: '/admin/datasets/requests' },
         ],
     },
     {
@@ -32,7 +32,7 @@ const menuData = [
         icon: IconTag,
         links: [
             { label: 'Manage all', link: '/admin/tags' },
-            { label: 'Incoming add requests', link: '/admin/tags/requests' },
+            { label: 'Incoming requests', link: '/admin/tags/requests' },
         ],
     },
     {
