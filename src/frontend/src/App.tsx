@@ -43,6 +43,7 @@ export default function App() {
             <Route path="/dataset/:id" element={<Dataset />} />
             <Route path="/signin" element={<SigninPage />} />
             <Route path="/add-dataset" element={<PrivateRoute><AddDatasetPage /></PrivateRoute>} />
+            <Route path="/edit-dataset/:id" element={<PrivateRoute><AddDatasetPage /></PrivateRoute>} />
             <Route path="/admin" element={<PrivateRoute><AdminPage /></PrivateRoute>}>
               <Route index element={<AdminHome />} />
               <Route path="datasets" element={<AdminDatasets />} />

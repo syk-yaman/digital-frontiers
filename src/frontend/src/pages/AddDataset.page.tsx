@@ -22,7 +22,7 @@ import proj4 from 'proj4';
 import { useForm } from '@mantine/form';
 import { notifications, Notifications } from '@mantine/notifications';
 import '@mantine/notifications/styles.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axiosInstance from '@/utils/axiosInstance';
 
 
@@ -52,6 +52,65 @@ interface Link {
 }
 
 export function AddDatasetPage() {
+    const { id: datasetId } = useParams(); // Get dataset ID from URL
+    const [isEditMode, setIsEditMode] = useState(false); // Track if in edit mode
+    const [loadingDataset, setLoadingDataset] = useState(false); // Track dataset loading state
+
+    useEffect(() => {
+        if (datasetId) {
+            setIsEditMode(true);
+            setLoadingDataset(true);
+            axiosInstance
+                .get(`/datasets/${datasetId}`)
+                .then((response) => {
+                    const dataset = response.data;
+                    // Populate form with dataset data
+                    setDataSample(dataset.dataExample);
+                    setLinks(dataset.links);
+                    setSliderImages(dataset.sliderImages.map((img: any) => img.fileName));
+
+                    // Set uploadedFiles based on sliderImages
+                    setUploadedFiles(
+                        dataset.sliderImages.map((img: any) => ({
+                            name: img.fileName, // Use the file name from the dataset
+                            url: `/path/to/slider/images/${img.fileName}`, // Adjust the path as needed
+                        }))
+                    );
+                    form.setValues({
+                        datasetName: dataset.name,
+                        ownerName: dataset.dataOwnerName,
+                        ownerEmail: dataset.dataOwnerEmail,
+                        datasetType: dataset.datasetType.charAt(0).toUpperCase() + dataset.datasetType.slice(1).toLowerCase(),
+                        datasetDescription: dataset.description,
+                        frequency: dataset.updateFrequency?.toString() || '',
+                        unit: dataset.updateFrequencyUnit.charAt(0).toUpperCase() + dataset.updateFrequencyUnit.slice(1).toLowerCase() || '',
+                        isFreqOnceChecked: dataset.updateFrequency === 0,
+                        dataSample: dataset.dataExample || '',
+                        datasetTags: dataset.tags.map((tag: any) => tag.name),
+                        sliderImages: dataset.sliderImages.map((img: any) => img.fileName),
+                        links: dataset.links || [],
+                        mqttAddress: dataset.mqttAddress || '',
+                        mqttPort: dataset.mqttPort || '',
+                        mqttTopic: dataset.mqttTopic || '',
+                        mqttUsername: dataset.mqttUsername || '',
+                        mqttPassword: dataset.mqttPassword || '',
+                    });
+                    setPins(dataset.locations.map((loc: any) => ({ position: [loc.lon, loc.lat], radius: 10 })));
+                    setSliderImages(dataset.sliderImages.map((img: any) => img.fileName));
+                    setSelectedTags(dataset.tags.map((tag: any) => tag.name));
+                })
+                .catch((error) => {
+                    console.error('Failed to load dataset:', error);
+                    notifications.show({
+                        title: 'Error',
+                        message: 'Failed to load dataset data.',
+                        color: 'red',
+                    });
+                })
+                .finally(() => setLoadingDataset(false));
+        }
+    }, [datasetId]);
+
     const [activeStep, setActiveStep] = useState(1);
     const [dataSample, setDataSample] = useState('');
     const [links, setLinks] = useState<Link[]>([]);
@@ -90,16 +149,16 @@ export function AddDatasetPage() {
         setIsSubmitting(true);
 
         const formattedData = {
-            id: null,
-            name: formData.datasetName,
-            dataOwnerName: formData.ownerName,
-            dataOwnerEmail: formData.ownerEmail,
-            datasetType: formData.datasetType.toLowerCase(),
-            description: formData.datasetDescription,
-            updateFrequency: (formData.frequency && formData.frequency !== 'N/A') ? parseInt(formData.frequency) : 0, // Modified line
-            updateFrequencyUnit: formData.unit.toLowerCase(),
+            id: datasetId || null,
+            name: form.values.datasetName,
+            dataOwnerName: form.values.ownerName,
+            dataOwnerEmail: form.values.ownerEmail,
+            datasetType: form.values.datasetType.toLowerCase(),
+            description: form.values.datasetDescription,
+            updateFrequency: (form.values.frequency && form.values.frequency !== 'N/A') ? parseInt(formData.frequency) : 0, // Modified line
+            updateFrequencyUnit: form.values.unit.toLowerCase(),
             dataExample: dataSample,
-            createdAt: new Date().toISOString(),
+            createdAt: isEditMode ? undefined : new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             links: isFreqOnceChecked
                 ? formData.links.map((link, index) => ({
@@ -124,7 +183,7 @@ export function AddDatasetPage() {
             sliderImages: formData.sliderImages.map((fileName, index) => ({
                 fileName: fileName,
             })),
-            tags: formData.datasetTags.map((tagName) => { // Map string[] to Tag-like objects
+            tags: form.values.datasetTags.map((tagName) => { // Map string[] to Tag-like objects
                 const tag = availableTags.find(t => t.name === tagName);
                 return tag ? {
                     id: tag.id,
@@ -137,25 +196,27 @@ export function AddDatasetPage() {
 
         console.log("Final JSON to Submit:", formattedData);
 
-        axiosInstance
-            .post(`/datasets`, formattedData)
+        const request = isEditMode
+            ? axiosInstance.put(`/datasets/${datasetId}`, formattedData) // PUT request for edit
+            : axiosInstance.post(`/datasets`, formattedData); // POST request for add
+
+        request
             .then((response) => {
-                console.log("Submission successful:", response.data);
+                console.log(isEditMode ? 'Update successful:' : 'Submission successful:', response.data);
                 notifications.show({
                     title: 'Success',
-                    message: 'Dataset submitted successfully!',
+                    message: isEditMode ? 'Dataset updated successfully!' : 'Dataset submitted successfully!',
                     color: 'green',
                     icon: <IconCheck />,
                 });
-                setSubmissionSuccess(true); // Set success state
-                setTimeout(() => navigate('/'), 500); // Navigate after 2 seconds
-
+                setSubmissionSuccess(true);
+                setTimeout(() => navigate('/my-datasets'), 500);
             })
             .catch((error) => {
-                console.error("Submission failed:", error);
+                console.error(isEditMode ? 'Update failed:' : 'Submission failed:', error);
                 notifications.show({
                     title: 'Error',
-                    message: 'Failed to submit dataset: ' + error.response?.data?.message,
+                    message: `Failed to ${isEditMode ? 'update' : 'submit'} dataset: ${error.response?.data?.message}`,
                     color: 'red',
                     icon: <IconX />,
                 });
@@ -513,10 +574,18 @@ export function AddDatasetPage() {
         }
     };
 
+    if (loadingDataset) {
+        return (
+            <Center style={{ height: '80vh' }}>
+                <Loader size="lg" color="blue" />
+            </Center>
+        );
+    }
+
     return (
         <Container mb="xl" style={{ marginTop: '50px' }}>
             <Center>
-                <Text size="xl">Dataset Add Wizard</Text>
+                <Text size="xl">{isEditMode ? 'Edit Dataset' : 'Dataset Add Wizard'}</Text>
             </Center>
 
             <Space h="md" />
@@ -963,7 +1032,7 @@ export function AddDatasetPage() {
                             loading={isSubmitting} // Use Mantine's loading prop
                             disabled={submissionSuccess} // Disable the button after successful submission
                         >
-                            {submissionSuccess ? 'Submitted!' : 'Submit for Approval'}
+                            {submissionSuccess ? 'Submitted!' : isEditMode ? 'Update Dataset' : 'Submit for Approval'}
                         </Button>
                     </Center>
                 </>

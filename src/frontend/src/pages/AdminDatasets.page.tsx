@@ -217,7 +217,7 @@ export function AdminDatasets() {
                                     size="sm"
                                     variant="subtle"
                                     color="blue"
-                                // onClick={() => showModal({ company, action: 'edit' })}
+                                    onClick={() => navigate(`/edit-dataset/${record.id}`)} // Navigate to edit dataset page
                                 >
                                     <IconEdit size={16} />
                                 </ActionIcon>
