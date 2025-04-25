@@ -107,7 +107,7 @@ export function HeaderMegaMenu() {
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const [dashboardMenuOpened, setDashboardMenuOpened] = useState(false);
   const [adminMenuOpened, setAdminMenuOpened] = useState(false);
-  const [latestTags, setLatestTags] = useState<{ icon: any; title: string; description?: string }[]>([]);
+  const [latestTags, setLatestTags] = useState<{ id?: number; icon: any; title: string; description?: string }[]>([]);
 
   const theme = useMantineTheme();
 
@@ -126,6 +126,7 @@ export function HeaderMegaMenu() {
     axiosInstance.get('/tags/top')
       .then((response) => {
         const fetchedTags = response.data.map((tag: any) => ({
+          id: tag.id, // Store the tag ID for navigation
           icon: IconCategory, // Replace with a dynamic icon if available
           title: tag.name,
           description: `Explore datasets tagged with "${tag.name}".`,
@@ -139,7 +140,12 @@ export function HeaderMegaMenu() {
   }, []);
 
   const links = latestTags.map((item) => (
-    <UnstyledButton className={classes.subLink} key={item.title}>
+    <UnstyledButton
+      className={classes.subLink}
+      key={item.title}
+      component={NavLink}
+      to={item.title === 'Show all' ? '/data-menu' : `/data-menu/tag/${item.id}`}
+    >
       <Group wrap="nowrap" >
         <ThemeIcon size={34} variant="default" radius="md">
           <item.icon size={22} color={'#FFC747'} />

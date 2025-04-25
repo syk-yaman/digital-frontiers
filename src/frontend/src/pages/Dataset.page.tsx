@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import {
   Breadcrumbs,
   Text,
@@ -78,6 +78,7 @@ interface Location {
 
 export function Dataset() {
   const { id } = useParams<{ id: string }>(); // Extract ID from URL
+  const navigate = useNavigate(); // Add React Router's navigation hook
   const defaultDatasetItem: DatasetItem = {
     id: 0,
     name: 'Default Dataset',
@@ -280,7 +281,13 @@ export function Dataset() {
           {/* Badges Section */}
           <Group align="left" >
             {dataset.tags.map(tag => (
-              <Badge key={tag.id} variant="outline" color={tag.colour == "#000000" ? "#c6ff00" : tag.colour}>
+              <Badge
+                key={tag.id}
+                variant="outline"
+                color={tag.colour == "#000000" ? "#c6ff00" : tag.colour}
+                style={{ cursor: 'pointer' }}
+                onClick={() => navigate(`/data-menu/tag/${tag.id}`)}
+              >
                 {tag.name}
               </Badge>
             ))}
