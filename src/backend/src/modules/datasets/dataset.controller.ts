@@ -122,6 +122,14 @@ export class DatasetsController {
         return this.datasetsService.approveDataset(id);
     }
 
+    @Put(':id/deny')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin')
+    @ApiBearerAuth()
+    denyDataset(@Param('id') id: number) {
+        return this.datasetsService.denyDataset(id);
+    }
+
     @Get('search/tag/:tagId')
     findByTagId(@Param('tagId') tagId: number) {
         return this.datasetsService.findByTagId(tagId);

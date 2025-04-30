@@ -9,12 +9,13 @@ import {
     ActionIcon,
     Modal,
     Button,
+    Tooltip,
 } from '@mantine/core';
 import { DataTable } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
 import axiosInstance from '@/utils/axiosInstance';
 import { notifications } from '@mantine/notifications';
-import { IconEye, IconCheck, IconEdit, IconTrash } from '@tabler/icons-react';
+import { IconEye, IconCheck, IconEdit, IconTrash, IconX } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 
 interface DatasetItem {
@@ -74,6 +75,27 @@ export function AdminDatasetRequests() {
                 });
             });
     };
+
+    const handleDenyDataset = (id: number) => {
+        axiosInstance
+            .put(`/datasets/${id}/deny`)
+            .then(() => {
+                notifications.show({
+                    title: 'Success',
+                    message: 'Dataset has been denied.',
+                    color: 'green',
+                });
+                setDatasets((prev) => prev.filter((dataset) => dataset.id !== id));
+            })
+            .catch((error) => {
+                console.error('Error denying dataset:', error);
+                notifications.show({
+                    title: 'Error',
+                    message: 'Failed to approve dataset.',
+                    color: 'red',
+                });
+            });
+    }
 
     const handleDeleteDataset = () => {
         if (!datasetToDelete) return;
@@ -175,41 +197,59 @@ export function AdminDatasetRequests() {
                         title: 'Actions',
                         render: (record) => (
                             <Group gap={4} justify="right" wrap="nowrap">
-                                <ActionIcon
-                                    size="sm"
-                                    variant="subtle"
-                                    color="green"
-                                    onClick={() => navigate(`/dataset/${record.id}`)} // Navigate to dataset page
-                                >
-                                    <IconEye size={16} />
-                                </ActionIcon>
-                                <ActionIcon
-                                    size="sm"
-                                    variant="subtle"
-                                    color="blue"
-                                    onClick={() => navigate(`/edit-dataset/${record.id}`)} // Navigate to edit dataset page
-                                >
-                                    <IconEdit size={16} />
-                                </ActionIcon>
-                                <ActionIcon
-                                    size="sm"
-                                    variant="subtle"
-                                    color="teal"
-                                    onClick={() => handleApproveDataset(record.id)} // Approve dataset
-                                >
-                                    <IconCheck size={16} />
-                                </ActionIcon>
-                                <ActionIcon
-                                    size="sm"
-                                    variant="subtle"
-                                    color="red"
-                                    onClick={() => {
-                                        setDatasetToDelete(record);
-                                        setDeleteModalOpened(true);
-                                    }}
-                                >
-                                    <IconTrash size={16} />
-                                </ActionIcon>
+                                <Tooltip label="View dataset" position="top" withArrow>
+                                    <ActionIcon
+                                        size="sm"
+                                        variant="subtle"
+                                        color="green"
+                                        onClick={() => navigate(`/dataset/${record.id}`)}
+                                    >
+                                        <IconEye size={16} />
+                                    </ActionIcon>
+                                </Tooltip>
+                                <Tooltip label="Edit dataset" position="top" withArrow>
+                                    <ActionIcon
+                                        size="sm"
+                                        variant="subtle"
+                                        color="blue"
+                                        onClick={() => navigate(`/edit-dataset/${record.id}`)}
+                                    >
+                                        <IconEdit size={16} />
+                                    </ActionIcon>
+                                </Tooltip>
+                                <Tooltip label="Deny dataset" position="top" withArrow>
+                                    <ActionIcon
+                                        size="sm"
+                                        variant="subtle"
+                                        color="red"
+                                        onClick={() => handleDenyDataset(record.id)}
+                                    >
+                                        <IconX size={16} />
+                                    </ActionIcon>
+                                </Tooltip>
+                                <Tooltip label="Approve dataset" position="top" withArrow>
+                                    <ActionIcon
+                                        size="sm"
+                                        variant="subtle"
+                                        color="teal"
+                                        onClick={() => handleApproveDataset(record.id)}
+                                    >
+                                        <IconCheck size={16} />
+                                    </ActionIcon>
+                                </Tooltip>
+                                <Tooltip label="Delete dataset" position="top" withArrow>
+                                    <ActionIcon
+                                        size="sm"
+                                        variant="subtle"
+                                        color="red"
+                                        onClick={() => {
+                                            setDatasetToDelete(record);
+                                            setDeleteModalOpened(true);
+                                        }}
+                                    >
+                                        <IconTrash size={16} />
+                                    </ActionIcon>
+                                </Tooltip>
                             </Group>
                         ),
                     },

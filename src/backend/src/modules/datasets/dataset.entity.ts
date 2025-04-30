@@ -93,6 +93,9 @@ export class Dataset {
     @Column({ type: 'timestamp', nullable: true })
     approvedAt?: Date;
 
+    @Column({ type: 'timestamp', nullable: true })
+    deniedAt?: Date;
+
     @CreateDateColumn()
     createdAt!: Date;
 

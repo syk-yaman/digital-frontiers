@@ -84,7 +84,10 @@ export class DatasetsService {
 
     findPendingApproval(): Promise<Dataset[]> {
         return this.datasetRepository.find({
-            where: { approvedAt: IsNull() },
+            where: {
+                approvedAt: IsNull(),
+                deniedAt: IsNull()
+            },
             relations: ['links', 'locations', 'sliderImages', 'tags'],
             order: { createdAt: 'DESC' },
         });
@@ -96,6 +99,15 @@ export class DatasetsService {
             throw new HttpException('Dataset not found', HttpStatus.NOT_FOUND);
         }
         dataset.approvedAt = new Date();
+        return this.datasetRepository.save(dataset);
+    }
+
+    async denyDataset(id: number) {
+        const dataset = await this.datasetRepository.findOne({ where: { id } });
+        if (!dataset) {
+            throw new HttpException('Dataset not found', HttpStatus.NOT_FOUND);
+        }
+        dataset.deniedAt = new Date();
         return this.datasetRepository.save(dataset);
     }
 
