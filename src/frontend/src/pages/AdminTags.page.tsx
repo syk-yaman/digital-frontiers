@@ -9,6 +9,7 @@ import {
     Button,
     Badge,
     Stack,
+    Tooltip,
 } from '@mantine/core';
 import { DataTable } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
@@ -168,25 +169,29 @@ export function AdminTags() {
                         title: 'Actions',
                         render: (record) => (
                             <Group gap={4} justify="right" wrap="nowrap">
-                                <ActionIcon
-                                    size="sm"
-                                    variant="subtle"
-                                    color="blue"
-                                    onClick={() => navigate(`/data-menu/tag/${record.id}`)}
-                                >
-                                    <IconEdit size={16} />
-                                </ActionIcon>
-                                <ActionIcon
-                                    size="sm"
-                                    variant="subtle"
-                                    color="red"
-                                    onClick={() => {
-                                        setTagToDelete(record);
-                                        setDeleteModalOpened(true);
-                                    }}
-                                >
-                                    <IconTrash size={16} />
-                                </ActionIcon>
+                                <Tooltip label="View tag datasets" position="top" withArrow>
+                                    <ActionIcon
+                                        size="sm"
+                                        variant="subtle"
+                                        color="blue"
+                                        onClick={() => navigate(`/data-menu/tag/${record.id}`)}
+                                    >
+                                        <IconEdit size={16} />
+                                    </ActionIcon>
+                                </Tooltip>
+                                <Tooltip label="Delete tag" position="top" withArrow>
+                                    <ActionIcon
+                                        size="sm"
+                                        variant="subtle"
+                                        color="red"
+                                        onClick={() => {
+                                            setTagToDelete(record);
+                                            setDeleteModalOpened(true);
+                                        }}
+                                    >
+                                        <IconTrash size={16} />
+                                    </ActionIcon>
+                                </Tooltip>
                             </Group>
                         ),
                     },

@@ -11,6 +11,7 @@ import {
     Modal,
     Button,
     Stack,
+    Tooltip,
 } from '@mantine/core';
 import { DataTable } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
@@ -207,33 +208,39 @@ export function AdminDatasets() {
                         title: 'Actions',
                         render: (record) => (
                             <Group gap={4} justify="right" wrap="nowrap">
-                                <ActionIcon
-                                    size="sm"
-                                    variant="subtle"
-                                    color="green"
-                                    onClick={() => navigate(`/dataset/${record.id}`)} // Navigate to dataset page
-                                >
-                                    <IconEye size={16} />
-                                </ActionIcon>
-                                <ActionIcon
-                                    size="sm"
-                                    variant="subtle"
-                                    color="blue"
-                                    onClick={() => navigate(`/edit-dataset/${record.id}`)} // Navigate to edit dataset page
-                                >
-                                    <IconEdit size={16} />
-                                </ActionIcon>
-                                <ActionIcon
-                                    size="sm"
-                                    variant="subtle"
-                                    color="red"
-                                    onClick={() => {
-                                        setDatasetToDelete(record);
-                                        setDeleteModalOpened(true);
-                                    }}
-                                >
-                                    <IconTrash size={16} />
-                                </ActionIcon>
+                                <Tooltip label="View dataset" position="top" withArrow>
+                                    <ActionIcon
+                                        size="sm"
+                                        variant="subtle"
+                                        color="green"
+                                        onClick={() => navigate(`/dataset/${record.id}`)}
+                                    >
+                                        <IconEye size={16} />
+                                    </ActionIcon>
+                                </Tooltip>
+                                <Tooltip label="Edit dataset" position="top" withArrow>
+                                    <ActionIcon
+                                        size="sm"
+                                        variant="subtle"
+                                        color="blue"
+                                        onClick={() => navigate(`/edit-dataset/${record.id}`)}
+                                    >
+                                        <IconEdit size={16} />
+                                    </ActionIcon>
+                                </Tooltip>
+                                <Tooltip label="Delete dataset" position="top" withArrow>
+                                    <ActionIcon
+                                        size="sm"
+                                        variant="subtle"
+                                        color="red"
+                                        onClick={() => {
+                                            setDatasetToDelete(record);
+                                            setDeleteModalOpened(true);
+                                        }}
+                                    >
+                                        <IconTrash size={16} />
+                                    </ActionIcon>
+                                </Tooltip>
                             </Group>
                         ),
                     },

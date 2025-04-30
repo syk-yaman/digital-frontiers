@@ -10,6 +10,7 @@ import {
     Stack,
     Badge,
     Avatar,
+    Tooltip,
 } from '@mantine/core';
 import { DataTable } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
@@ -164,42 +165,48 @@ export function AdminUsers() {
                         title: 'Actions',
                         render: (record) => (
                             <Group gap={4} justify="right" wrap="nowrap">
-                                <ActionIcon
-                                    size="sm"
-                                    variant="subtle"
-                                    color="blue"
-                                    onClick={() => {
-                                        // Feature not yet implemented
-                                        notifications.show({
-                                            title: 'Feature Coming Soon',
-                                            message: 'User editing will be available in a future update.',
-                                            color: 'blue',
-                                        });
-                                    }}
-                                >
-                                    <IconEdit size={16} />
-                                </ActionIcon>
-                                <ActionIcon
-                                    size="sm"
-                                    variant="subtle"
-                                    color="green"
-                                    onClick={() => {
-                                        window.location.href = `mailto:${record.email}`;
-                                    }}
-                                >
-                                    <IconMail size={16} />
-                                </ActionIcon>
-                                <ActionIcon
-                                    size="sm"
-                                    variant="subtle"
-                                    color="red"
-                                    onClick={() => {
-                                        setUserToDelete(record);
-                                        setDeleteModalOpened(true);
-                                    }}
-                                >
-                                    <IconTrash size={16} />
-                                </ActionIcon>
+                                <Tooltip label="Edit user" position="top" withArrow>
+                                    <ActionIcon
+                                        size="sm"
+                                        variant="subtle"
+                                        color="blue"
+                                        onClick={() => {
+                                            // Feature not yet implemented
+                                            notifications.show({
+                                                title: 'Feature Coming Soon',
+                                                message: 'User editing will be available in a future update.',
+                                                color: 'blue',
+                                            });
+                                        }}
+                                    >
+                                        <IconEdit size={16} />
+                                    </ActionIcon>
+                                </Tooltip>
+                                <Tooltip label="Send email" position="top" withArrow>
+                                    <ActionIcon
+                                        size="sm"
+                                        variant="subtle"
+                                        color="green"
+                                        onClick={() => {
+                                            window.location.href = `mailto:${record.email}`;
+                                        }}
+                                    >
+                                        <IconMail size={16} />
+                                    </ActionIcon>
+                                </Tooltip>
+                                <Tooltip label="Delete user" position="top" withArrow>
+                                    <ActionIcon
+                                        size="sm"
+                                        variant="subtle"
+                                        color="red"
+                                        onClick={() => {
+                                            setUserToDelete(record);
+                                            setDeleteModalOpened(true);
+                                        }}
+                                    >
+                                        <IconTrash size={16} />
+                                    </ActionIcon>
+                                </Tooltip>
                             </Group>
                         ),
                     },
