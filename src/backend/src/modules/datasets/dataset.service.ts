@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Not, IsNull } from 'typeorm';
 import { Dataset, DatasetLink, DatasetLocation, DatasetSliderImage, DatasetTag } from './dataset.entity';
@@ -6,13 +6,15 @@ import { CreateDatasetDto, UpdateDatasetDto } from './dataset.dto';
 import { User } from '../users/user.entity';
 import { plainToInstance } from 'class-transformer';
 import mqtt from 'mqtt';
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { TagsService } from '../tags/tags.service';
+import { AuthorisationService } from '../authorisation/authorisation.service-Yaman’s MacBook Pro';
+import { Permission } from '../authorisation/enums/permissions.enum';
+import { UserContext } from '../authorisation/user-context';
 
 @Injectable()
 export class DatasetsService {
     private connectionPool: mqtt.MqttClient[] = []; // Connection pool
     private maxConnections = 10; // Maximum concurrent connections
-
 
     constructor(
         @InjectRepository(Dataset)
@@ -21,13 +23,20 @@ export class DatasetsService {
         private tagRepository: Repository<DatasetTag>,
         @InjectRepository(User)
         private usersRepository: Repository<User>,
+        private authorisationService: AuthorisationService,
+        private tagsService: TagsService,
     ) { }
 
-    findAll(): Promise<Dataset[]> {
-        return this.datasetRepository.find({
-            relations: ['links', 'locations', 'sliderImages', 'tags'],
+    async findAll(userContext?: UserContext): Promise<Dataset[]> {
+        const datasets = await this.datasetRepository.find({
+            relations: ['links', 'locations', 'sliderImages', 'tags', 'user'],
             order: { createdAt: 'DESC' },
         });
+
+        // Filter datasets based on permissions
+        return datasets.filter(dataset =>
+            this.authorisationService.canViewDataset(dataset, userContext)
+        );
     }
 
     findAllApproved(): Promise<Dataset[]> {
@@ -38,32 +47,22 @@ export class DatasetsService {
         });
     }
 
-    async findOne(id: number): Promise<Dataset | null> {
-        var dataset = await this.datasetRepository.findOne({
+    async findOne(id: number, userContext?: UserContext): Promise<Dataset | null> {
+        const dataset = await this.datasetRepository.findOne({
             where: { id },
-            relations: ['links', 'locations', 'sliderImages', 'tags'],
+            relations: ['links', 'locations', 'sliderImages', 'tags', 'user'],
         });
 
         if (!dataset) {
             throw new HttpException('Dataset not found', HttpStatus.NOT_FOUND);
         }
 
-        return dataset;
-        // if (dataset.approvedAt !== null) {
-        //     return dataset;
-        // } else {
-        //     console.log(currentUserId);
-        //     const currentUser = await this.usersRepository.findOne({ where: { id: currentUserId } });
-        //     if (!currentUser) {
-        //         throw new Error('User not found');
-        //     }
+        // Check if user can view this dataset
+        if (!this.authorisationService.canViewDataset(dataset, userContext)) {
+            throw new HttpException('Dataset not found or not approved yet', HttpStatus.NOT_FOUND);
+        }
 
-        //     if (!currentUser.isAdmin) {
-        //         throw new HttpException('Dataset not found.', HttpStatus.NOT_FOUND);
-        //     } else {
-        //         return dataset;
-        //     }
-        // }
+        return dataset;
     }
 
     findRecent(): Promise<Dataset[]> {
@@ -75,30 +74,58 @@ export class DatasetsService {
         });
     }
 
+    // Update the findByUser method to be more explicit about ownership
     findByUser(userId: string): Promise<Dataset[]> {
         return this.datasetRepository.find({
             where: { user: { id: userId } },
-            relations: ['links', 'locations', 'sliderImages', 'tags'],
-        });
-    }
-
-    findPendingApproval(): Promise<Dataset[]> {
-        return this.datasetRepository.find({
-            where: {
-                approvedAt: IsNull(),
-                deniedAt: IsNull()
-            },
             relations: ['links', 'locations', 'sliderImages', 'tags'],
             order: { createdAt: 'DESC' },
         });
     }
 
-    async approveDataset(id: number): Promise<Dataset> {
-        const dataset = await this.datasetRepository.findOne({ where: { id } });
+    async findPendingApproval(userContext: UserContext): Promise<Dataset[]> {
+        // Only admins can see all pending datasets
+        if (!this.authorisationService.canViewAllUnapprovedContent(userContext)) {
+            throw new HttpException('Not authorized', HttpStatus.FORBIDDEN);
+        }
+
+        return this.datasetRepository.find({
+            where: {
+                approvedAt: IsNull(),
+                deniedAt: IsNull()
+            },
+            relations: ['links', 'locations', 'sliderImages', 'tags', 'user'],
+            order: { createdAt: 'DESC' },
+        });
+    }
+
+    async approveDataset(id: number, userContext: UserContext): Promise<Dataset> {
+        if (!userContext.canApproveContent()) {
+            throw new HttpException('Not authorized', HttpStatus.FORBIDDEN);
+        }
+
+        const dataset = await this.datasetRepository.findOne({
+            where: { id },
+            relations: ['tags']
+        });
+
         if (!dataset) {
             throw new HttpException('Dataset not found', HttpStatus.NOT_FOUND);
         }
+
         dataset.approvedAt = new Date();
+
+        // Approve all unapproved tags when dataset is approved
+        if (dataset.tags && dataset.tags.length > 0) {
+            const now = new Date();
+            for (const tag of dataset.tags) {
+                if (!tag.approvedAt) {
+                    tag.approvedAt = now;
+                    await this.tagRepository.save(tag);
+                }
+            }
+        }
+
         return this.datasetRepository.save(dataset);
     }
 
@@ -111,13 +138,13 @@ export class DatasetsService {
         return this.datasetRepository.save(dataset);
     }
 
-    async create(createDto: CreateDatasetDto): Promise<Dataset> {
+    async create(createDto: CreateDatasetDto, userContext: UserContext): Promise<Dataset> {
         // Transform plain object into an instance of CreateDatasetDto
         const createDatasetInstance = plainToInstance(CreateDatasetDto, createDto);
 
         const user = await this.usersRepository.findOne({ where: { id: createDatasetInstance.userId } });
         if (!user) {
-            throw new Error('User not found');
+            throw new HttpException('User not found', HttpStatus.NOT_FOUND);
         }
 
         // Validation
@@ -140,17 +167,23 @@ export class DatasetsService {
                     }
                 }
                 // Generate a random color if not provided
-                tagDto.colour = `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
-                tagDto.icon = '🏷️';
+                tagDto.colour = tagDto.colour || `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
+                tagDto.icon = tagDto.icon || '🏷️';
                 const newTag = this.tagRepository.create(tagDto);
+
+                // Auto-approve tag if user has permission to create approved content
+                if (this.tagsService.shouldAutoApproveTags(userContext)) {
+                    newTag.approvedAt = new Date();
+                }
+
                 return this.tagRepository.save(newTag);
             }),
         );
 
-        console.log(createDatasetInstance);
         const newDataset = this.datasetRepository.create({ ...createDatasetInstance, tags, user });
 
-        if (user.isAdmin) { //Auto approve if user is admin
+        // Auto-approve dataset if user can create approved content
+        if (userContext.hasPermission(Permission.CREATE_APPROVED_CONTENT)) {
             newDataset.approvedAt = new Date();
         }
 

@@ -104,6 +104,19 @@ export class Dataset {
 
     @DeleteDateColumn()
     deletedAt?: Date;  // Soft delete column
+
+    // Helper method for domain logic
+    get isControlled(): boolean {
+        return this.datasetType === DatasetType.CONTROLLED;
+    }
+
+    get isApproved(): boolean {
+        return this.approvedAt !== null;
+    }
+
+    isOwnedBy(userId: string): boolean {
+        return this.user.id === userId;
+    }
 }
 
 @Entity('dataset_links')

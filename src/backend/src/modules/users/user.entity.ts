@@ -52,6 +52,15 @@ export class User {
     @Column({ default: false })
     isActivated!: boolean;
 
+    @Column({
+        type: 'json',
+        default: () => "['user']"
+    })
+    roles!: string[]; // Array of role names
+
+    @Column({ type: 'json', nullable: true })
+    controlledDatasetIds?: string[]; // Datasets this user has explicit access to
+
     @OneToMany(() => Dataset, (dataset) => dataset.user, { cascade: true })
     datasets!: Dataset[];
 

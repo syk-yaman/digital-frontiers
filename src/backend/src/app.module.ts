@@ -5,7 +5,7 @@ import { UsersModule } from './modules/users/users.module';
 import { DatasetsModule } from './modules/datasets/datasets.module';
 import { Dataset, DatasetLink, DatasetLocation, DatasetSliderImage, DatasetTag } from './modules/datasets/dataset.entity';
 import { TagsModule } from './modules/tags/tags.module';
-import { AuthModule } from './modules/auth/auth.module';
+import { AuthModule } from './modules/authentication/auth.module';
 
 @Module({
   imports: [TypeOrmModule.forRoot({

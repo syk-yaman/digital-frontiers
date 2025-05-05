@@ -1,21 +1,29 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Query, UseGuards, Request } from '@nestjs/common';
 import { TagsService } from './tags.service';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateDatasetTagDto, UpdateDatasetTagDto } from './tags.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { Roles } from '../auth/roles.decorator';
-import { RolesGuard } from '../auth/roles.guard';
+import { JwtAuthGuard } from '../authentication/jwt-auth.guard';
+import { Roles } from '../authentication/roles.decorator';
+import { RolesGuard } from '../authentication/roles.guard';
+import { JwtUserContextFactory } from '../authorisation/factories/jwt-user-context.factory';
 
 @ApiTags('Dataset Tags')
 @Controller('tags')
 export class TagsController {
-    constructor(private readonly tagsService: TagsService) { }
+    constructor(
+        private readonly tagsService: TagsService,
+        private readonly userContextFactory: JwtUserContextFactory
+    ) { }
 
     @Get()
     @ApiOperation({ summary: 'List all tags' })
     @ApiResponse({ status: 200, description: 'Returns a list of all tags.' })
-    findAll() {
-        return this.tagsService.findAll();
+    async findAll(@Request() req) {
+        const userContext = req.user ?
+            this.userContextFactory.createFromRequest(req) :
+            this.userContextFactory.createPublicContext();
+
+        return this.tagsService.findAll(userContext);
     }
 
     @Get('search') //TODO: discuss lowercase and other potential inputs..
@@ -36,8 +44,12 @@ export class TagsController {
     @Get(':id') //TODO: discuss if it doesn't exist
     @ApiOperation({ summary: 'Get a single tag by ID' })
     @ApiResponse({ status: 200, description: 'Returns the tag with the specified ID.' })
-    findOne(@Param('id') id: number) {
-        return this.tagsService.findOne(id);
+    async findOne(@Param('id') id: number, @Request() req) {
+        const userContext = req.user ?
+            this.userContextFactory.createFromRequest(req) :
+            this.userContextFactory.createPublicContext();
+
+        return this.tagsService.findOne(id, userContext);
     }
 
     @Post()
@@ -46,8 +58,9 @@ export class TagsController {
     @ApiOperation({ summary: 'Create a new tag' })
     @ApiResponse({ status: 201, description: 'The tag has been successfully created.' })
     @ApiBody({ type: CreateDatasetTagDto })
-    create(@Body() createTagDto: CreateDatasetTagDto) {
-        return this.tagsService.create(createTagDto);
+    async create(@Body() createTagDto: CreateDatasetTagDto, @Request() req) {
+        const userContext = this.userContextFactory.createFromRequest(req);
+        return this.tagsService.create(createTagDto, userContext);
     }
 
     @Put(':id')

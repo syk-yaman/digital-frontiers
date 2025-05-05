@@ -5,10 +5,11 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import mqtt from 'mqtt';
-import { RolesGuard } from '../auth/roles.guard';
-import { Roles } from '../auth/roles.decorator';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../authentication/jwt-auth.guard';
+import { Roles } from '../authentication/roles.decorator';
+import { RolesGuard } from '../authentication/roles.guard';
+import { JwtUserContextFactory } from '../authorisation/factories/jwt-user-context.factory';
 
 interface MqttConnectionDto {
     mqttAddress: string;
@@ -21,19 +22,27 @@ interface MqttConnectionDto {
 @Controller('datasets')
 export class DatasetsController {
 
-    constructor(private readonly datasetsService: DatasetsService) { }
+    constructor(
+        private readonly datasetsService: DatasetsService,
+        private readonly userContextFactory: JwtUserContextFactory
+    ) { }
 
     @Get()
-    findAll() {
-        return this.datasetsService.findAllApproved();
+    async findAll(@Request() req) {
+        const userContext = req.user ?
+            this.userContextFactory.createFromRequest(req) :
+            this.userContextFactory.createPublicContext();
+
+        return this.datasetsService.findAll(userContext);
     }
 
     @Get('requests')
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('admin')
     @ApiBearerAuth()
-    findPendingApproval() {
-        return this.datasetsService.findPendingApproval();
+    findPendingApproval(@Request() req) {
+        const userContext = this.userContextFactory.createFromRequest(req);
+        return this.datasetsService.findPendingApproval(userContext);
     }
 
     @Get('recent')
@@ -42,17 +51,21 @@ export class DatasetsController {
     }
 
     @Get(':id')
-    findOne(@Param('id') id: number) {
-        return this.datasetsService.findOne(id);
+    async findOne(@Param('id') id: number, @Request() req) {
+        const userContext = req.user ?
+            this.userContextFactory.createFromRequest(req) :
+            this.userContextFactory.createPublicContext();
+
+        return this.datasetsService.findOne(id, userContext);
     }
 
     @UseGuards(JwtAuthGuard)
     @Post()
     @ApiBearerAuth()
-    create(@Body() createDto: CreateDatasetDto, @Request() req) {
-        const userId = req.user.userId;
-        createDto.userId = userId;
-        return this.datasetsService.create(createDto);
+    async create(@Body() createDto: CreateDatasetDto, @Request() req) {
+        const userContext = this.userContextFactory.createFromRequest(req);
+        createDto.userId = req.user.userId;
+        return this.datasetsService.create(createDto, userContext);
     }
 
     @UseGuards(JwtAuthGuard)
@@ -118,8 +131,9 @@ export class DatasetsController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('admin')
     @ApiBearerAuth()
-    approveDataset(@Param('id') id: number) {
-        return this.datasetsService.approveDataset(id);
+    async approveDataset(@Param('id') id: number, @Request() req) {
+        const userContext = this.userContextFactory.createFromRequest(req);
+        return this.datasetsService.approveDataset(id, userContext);
     }
 
     @Put(':id/deny')
