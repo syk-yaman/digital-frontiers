@@ -4,7 +4,7 @@ import { UserContext } from '../user-context';
 import { UserRole } from '../enums/user-roles.enum';
 
 @Injectable()
-export class DatasetAuthorizationService {
+export class DatasetAuthorisationService {
   canUserViewDataset(dataset: Dataset, userContext?: UserContext): boolean {
     if (!userContext) {
       // Public visitor can only see approved non-controlled datasets

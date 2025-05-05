@@ -3,8 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthorisationService } from './authorisation.service';
 import { JwtUserContextFactory } from './factories/jwt-user-context.factory';
 import { User } from '../users/user.entity';
-import { DatasetAuthorizationService } from './domain/dataset-authorization.service';
-import { TagAuthorizationService } from './domain/tag-authorization.service';
+import { DatasetAuthorisationService } from './domain/dataset-authorisation.service';
+import { TagAuthorisationService } from './domain/tag-authorisation.service';
 
 @Module({
   imports: [
@@ -13,14 +13,14 @@ import { TagAuthorizationService } from './domain/tag-authorization.service';
   providers: [
     AuthorisationService,
     JwtUserContextFactory,
-    DatasetAuthorizationService,
-    TagAuthorizationService
+    DatasetAuthorisationService,
+    TagAuthorisationService
   ],
   exports: [
     AuthorisationService,
     JwtUserContextFactory,
-    DatasetAuthorizationService,
-    TagAuthorizationService
+    DatasetAuthorisationService,
+    TagAuthorisationService
   ]
 })
-export class AuthorisationModule {}
+export class AuthorisationModule { }
