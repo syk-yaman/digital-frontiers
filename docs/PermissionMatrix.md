@@ -1,4 +1,9 @@
-|                             | Public visitor | User | Controlled dataset granted user | Content owner | Admin |
+**Authorisation system table (Permissions vs. Roles):**
+
+`Note: 
+'Content' means: Datasets, Tags, and Showcases.`
+
+| Permission/Role             | Public visitor | User | Controlled dataset granted user | Content owner | Admin |
 | :-------------------------- | :------------- | :--- | :------------------------------ | :------------ | :---- |
 | View public content         | Y              | Y    | Y                               | Y             | Y     |
 | Create unapproved content   |                | Y    | Y                               | Y             | Y     |
@@ -14,4 +19,4 @@
 | Edit homepage settings      |                |      |                                 |               | Y     |
 | Manage users                |                |      |                                 |               | Y     |
 
-**Content** includes: Datasets, Tags, Showcases
+

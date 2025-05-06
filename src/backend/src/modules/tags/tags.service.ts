@@ -98,7 +98,7 @@ export class TagsService {
     }
 
     async approveTagsForDataset(tags: DatasetTag[], userContext: UserContext): Promise<void> {
-        if (!userContext.canApproveContent()) {
+        if (!this.authorisationService.canApproveContent(userContext)) {
             return;
         }
 
@@ -114,7 +114,7 @@ export class TagsService {
     }
 
     async approveTags(tagIds: number[], userContext: UserContext): Promise<void> {
-        if (!userContext.canApproveContent() || !tagIds || tagIds.length === 0) {
+        if (!this.authorisationService.canApproveContent(userContext) || !tagIds || tagIds.length === 0) {
             return;
         }
 

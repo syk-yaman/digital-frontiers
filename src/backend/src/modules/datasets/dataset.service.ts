@@ -27,7 +27,7 @@ export class DatasetsService {
         private tagsService: TagsService,
     ) { }
 
-    async findAll(userContext?: UserContext): Promise<Dataset[]> {
+    async findAll(userContext: UserContext): Promise<Dataset[]> {
         const datasets = await this.datasetRepository.find({
             relations: ['links', 'locations', 'sliderImages', 'tags', 'user'],
             order: { createdAt: 'DESC' },
@@ -47,7 +47,7 @@ export class DatasetsService {
         });
     }
 
-    async findOne(id: number, userContext?: UserContext): Promise<Dataset | null> {
+    async findOne(id: number, userContext: UserContext): Promise<Dataset | null> {
         const dataset = await this.datasetRepository.findOne({
             where: { id },
             relations: ['links', 'locations', 'sliderImages', 'tags', 'user'],
@@ -100,7 +100,7 @@ export class DatasetsService {
     }
 
     async approveDataset(id: number, userContext: UserContext): Promise<Dataset> {
-        if (!userContext.canApproveContent()) {
+        if (!this.authorisationService.canApproveContent(userContext)) {
             throw new HttpException('Not authorized', HttpStatus.FORBIDDEN);
         }
 

@@ -1,17 +1,46 @@
 import { UserRole } from './enums/user-roles.enum';
 import { Permission } from './enums/permissions.enum';
 
+/**
+ * UserContext Class
+ * 
+ * Represents the security context of a user in the system.
+ * This class encapsulates all authorisation-related information about a user,
+ * including identity, assigned roles, and accessible controlled datasets.
+ * It provides methods to check permissions and access rights for various operations.
+ */
 export class UserContext {
+    /**
+     * Creates a new UserContext instance.
+     * 
+     * @param userId - The unique identifier of the user, or null for unauthenticated users
+     * @param roles - Array of user roles assigned to this user (defaults to PUBLIC_VISITOR)
+     * @param controlledDatasetIds - Array of controlled dataset IDs the user has access to
+     */
     constructor(
         public readonly userId: string | null,
-        public readonly roles: UserRole[] = [UserRole.PUBLIC],
+        public readonly roles: UserRole[] = [UserRole.PUBLIC_VISITOR],
         public readonly controlledDatasetIds: string[] = []
-    ) { }
+    ) {
+        console.log('UserContext created:', { userId, roles, controlledDatasetIds });
+    }
 
+    /**
+     * Checks if the user has a specific role.
+     * 
+     * @param role - The role to check against user's assigned roles
+     * @returns True if the user has the specified role, false otherwise
+     */
     hasRole(role: UserRole): boolean {
         return this.roles.includes(role);
     }
 
+    /**
+     * Determines if the user has a specific permission based on their roles.
+     * 
+     * @param permission - The permission to check
+     * @returns True if the user has the specified permission, false otherwise
+     */
     hasPermission(permission: Permission): boolean {
         switch (permission) {
             case Permission.VIEW_PUBLIC_CONTENT:
@@ -23,14 +52,16 @@ export class UserContext {
             case Permission.CREATE_UNAPPROVED_CONTENT:
             case Permission.EDIT_OWN_CONTENT:
             case Permission.CREATE_CONTROLLED_DATASETS:
+                // These permissions are available to all authenticated users except public visitors
                 return this.roles.some(role => [
-                    UserRole.USER,
+                    UserRole.GENERAL_USER,
                     UserRole.CONTROLLED_DATASET_USER,
                     UserRole.CONTENT_OWNER,
                     UserRole.ADMIN
                 ].includes(role));
 
             case Permission.VIEW_CONTROLLED_DATASETS:
+                // Only users with elevated roles can view controlled datasets
                 return this.roles.some(role => [
                     UserRole.CONTROLLED_DATASET_USER,
                     UserRole.CONTENT_OWNER,
@@ -38,6 +69,7 @@ export class UserContext {
                 ].includes(role));
 
             case Permission.EDIT_CONTROLLED_DATASETS:
+                // Only content owners and admins can edit controlled datasets
                 return this.roles.some(role => [
                     UserRole.CONTENT_OWNER,
                     UserRole.ADMIN
@@ -55,58 +87,5 @@ export class UserContext {
             default:
                 return false;
         }
-    }
-
-    canViewDataset(dataset: { id: string; isControlled: boolean; ownerId: string; isApproved: boolean }): boolean {
-        // If user is the owner, they can view their dataset regardless of approval status
-        if (this.userId === dataset.ownerId) {
-            return true;
-        }
-
-        // Admins can view any dataset
-        if (this.hasPermission(Permission.VIEW_ALL_UNAPPROVED_CONTENT)) {
-            return true;
-        }
-
-        // For non-owners, the dataset must be approved
-        if (!dataset.isApproved) {
-            return false;
-        }
-
-        // For public datasets that are approved, anyone can view
-        if (!dataset.isControlled) {
-            return true;
-        }
-
-        // For controlled datasets that are approved, only users with specific access can view
-        return this.controlledDatasetIds.includes(dataset.id);
-    }
-
-    canEditDataset(dataset: { ownerId: string; isControlled: boolean }): boolean {
-        // Admin can edit anything
-        if (this.hasPermission(Permission.EDIT_ALL_CONTENT)) {
-            return true;
-        }
-
-        // Users can edit their own content
-        if (this.userId === dataset.ownerId) {
-            return true;
-        }
-
-        // Content owners with controlled dataset permission can edit controlled datasets
-        if (dataset.isControlled &&
-            this.hasPermission(Permission.EDIT_CONTROLLED_DATASETS)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    canApproveContent(): boolean {
-        return this.hasPermission(Permission.APPROVE_CONTENT);
-    }
-
-    isContentOwner(ownerId: string): boolean {
-        return this.userId === ownerId;
     }
 }
