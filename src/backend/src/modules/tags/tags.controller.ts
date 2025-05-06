@@ -15,17 +15,15 @@ export class TagsController {
         private readonly userContextFactory: JwtUserContextFactory
     ) { }
 
+    //Returns only public results 
     @Get()
     @ApiOperation({ summary: 'List all tags' })
     @ApiResponse({ status: 200, description: 'Returns a list of all tags.' })
     async findAll(@Request() req) {
-        const userContext = req.user ?
-            this.userContextFactory.createFromRequest(req) :
-            this.userContextFactory.createPublicContext();
-
-        return this.tagsService.findAll(userContext);
+        return this.tagsService.findAll();
     }
 
+    //Returns only public results 
     @Get('search') //TODO: discuss lowercase and other potential inputs..
     @ApiOperation({ summary: 'Search tags by name' })
     @ApiQuery({ name: 'name', required: true, description: 'The name of the tag to search for.' })
@@ -34,6 +32,7 @@ export class TagsController {
         return this.tagsService.search(name);
     }
 
+    //Returns only public results 
     @Get('top')
     @ApiOperation({ summary: 'Get the last 5 created tags' })
     @ApiResponse({ status: 200, description: 'Returns the last 5 most recently created tags.' })
@@ -41,6 +40,7 @@ export class TagsController {
         return this.tagsService.getTopTags();
     }
 
+    //Returns public and user-aware results 
     @Get(':id') //TODO: discuss if it doesn't exist
     @ApiOperation({ summary: 'Get a single tag by ID' })
     @ApiResponse({ status: 200, description: 'Returns the tag with the specified ID.' })

@@ -34,7 +34,7 @@ export class JwtUserContextFactory {
         if (!req.user) {
             throw new Error('User not found in request');
         }
-
+        console.log('User found in request:', req.user);
         const { userId, isAdmin } = req.user;
 
         // Default role for authenticated users

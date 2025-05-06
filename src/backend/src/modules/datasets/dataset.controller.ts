@@ -5,11 +5,12 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import mqtt from 'mqtt';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../authentication/jwt-auth.guard';
 import { Roles } from '../authentication/roles.decorator';
 import { RolesGuard } from '../authentication/roles.guard';
 import { JwtUserContextFactory } from '../authorisation/factories/jwt-user-context.factory';
+import { OptionalJwtAuthGuard } from '../authentication/optional-jwt-auth.guard';
 
 interface MqttConnectionDto {
     mqttAddress: string;
@@ -27,13 +28,16 @@ export class DatasetsController {
         private readonly userContextFactory: JwtUserContextFactory
     ) { }
 
+    //Returns only public results 
     @Get()
     async findAll(@Request() req) {
-        const userContext = req.user ?
-            this.userContextFactory.createFromRequest(req) :
-            this.userContextFactory.createPublicContext();
+        return this.datasetsService.findAll();
+    }
 
-        return this.datasetsService.findAll(userContext);
+    //Returns only public results 
+    @Get('recent')
+    findRecent() {
+        return this.datasetsService.findRecent();
     }
 
     @Get('requests')
@@ -45,12 +49,13 @@ export class DatasetsController {
         return this.datasetsService.findPendingApproval(userContext);
     }
 
-    @Get('recent')
-    findRecent() {
-        return this.datasetsService.findRecent();
-    }
-
+    //Returns public and user-aware results 
     @Get(':id')
+    @UseGuards(OptionalJwtAuthGuard)
+    @ApiOperation({
+        summary: 'Get dataset by ID',
+        description: 'Public endpoint that returns different data based on authentication status'
+    })
     async findOne(@Param('id') id: number, @Request() req) {
         const userContext = req.user ?
             this.userContextFactory.createFromRequest(req) :
@@ -119,6 +124,7 @@ export class DatasetsController {
         return this.datasetsService.verifyMqttConnection(mqttAddress, mqttPort, mqttTopic, mqttUsername, mqttPassword);
     }
 
+    //Returns user-aware results 
     @UseGuards(JwtAuthGuard)
     @Get('search/me')
     @ApiBearerAuth()
@@ -144,6 +150,7 @@ export class DatasetsController {
         return this.datasetsService.denyDataset(id);
     }
 
+    //Returns only public results 
     @Get('search/tag/:tagId')
     findByTagId(@Param('tagId') tagId: number) {
         return this.datasetsService.findByTagId(tagId);

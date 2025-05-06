@@ -27,24 +27,18 @@ export class DatasetsService {
         private tagsService: TagsService,
     ) { }
 
-    async findAll(userContext: UserContext): Promise<Dataset[]> {
+    async findAll(): Promise<Dataset[]> {
         const datasets = await this.datasetRepository.find({
             relations: ['links', 'locations', 'sliderImages', 'tags', 'user'],
+            where: { approvedAt: Not(IsNull()) },
             order: { createdAt: 'DESC' },
         });
 
-        // Filter datasets based on permissions
-        return datasets.filter(dataset =>
-            this.authorisationService.canViewDataset(dataset, userContext)
-        );
-    }
+        return datasets;
 
-    findAllApproved(): Promise<Dataset[]> {
-        return this.datasetRepository.find({
-            where: { approvedAt: Not(IsNull()) }, // Only fetch datasets with approvedAt not null
-            relations: ['links', 'locations', 'sliderImages', 'tags'],
-            order: { createdAt: 'DESC' },
-        });
+        //return datasets.filter(dataset =>
+        //    this.authorisationService.canViewDataset(dataset, userContext)
+        //);
     }
 
     async findOne(id: number, userContext: UserContext): Promise<Dataset | null> {
@@ -86,7 +80,7 @@ export class DatasetsService {
     async findPendingApproval(userContext: UserContext): Promise<Dataset[]> {
         // Only admins can see all pending datasets
         if (!this.authorisationService.canViewAllUnapprovedContent(userContext)) {
-            throw new HttpException('Not authorized', HttpStatus.FORBIDDEN);
+            throw new HttpException('Not authorised', HttpStatus.FORBIDDEN);
         }
 
         return this.datasetRepository.find({

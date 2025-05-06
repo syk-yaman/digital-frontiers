@@ -27,15 +27,16 @@ export class AuthorisationService {
             return dataset.isApproved && !dataset.isControlled;
         }
 
+        // Admins can view any dataset
+        if (userContext.hasPermission(Permission.VIEW_ALL_UNAPPROVED_CONTENT)) {
+            return true;
+        }
+
         // If user is the owner, they can view their dataset regardless of approval status
         if (userContext.userId === dataset.user.id) {
             return true;
         }
 
-        // Admins can view any dataset
-        if (userContext.hasPermission(Permission.VIEW_ALL_UNAPPROVED_CONTENT)) {
-            return true;
-        }
 
         // For non-owners, the dataset must be approved
         if (!dataset.isApproved) {
