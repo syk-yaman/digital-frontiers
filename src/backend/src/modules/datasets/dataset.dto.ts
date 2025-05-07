@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, ValidateNested, ValidateIf, IsIn } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { DatasetType, UpdateFrequencyUnit } from './dataset.entity';
 import { HttpException, HttpStatus } from '@nestjs/common'; // Import HttpException and HttpStatus
 
@@ -38,19 +38,38 @@ export class CreateDatasetDto {
     @ValidateIf((o) => !o.mqttAddress) // Required if no MQTT info exists
     @IsEnum(UpdateFrequencyUnit) updateFrequencyUnit!: UpdateFrequencyUnit;
 
-    @ValidateIf((o) => o.mqttAddress) // Required if MQTT info exists
+    @Transform(({ value }) => {
+        if (value === '' || value === null || value === undefined) return null;
+        return value;
+    })
     @IsString() mqttAddress?: string;
 
     @ValidateIf((o) => o.mqttAddress) // Required if MQTT info exists
+    @Transform(({ value }) => {
+        if (value === '' || value === null || value === undefined) return null;
+        return Number(value);
+    })
     @IsNumber() mqttPort?: number;
 
     @ValidateIf((o) => o.mqttAddress) // Required if MQTT info exists
+    @Transform(({ value }) => {
+        if (value === '' || value === null || value === undefined) return null;
+        return value;
+    })
     @IsString() mqttTopic?: string;
 
     @ValidateIf((o) => o.mqttUsername || o.mqttPassword) // Both username and password must exist together
+    @Transform(({ value }) => {
+        if (value === '' || value === null || value === undefined) return null;
+        return value;
+    })
     @IsString() mqttUsername?: string;
 
     @ValidateIf((o) => o.mqttUsername || o.mqttPassword) // Both username and password must exist together
+    @Transform(({ value }) => {
+        if (value === '' || value === null || value === undefined) return null;
+        return value;
+    })
     @IsString() mqttPassword?: string;
 
     @IsOptional() @IsString() dataExample?: string;

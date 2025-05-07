@@ -135,6 +135,7 @@ export class DatasetsService {
     async create(createDto: CreateDatasetDto, userContext: UserContext): Promise<Dataset> {
         // Transform plain object into an instance of CreateDatasetDto
         const createDatasetInstance = plainToInstance(CreateDatasetDto, createDto);
+        console.log('createDatasetInstance', createDto);
 
         const user = await this.usersRepository.findOne({ where: { id: createDatasetInstance.userId } });
         if (!user) {
@@ -144,11 +145,12 @@ export class DatasetsService {
         // Validation
         createDatasetInstance.validateTags();
         createDatasetInstance.validateMqttData();
-        this.verifyMqttConnection(createDatasetInstance.mqttAddress,
-            createDatasetInstance.mqttPort,
-            createDatasetInstance.mqttTopic,
-            createDatasetInstance.mqttUsername,
-            createDatasetInstance.mqttPassword);
+        if (createDatasetInstance.mqttAddress && createDatasetInstance.mqttPort)
+            await this.verifyMqttConnection(createDatasetInstance.mqttAddress,
+                createDatasetInstance.mqttPort,
+                createDatasetInstance.mqttTopic,
+                createDatasetInstance.mqttUsername,
+                createDatasetInstance.mqttPassword);
 
         // Handle tags & prevent duplicates
         const tags = await Promise.all(
@@ -210,13 +212,12 @@ export class DatasetsService {
         // Validate tags and MQTT data
         editDatasetInstance.validateTags();
         editDatasetInstance.validateMqttData();
-        this.verifyMqttConnection(
-            editDatasetInstance.mqttAddress,
-            editDatasetInstance.mqttPort,
-            editDatasetInstance.mqttTopic,
-            editDatasetInstance.mqttUsername,
-            editDatasetInstance.mqttPassword,
-        );
+        if (editDatasetInstance.mqttAddress && editDatasetInstance.mqttPort)
+            await this.verifyMqttConnection(editDatasetInstance.mqttAddress,
+                editDatasetInstance.mqttPort,
+                editDatasetInstance.mqttTopic,
+                editDatasetInstance.mqttUsername,
+                editDatasetInstance.mqttPassword);
 
         // Update scalar fields
         Object.assign(existingDataset, {
@@ -301,6 +302,8 @@ export class DatasetsService {
         const options: mqtt.IClientOptions = {
             username: mqttUsername,
             password: mqttPassword,
+            connectTimeout: 5000,
+            reconnectPeriod: 0,
         };
 
         if (this.connectionPool.length >= this.maxConnections) {
@@ -308,15 +311,28 @@ export class DatasetsService {
         }
 
         const client = mqtt.connect(`mqtt://${mqttAddress}:${mqttPort}`, options);
+        this.connectionPool.push(client);
 
         return new Promise<void>((resolve, reject) => {
             client.on('connect', () => {
+                // Remove from connection pool and close the connection
+                const index = this.connectionPool.indexOf(client);
+                if (index > -1) {
+                    this.connectionPool.splice(index, 1);
+                }
+
                 client.end(); // Close the connection immediately
                 console.log(`Connected to MQTT broker at ${mqttAddress}:${mqttPort}`);
                 resolve();
             });
 
             client.on('error', (error) => {
+                // Remove from connection pool and close the connection
+                const index = this.connectionPool.indexOf(client);
+                if (index > -1) {
+                    this.connectionPool.splice(index, 1);
+                }
+
                 client.end(); // close the connection on error.
                 console.error('MQTT connection error:', error);
                 reject(new HttpException(error.message, HttpStatus.BAD_GATEWAY));
@@ -325,11 +341,17 @@ export class DatasetsService {
             // Add a timeout to prevent hanging if the connection never succeeds
             setTimeout(() => {
                 if (!client.connected) {
+                    // Remove from connection pool and close the connection
+                    const index = this.connectionPool.indexOf(client);
+                    if (index > -1) {
+                        this.connectionPool.splice(index, 1);
+                    }
+
                     client.end(); // close the connection on timeout.
                     console.error('MQTT connection timeout');
                     reject(new HttpException('MQTT connection timeout', HttpStatus.REQUEST_TIMEOUT));
                 }
-            }, 5000); // 5 seconds timeout (adjust as needed)
+            }, 5000); // 5 seconds timeout 
         });
     }
 
