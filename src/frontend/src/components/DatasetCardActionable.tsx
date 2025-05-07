@@ -13,6 +13,7 @@ interface DatasetCardProps {
     description: string;
     createdAt: string;
     approvedAt: string | null;
+    deniedAt: string | null;
     sliderImages: { id: number; fileName: string }[];
     tags: { name: string; icon: string }[];
 }
@@ -25,6 +26,7 @@ export function DatasetCardActionable({
     description,
     createdAt,
     approvedAt,
+    deniedAt,
     sliderImages,
     tags,
 }: DatasetCardProps) {
@@ -166,11 +168,15 @@ export function DatasetCardActionable({
 
                 {/* Action Buttons Section */}
                 <Group justify="space-between" mt="md">
-                    {approvedAt === null && (
+                    {deniedAt !== null ? (
+                        <Badge color="pink" variant="filled">
+                            Not Approved
+                        </Badge>
+                    ) : approvedAt === null ? (
                         <Badge color="grey" variant="filled">
                             Pending Approval
                         </Badge>
-                    )}
+                    ) : null}
 
                     <Group ml="auto">
                         <Tooltip label="View" position="top" withArrow>

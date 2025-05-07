@@ -283,6 +283,8 @@ export class DatasetsService {
         }
         existingDataset.sliderImages = sliderImages;
         existingDataset.approvedAt = null; // Needs admin approval again
+        existingDataset.deniedAt = null; // Reset deniedAt if it was previously set
+
 
         // Save the updated dataset
         await this.datasetRepository.save(existingDataset);
