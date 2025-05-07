@@ -14,6 +14,7 @@ interface DatasetItem {
     dataOwnerPhoto: string;
     description: string;
     createdAt: string;
+    approvedAt: string | null;
     sliderImages: { id: number; fileName: string }[];
     tags: { name: string; icon: string }[];
 }
@@ -169,6 +170,7 @@ export function MyDatasetsPage() {
                         dataOwnerPhoto={dataset.dataOwnerPhoto}
                         description={dataset.description}
                         createdAt={dataset.createdAt}
+                        approvedAt={dataset.approvedAt}
                         sliderImages={dataset.sliderImages}
                         tags={dataset.tags.map((tag) => ({
                             name: tag.name,

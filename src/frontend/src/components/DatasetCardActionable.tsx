@@ -12,6 +12,7 @@ interface DatasetCardProps {
     dataOwnerPhoto: string;
     description: string;
     createdAt: string;
+    approvedAt: string | null;
     sliderImages: { id: number; fileName: string }[];
     tags: { name: string; icon: string }[];
 }
@@ -23,6 +24,7 @@ export function DatasetCardActionable({
     dataOwnerPhoto,
     description,
     createdAt,
+    approvedAt,
     sliderImages,
     tags,
 }: DatasetCardProps) {
@@ -163,34 +165,42 @@ export function DatasetCardActionable({
                 </Group>
 
                 {/* Action Buttons Section */}
-                <Group justify="right" mt="md">
-                    <Tooltip label="View" position="top" withArrow>
-                        <ActionIcon
-                            color="blue"
-                            variant="dark"
-                            onClick={() => navigate(`/dataset/${id}`)}
-                        >
-                            <IconEye size={18} />
-                        </ActionIcon>
-                    </Tooltip>
-                    <Tooltip label="Edit" position="top" withArrow>
-                        <ActionIcon
-                            color="green"
-                            variant="dark"
-                            onClick={() => navigate(`/edit-dataset/${id}`)}
-                        >
-                            <IconPencil size={18} />
-                        </ActionIcon>
-                    </Tooltip>
-                    <Tooltip label="Delete" position="top" withArrow>
-                        <ActionIcon
-                            color="red"
-                            variant="dark"
-                            onClick={() => setDeleteModalOpened(true)}
-                        >
-                            <IconTrash size={18} />
-                        </ActionIcon>
-                    </Tooltip>
+                <Group justify="space-between" mt="md">
+                    {approvedAt === null && (
+                        <Badge color="grey" variant="filled">
+                            Pending Approval
+                        </Badge>
+                    )}
+
+                    <Group ml="auto">
+                        <Tooltip label="View" position="top" withArrow>
+                            <ActionIcon
+                                color="blue"
+                                variant="dark"
+                                onClick={() => navigate(`/dataset/${id}`)}
+                            >
+                                <IconEye size={18} />
+                            </ActionIcon>
+                        </Tooltip>
+                        <Tooltip label="Edit" position="top" withArrow>
+                            <ActionIcon
+                                color="green"
+                                variant="dark"
+                                onClick={() => navigate(`/edit-dataset/${id}`)}
+                            >
+                                <IconPencil size={18} />
+                            </ActionIcon>
+                        </Tooltip>
+                        <Tooltip label="Delete" position="top" withArrow>
+                            <ActionIcon
+                                color="red"
+                                variant="dark"
+                                onClick={() => setDeleteModalOpened(true)}
+                            >
+                                <IconTrash size={18} />
+                            </ActionIcon>
+                        </Tooltip>
+                    </Group>
                 </Group>
             </Card>
         </>
