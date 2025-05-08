@@ -24,7 +24,8 @@ const menuData = [
         initiallyOpened: true,
         links: [
             { label: 'Manage all', link: '/admin/datasets' },
-            { label: 'Incoming requests', link: '/admin/datasets/requests' },
+            { label: 'Add requests', link: '/admin/datasets/requests' },
+            { label: 'Access requests', link: '/admin/' },
         ],
     },
     {
@@ -32,7 +33,7 @@ const menuData = [
         icon: IconTag,
         links: [
             { label: 'Manage all', link: '/admin/tags' },
-            { label: 'Incoming requests', link: '/admin/tags/requests' },
+            { label: 'Add requests', link: '/admin/tags/requests' },
         ],
     },
     {
@@ -40,7 +41,7 @@ const menuData = [
         icon: IconTag,
         links: [
             { label: 'Manage all', link: '/admin/showcases' },
-            { label: 'Incoming requests', link: '/admin/showcases/requests' },
+            { label: 'Add requests', link: '/admin/showcases/requests' },
         ],
     },
     {
