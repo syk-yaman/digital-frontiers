@@ -16,14 +16,36 @@ export class TagsService {
         private authorisationService: AuthorisationService,
     ) { }
 
-    findAll(): Promise<DatasetTag[]> {
-        //Only return approved tags
-        return this.tagRepository.find({
+    async findAll(): Promise<DatasetTag[]> {
+        // Get approved tags
+        const tags = await this.tagRepository.find({
             where: {
                 approvedAt: Not(IsNull())
             },
             order: { createdAt: 'DESC' }
         });
+
+        // Get the counts for all tags in a single query to optimize performance
+        const countResults = await this.tagRepository.manager.query(
+            `SELECT "datasetTagsId", COUNT(*) as count 
+             FROM datasets_tags_dataset_tags
+             JOIN datasets ON datasets_tags_dataset_tags."datasetsId" = datasets.id
+             WHERE datasets."approvedAt" IS NOT NULL
+             GROUP BY "datasetTagsId"`
+        );
+
+        // Convert query results to a map for easier lookup
+        const countMap = new Map<number, number>();
+        countResults.forEach((result: { datasetTagsId: number, count: string }) => {
+            countMap.set(result.datasetTagsId, parseInt(result.count, 10));
+        });
+
+        // Attach the dataset count to each tag
+        for (const tag of tags) {
+            tag.datasetsCount = countMap.get(tag.id) || 0;
+        }
+
+        return tags;
     }
 
     async findPendingApproval(userContext: UserContext): Promise<DatasetTag[]> {

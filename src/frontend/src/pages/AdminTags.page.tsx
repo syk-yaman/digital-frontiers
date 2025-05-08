@@ -15,7 +15,7 @@ import { DataTable } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
 import axiosInstance from '@/utils/axiosInstance';
 import { notifications } from '@mantine/notifications';
-import { IconEdit, IconTrash, IconPlus } from '@tabler/icons-react';
+import { IconEdit, IconTrash, IconPlus, IconDatabase } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import '@mantine/core/styles.layer.css';
 import 'mantine-datatable/styles.layer.css';
@@ -28,6 +28,7 @@ interface TagItem {
     orderInNavbar?: number;
     createdAt: string;
     updatedAt: string;
+    datasetsCount?: number; // Added property for dataset count
 }
 
 export function AdminTags() {
@@ -153,6 +154,17 @@ export function AdminTags() {
                         accessor: 'icon',
                         title: 'Icon',
                         render: (record) => <Text>{record.icon}</Text>,
+                    },
+                    {
+                        accessor: 'datasetsCount',
+                        title: 'Datasets',
+                        render: (record) => (
+                            <Group gap={4} align="center">
+                                <IconDatabase size={16} />
+                                <Text>{record.datasetsCount || 0}</Text>
+                            </Group>
+                        ),
+                        sortable: true,
                     },
                     {
                         accessor: 'orderInNavbar',

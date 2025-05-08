@@ -189,4 +189,7 @@ export class DatasetTag {
 
     @DeleteDateColumn()
     deletedAt?: Date;  // Soft delete column
+
+    // Virtual property to hold the count of datasets using this tag
+    datasetsCount?: number;
 }
