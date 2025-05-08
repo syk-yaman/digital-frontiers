@@ -36,6 +36,14 @@ const menuData = [
         ],
     },
     {
+        label: 'Showcases',
+        icon: IconTag,
+        links: [
+            { label: 'Manage all', link: '/admin/showcases' },
+            { label: 'Incoming requests', link: '/admin/showcases/requests' },
+        ],
+    },
+    {
         label: 'Users',
         icon: IconUser,
         links: [
