@@ -7,6 +7,7 @@ import { Dataset, DatasetLink, DatasetLocation, DatasetSliderImage, DatasetTag }
 import { TagsModule } from './modules/tags/tags.module';
 import { AuthModule } from './modules/authentication/auth.module';
 import { AuthorisationModule } from './modules/authorisation/authorisation.module';
+import { ShowcasesModule } from './modules/showcases/showcases.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { AuthorisationModule } from './modules/authorisation/authorisation.modul
     DatasetsModule,
     TagsModule,
     AuthModule,
-    AuthorisationModule
+    AuthorisationModule,
+    ShowcasesModule
   ],
   controllers: [],
   providers: [],
