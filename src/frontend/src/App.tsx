@@ -27,6 +27,9 @@ import { TagDatasets } from './pages/TagDatasets.page';
 import { AdminTags } from './pages/AdminTags.page';
 import { AdminTagRequests } from './pages/AdminTagRequests.page';
 import { AdminUsers } from './pages/AdminUsers.page';
+import { AdminShowcases } from './pages/AdminShowcases.page';
+import { AdminShowcaseRequests } from './pages/AdminShowcaseRequests.page';
+import { AddShowcase } from './pages/AddShowcase.page';
 
 export default function App() {
   return (
@@ -50,12 +53,16 @@ export default function App() {
             <Route path="/signin" element={<SigninPage />} />
             <Route path="/add-dataset" element={<PrivateRoute><AddDatasetPage /></PrivateRoute>} />
             <Route path="/edit-dataset/:id" element={<PrivateRoute><AddDatasetPage /></PrivateRoute>} />
+            <Route path="/add-showcase" element={<PrivateRoute><AddShowcase /></PrivateRoute>} />
+            <Route path="/edit-showcase/:id" element={<PrivateRoute><AddShowcase /></PrivateRoute>} />
             <Route path="/admin" element={<PrivateRoute><AdminPage /></PrivateRoute>}>
               <Route index element={<AdminHome />} />
               <Route path="datasets" element={<AdminDatasets />} />
               <Route path="datasets/requests" element={<AdminDatasetRequests />} />
               <Route path="tags" element={<AdminTags />} />
               <Route path="tags/requests" element={<AdminTagRequests />} />
+              <Route path="showcases" element={<AdminShowcases />} />
+              <Route path="showcases/requests" element={<AdminShowcaseRequests />} />
               <Route path="users" element={<AdminUsers />} />
             </Route>
             <Route path="/terms" element={<TermsPage />} />

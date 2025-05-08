@@ -8,6 +8,7 @@ import { TagsModule } from './modules/tags/tags.module';
 import { AuthModule } from './modules/authentication/auth.module';
 import { AuthorisationModule } from './modules/authorisation/authorisation.module';
 import { ShowcasesModule } from './modules/showcases/showcases.module';
+import { Showcase, ShowcaseLocation, ShowcaseSliderImage } from './modules/showcases/showcase.entity';
 
 @Module({
   imports: [
@@ -18,7 +19,11 @@ import { ShowcasesModule } from './modules/showcases/showcases.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User, Dataset, DatasetLink, DatasetLocation, DatasetSliderImage, DatasetTag],
+      entities: [
+        User,
+        Dataset, DatasetLink, DatasetLocation, DatasetSliderImage, DatasetTag,
+        Showcase, ShowcaseSliderImage, ShowcaseLocation
+      ],
       synchronize: false, //to be off in production
       migrations: ['src/database/migrations/*-migration.ts'],
       migrationsTableName: '_migrations',
