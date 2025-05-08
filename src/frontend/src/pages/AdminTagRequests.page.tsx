@@ -10,6 +10,7 @@ import {
     Badge,
     Stack,
     Tooltip,
+    Alert,
     TextInput,
     ColorInput,
     NumberInput,
@@ -19,7 +20,7 @@ import { DataTable } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
 import axiosInstance from '@/utils/axiosInstance';
 import { notifications } from '@mantine/notifications';
-import { IconEdit, IconTrash, IconPlus, IconDatabase } from '@tabler/icons-react';
+import { IconEdit, IconTrash, IconDatabase, IconCheck, IconInfoCircle } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import '@mantine/core/styles.layer.css';
 import 'mantine-datatable/styles.layer.css';
@@ -34,7 +35,7 @@ interface TagItem {
     orderInNavbar?: number;
     createdAt: string;
     updatedAt: string;
-    datasetsCount?: number; // Added property for dataset count
+    datasetsCount?: number;
 }
 
 interface TagFormValues {
@@ -44,7 +45,7 @@ interface TagFormValues {
     orderInNavbar?: number | null;
 }
 
-export function AdminTags() {
+export function AdminTagRequests() {
     const [tags, setTags] = useState<TagItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -53,12 +54,15 @@ export function AdminTags() {
     const [tagToDelete, setTagToDelete] = useState<TagItem | null>(null);
     const [formModalOpened, setFormModalOpened] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isApproving, setIsApproving] = useState(false);
     const [editingTagId, setEditingTagId] = useState<number | null>(null);
+    const [approveModalOpened, setApproveModalOpened] = useState(false);
+    const [tagToApprove, setTagToApprove] = useState<TagItem | null>(null);
 
     const itemsPerPage = 10;
     const navigate = useNavigate();
 
-    // Form setup for creating/editing a tag
+    // Form setup for editing a tag
     const form = useForm<TagFormValues>({
         initialValues: {
             name: '',
@@ -77,19 +81,19 @@ export function AdminTags() {
     const fetchTags = () => {
         setLoading(true);
         axiosInstance
-            .get('/tags')
+            .get('/tags/requests')
             .then((response) => {
                 setTags(response.data);
                 setLoading(false);
             })
             .catch((error) => {
-                console.error('Error fetching tags:', error);
+                console.error('Error fetching pending tags:', error);
                 notifications.show({
                     title: 'Error',
-                    message: 'Failed to fetch tags.',
+                    message: 'Failed to fetch pending tags.',
                     color: 'red',
                 });
-                setError('Failed to fetch tags.');
+                setError('Failed to fetch pending tags.');
                 setLoading(false);
             });
     };
@@ -103,10 +107,11 @@ export function AdminTags() {
 
         axiosInstance
             .delete(`/tags/${tagToDelete.id}`)
-            .then(() => {
+            .then((response) => {
+                const message = response.data?.message || `Tag "${tagToDelete.name}" deleted successfully.`;
                 notifications.show({
                     title: 'Success',
-                    message: `Tag "${tagToDelete.name}" deleted successfully.`,
+                    message,
                     color: 'green',
                 });
                 setTags((prev) => prev.filter((tag) => tag.id !== tagToDelete.id));
@@ -123,15 +128,37 @@ export function AdminTags() {
             });
     };
 
-    const openCreateDialog = () => {
-        // Reset form and set to creation mode
-        form.reset();
-        setEditingTagId(null);
-        setFormModalOpened(true);
+    const handleApproveTag = () => {
+        if (!tagToApprove) return;
+
+        setIsApproving(true);
+        axiosInstance
+            .put(`/tags/${tagToApprove.id}/approve`)
+            .then((response) => {
+                notifications.show({
+                    title: 'Success',
+                    message: `Tag "${tagToApprove.name}" approved successfully.`,
+                    color: 'green',
+                });
+                // Remove the approved tag from the list
+                setTags((prev) => prev.filter((tag) => tag.id !== tagToApprove.id));
+                setApproveModalOpened(false);
+                setTagToApprove(null);
+            })
+            .catch((error) => {
+                console.error('Error approving tag:', error);
+                notifications.show({
+                    title: 'Error',
+                    message: 'Failed to approve tag.',
+                    color: 'red',
+                });
+            })
+            .finally(() => {
+                setIsApproving(false);
+            });
     };
 
     const openEditDialog = (tag: TagItem) => {
-        // Set form values to the selected tag's values
         form.setValues({
             name: tag.name,
             colour: tag.colour,
@@ -151,39 +178,29 @@ export function AdminTags() {
             orderInNavbar: values.orderInNavbar === null ? undefined : values.orderInNavbar
         };
 
-        // Determine if we're creating or editing
-        const isEditing = editingTagId !== null;
-        const endpoint = isEditing ? `/tags/${editingTagId}` : '/tags';
-        const method = isEditing ? 'put' : 'post';
-
         axiosInstance({
-            method,
-            url: endpoint,
+            method: 'put',
+            url: `/tags/${editingTagId}`,
             data: payload
         })
             .then((response) => {
                 notifications.show({
                     title: 'Success',
-                    message: `Tag ${isEditing ? 'updated' : 'created'} successfully.`,
+                    message: `Tag updated successfully.`,
                     color: 'green',
                 });
 
-                if (isEditing) {
-                    // Update the tag in the existing list
-                    setTags(prev =>
-                        prev.map(tag => tag.id === editingTagId ? { ...response.data, datasetsCount: tag.datasetsCount } : tag)
-                    );
-                } else {
-                    // Add the new tag to the list
-                    setTags(prev => [...prev, response.data]);
-                }
+                // Update the tag in the existing list
+                setTags(prev =>
+                    prev.map(tag => tag.id === editingTagId ? { ...response.data, datasetsCount: tag.datasetsCount } : tag)
+                );
 
                 setFormModalOpened(false);
                 form.reset();
             })
             .catch((error) => {
-                console.error(`Error ${isEditing ? 'updating' : 'creating'} tag:`, error);
-                const errorMessage = error.response?.data?.message || `Failed to ${isEditing ? 'update' : 'create'} tag.`;
+                console.error('Error updating tag:', error);
+                const errorMessage = error.response?.data?.message || 'Failed to update tag.';
 
                 // Show different messages based on error status
                 if (error.response?.status === 400) {
@@ -195,7 +212,7 @@ export function AdminTags() {
                 } else if (error.response?.status === 403) {
                     notifications.show({
                         title: 'Permission Denied',
-                        message: `You don't have permission to ${isEditing ? 'edit' : 'create'} tags.`,
+                        message: 'You don\'t have permission to edit tags.',
                         color: 'red',
                     });
                 } else if (error.response?.status === 409) {
@@ -246,123 +263,144 @@ export function AdminTags() {
 
     return (
         <Container>
-            <Group justify="space-between" mb="lg">
-                <Text size="xl" fw={700}>
-                    Manage Tags
-                </Text>
-                <Button
-                    leftSection={<IconPlus size={16} />}
-                    onClick={openCreateDialog}
-                >
-                    Add New Tag
-                </Button>
-            </Group>
+            <Text size="xl" fw={700} mb="lg">
+                Pending Tag Approvals
+            </Text>
 
-            <DataTable
-                withTableBorder
-                textSelectionDisabled
-                columns={[
-                    {
-                        accessor: 'name',
-                        title: 'Name',
-                        render: (record) => <Text fw={500}>{record.name}</Text>,
-                    },
-                    {
-                        accessor: 'colour',
-                        title: 'Color',
-                        render: (record) => (
-                            <Badge
-                                style={{
-                                    backgroundColor: record.colour,
-                                    color: getBestTextColor(record.colour),
-                                    width: '80px',
-                                    height: '25px',
-                                }}
-                            >
-                                {record.colour}
-                            </Badge>
-                        ),
-                    },
-                    {
-                        accessor: 'icon',
-                        title: 'Icon',
-                        render: (record) => <Text>{record.icon}</Text>,
-                    },
-                    {
-                        accessor: 'datasetsCount',
-                        title: 'Datasets',
-                        render: (record) => (
-                            <Group gap={4} align="center">
-                                <IconDatabase size={16} />
-                                <Text>{record.datasetsCount || 0}</Text>
-                            </Group>
-                        ),
-                        sortable: true,
-                    },
-                    {
-                        accessor: 'orderInNavbar',
-                        title: 'Nav Order',
-                        render: (record) => <Text>{record.orderInNavbar || 'N/A'}</Text>,
-                    },
-                    {
-                        accessor: 'createdAt',
-                        title: 'Created',
-                        render: (record) => new Date(record.createdAt).toLocaleDateString(),
-                    },
-                    {
-                        accessor: 'actions',
-                        title: 'Actions',
-                        render: (record) => (
-                            <Group gap={4} justify="right" wrap="nowrap">
-                                <Tooltip label="Edit tag" position="top" withArrow>
-                                    <ActionIcon
-                                        size="sm"
-                                        variant="subtle"
-                                        color="blue"
-                                        onClick={() => openEditDialog(record)}
-                                    >
-                                        <IconEdit size={16} />
-                                    </ActionIcon>
-                                </Tooltip>
-                                <Tooltip label="View datasets" position="top" withArrow>
-                                    <ActionIcon
-                                        size="sm"
-                                        variant="subtle"
-                                        color="green"
-                                        onClick={() => navigate(`/data-menu/tag/${record.id}`)}
-                                    >
-                                        <IconDatabase size={16} />
-                                    </ActionIcon>
-                                </Tooltip>
-                                <Tooltip label="Delete tag" position="top" withArrow>
-                                    <ActionIcon
-                                        size="sm"
-                                        variant="subtle"
-                                        color="red"
-                                        onClick={() => {
-                                            setTagToDelete(record);
-                                            setDeleteModalOpened(true);
-                                        }}
-                                    >
-                                        <IconTrash size={16} />
-                                    </ActionIcon>
-                                </Tooltip>
-                            </Group>
-                        ),
-                    },
-                ]}
-                records={paginatedTags}
-                totalRecords={tags.length}
-                recordsPerPage={itemsPerPage}
-                page={activePage}
-                onPageChange={setActivePage}
-                emptyState={
-                    <Text ta="center" c="dimmed">
-                        No tags found
-                    </Text>
-                }
-            />
+            <Alert
+                icon={<IconInfoCircle size="1rem" />}
+                title="Note"
+                color="blue"
+                mb="lg"
+            >
+                You can approve tags manually here, or they will be automatically approved when approving datasets.
+            </Alert>
 
+            {tags.length === 0 ? (
+                <Center style={{ height: '40vh' }}>
+                    <Text c="dimmed">No pending tag approvals found.</Text>
+                </Center>
+            ) : (
+                <DataTable
+                    withTableBorder
+                    textSelectionDisabled
+                    columns={[
+                        {
+                            accessor: 'name',
+                            title: 'Name',
+                            render: (record) => <Text fw={500}>{record.name}</Text>,
+                        },
+                        {
+                            accessor: 'colour',
+                            title: 'Color',
+                            render: (record) => (
+                                <Badge
+                                    style={{
+                                        backgroundColor: record.colour,
+                                        color: getBestTextColor(record.colour),
+                                        width: '80px',
+                                        height: '25px',
+                                    }}
+                                >
+                                    {record.colour}
+                                </Badge>
+                            ),
+                        },
+                        {
+                            accessor: 'icon',
+                            title: 'Icon',
+                            render: (record) => <Text>{record.icon}</Text>,
+                        },
+                        {
+                            accessor: 'datasetsCount',
+                            title: 'Datasets',
+                            render: (record) => (
+                                <Group gap={4} align="center">
+                                    <IconDatabase size={16} />
+                                    <Text>{record.datasetsCount || 0}</Text>
+                                </Group>
+                            ),
+                            sortable: true,
+                        },
+                        {
+                            accessor: 'orderInNavbar',
+                            title: 'Nav Order',
+                            render: (record) => <Text>{record.orderInNavbar || 'N/A'}</Text>,
+                        },
+                        {
+                            accessor: 'createdAt',
+                            title: 'Created',
+                            render: (record) => new Date(record.createdAt).toLocaleDateString(),
+                        },
+                        {
+                            accessor: 'actions',
+                            title: 'Actions',
+                            render: (record) => (
+                                <Group gap={4} justify="right" wrap="nowrap">
+                                    <Tooltip label="Approve tag" position="top" withArrow>
+                                        <ActionIcon
+                                            size="sm"
+                                            variant="subtle"
+                                            color="green"
+                                            onClick={() => {
+                                                setTagToApprove(record);
+                                                setApproveModalOpened(true);
+                                            }}
+                                        >
+                                            <IconCheck size={16} />
+                                        </ActionIcon>
+                                    </Tooltip>
+                                    <Tooltip label="Edit tag" position="top" withArrow>
+                                        <ActionIcon
+                                            size="sm"
+                                            variant="subtle"
+                                            color="blue"
+                                            onClick={() => openEditDialog(record)}
+                                        >
+                                            <IconEdit size={16} />
+                                        </ActionIcon>
+                                    </Tooltip>
+                                    <Tooltip label="View datasets" position="top" withArrow>
+                                        <ActionIcon
+                                            size="sm"
+                                            variant="subtle"
+                                            color="teal"
+                                            onClick={() => navigate(`/data-menu/tag/${record.id}`)}
+                                        >
+                                            <IconDatabase size={16} />
+                                        </ActionIcon>
+                                    </Tooltip>
+                                    <Tooltip label="Delete tag" position="top" withArrow>
+                                        <ActionIcon
+                                            size="sm"
+                                            variant="subtle"
+                                            color="red"
+                                            onClick={() => {
+                                                setTagToDelete(record);
+                                                setDeleteModalOpened(true);
+                                            }}
+                                        >
+                                            <IconTrash size={16} />
+                                        </ActionIcon>
+                                    </Tooltip>
+                                </Group>
+                            ),
+                        },
+                    ]}
+                    records={paginatedTags}
+                    totalRecords={tags.length}
+                    recordsPerPage={itemsPerPage}
+                    page={activePage}
+                    onPageChange={setActivePage}
+                    emptyState={
+                        <Text ta="center" c="dimmed">
+                            No tags found
+                        </Text>
+                    }
+                />
+            )}
+
+            {/* Delete Confirmation Modal */}
             <Modal
                 opened={deleteModalOpened}
                 onClose={() => setDeleteModalOpened(false)}
@@ -391,11 +429,39 @@ export function AdminTags() {
                 </Group>
             </Modal>
 
-            {/* Create/Edit Tag Modal */}
+            {/* Approve Confirmation Modal */}
+            <Modal
+                opened={approveModalOpened}
+                onClose={() => setApproveModalOpened(false)}
+                title="Confirm Approval"
+                centered
+            >
+                <Text>
+                    Are you sure you want to approve the tag{' '}
+                    <Text span fw={700}>
+                        {tagToApprove?.name}
+                    </Text>
+                    ?
+                </Text>
+                <Group justify="right" mt="md">
+                    <Button variant="default" onClick={() => setApproveModalOpened(false)} disabled={isApproving}>
+                        Cancel
+                    </Button>
+                    <Button
+                        color="green"
+                        onClick={handleApproveTag}
+                        loading={isApproving}
+                    >
+                        Approve
+                    </Button>
+                </Group>
+            </Modal>
+
+            {/* Edit Tag Modal */}
             <Modal
                 opened={formModalOpened}
                 onClose={closeFormModal}
-                title={editingTagId ? "Edit Tag" : "Create New Tag"}
+                title="Edit Tag"
                 centered
             >
                 <form onSubmit={form.onSubmit(handleSubmitTag)}>
@@ -460,7 +526,7 @@ export function AdminTags() {
                             type="submit"
                             loading={isSubmitting}
                         >
-                            {editingTagId ? "Save Changes" : "Create Tag"}
+                            Save Changes
                         </Button>
                     </Group>
                 </form>
