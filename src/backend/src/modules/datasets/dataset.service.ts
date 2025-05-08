@@ -169,7 +169,7 @@ export class DatasetsService {
                 const newTag = this.tagRepository.create(tagDto);
 
                 // Auto-approve tag if user has permission to create approved content
-                if (this.tagsService.shouldAutoApproveTags(userContext)) {
+                if (userContext.hasPermission(Permission.CREATE_APPROVED_CONTENT)) {
                     newTag.approvedAt = new Date();
                 }
 

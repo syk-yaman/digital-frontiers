@@ -10,14 +10,14 @@ export class AuthController {
     constructor(private readonly authService: AuthService) { }
 
     @Post('signup')
-    @ApiOperation({ summary: 'Sign up a new user' })
+    @ApiOperation({ summary: '[Public] Sign up a new user' })
     @ApiBody({ type: SignUpDto })
     async signUp(@Body() userDto: SignUpDto) {
         return this.authService.signUp(userDto);
     }
 
     @Post('signin')
-    @ApiOperation({ summary: 'Sign in an existing user' })
+    @ApiOperation({ summary: '[User] Sign in an existing user' })
     @ApiBody({ type: SignInDto })
     @ApiBearerAuth()
     @UseGuards(LocalAuthGuard)

@@ -14,14 +14,14 @@ export class UsersController {
     @Get()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('admin')
-    @ApiOperation({ summary: 'Get all users' })
+    @ApiOperation({ summary: '[Admin] Get all users' })
     async findAll() {
         return this.usersService.findAll();
     }
 
     @Get('me')
     @UseGuards(JwtAuthGuard)
-    @ApiOperation({ summary: 'Get the current signed-in user' })
+    @ApiOperation({ summary: '[User] Get the current signed-in user' })
     async getMe(@Request() req) {
         return this.usersService.findOne(req.user.userId);
     }

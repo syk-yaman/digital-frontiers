@@ -63,7 +63,7 @@ export class DatasetsController {
     @Get(':id')
     @UseGuards(OptionalJwtAuthGuard)
     @ApiOperation({
-        summary: '[User-aware] Get dataset by ID',
+        summary: '[Public, User, Admin] Get dataset by ID',
         description: `Public endpoint that returns different data based on
          authentication status. i.e. if user is admin, he can get info about
         controlled and unapproved datasets.`
@@ -77,7 +77,7 @@ export class DatasetsController {
     }
 
     @ApiOperation({
-        summary: '[User-aware] Create a dataset',
+        summary: '[User, Admin] Create a dataset',
         description: `Authenticated endpoint that creates a dataset. If used be admin, it will be auto-approved.`
     })
     @UseGuards(JwtAuthGuard)
@@ -89,7 +89,7 @@ export class DatasetsController {
     }
 
     @ApiOperation({
-        summary: '[User-aware] Edit a dataset',
+        summary: '[Content owner, Admin] Edit a dataset',
         description: `Authenticated endpoint that edits a dataset. 
         Admin can used it to modify controlled, approved and not-approved datasets.`
     })
@@ -103,7 +103,7 @@ export class DatasetsController {
     }
 
     @ApiOperation({
-        summary: '[User-aware] Delete a dataset',
+        summary: '[Content owner, Admin] Delete a dataset',
         description: `Authenticated endpoint that deletes a dataset.
          User can use it to delete his own datasets.
          Admin can used it to delete any dataset (controlled, approved and not-approved).`
@@ -117,7 +117,7 @@ export class DatasetsController {
     }
 
     @ApiOperation({
-        summary: 'Upload a hero image for a dataset',
+        summary: '[User, Admin] Upload a hero image for a dataset',
         description: `Authenticated endpoint that uploads a hero image for a dataset.`
     })
     @UseGuards(JwtAuthGuard)
@@ -148,7 +148,7 @@ export class DatasetsController {
     }
 
     @ApiOperation({
-        summary: 'Verfiy mqtt connection for a dataset',
+        summary: '[User, Admin] Verfiy mqtt connection for a dataset',
         description: `Authenticated endpoint that verifies mqtt connection for a dataset.`
     })
     @UseGuards(JwtAuthGuard)
@@ -160,7 +160,7 @@ export class DatasetsController {
     }
 
     @ApiOperation({
-        summary: 'Get my datasets',
+        summary: '[User, Admin] Get my datasets',
         description: `Authenticated endpoint that returns datasets created by the user.`
     })
     @UseGuards(JwtAuthGuard)
