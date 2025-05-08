@@ -84,8 +84,39 @@ export class TagsService {
         });
     }
 
+    /**
+     * Checks if a tag with the given orderInNavbar already exists
+     * @param orderInNavbar - The navbar order to check
+     * @param excludeTagId - Optional tag ID to exclude from the check (for updates)
+     * @returns Promise<boolean> - True if a duplicate exists
+     */
+    private async hasOrderInNavbarDuplicate(orderInNavbar: number, excludeTagId?: number): Promise<boolean> {
+        if (orderInNavbar === undefined || orderInNavbar === null) {
+            return false; // No need to check if orderInNavbar is not provided
+        }
+
+        const query = this.tagRepository.createQueryBuilder('tag')
+            .where('tag.orderInNavbar = :orderInNavbar', { orderInNavbar });
+
+        if (excludeTagId) {
+            query.andWhere('tag.id != :excludeTagId', { excludeTagId });
+        }
+
+        const count = await query.getCount();
+        return count > 0;
+    }
+
     async create(createDto: CreateDatasetTagDto, userContext: UserContext): Promise<DatasetTag> {
-        createDto.validateOrderInNavbar();
+        // Check for orderInNavbar duplicates
+        if (createDto.orderInNavbar !== undefined && createDto.orderInNavbar !== null) {
+            const hasDuplicate = await this.hasOrderInNavbarDuplicate(createDto.orderInNavbar);
+            if (hasDuplicate) {
+                throw new HttpException(
+                    `A tag with navbar order ${createDto.orderInNavbar} already exists. Please use a different order.`,
+                    HttpStatus.CONFLICT
+                );
+            }
+        }
 
         const newTag = this.tagRepository.create(createDto);
 
@@ -98,7 +129,29 @@ export class TagsService {
     }
 
     async update(id: number, updateDto: UpdateDatasetTagDto): Promise<DatasetTag> {
-        updateDto.validateOrderInNavbar();
+
+        // Check if tag exists
+        const existingTag = await this.tagRepository.findOne({
+            where: { id }
+        });
+
+        if (!existingTag) {
+            throw new HttpException('Tag not found', HttpStatus.NOT_FOUND);
+        }
+
+        // Check for orderInNavbar duplicates if it's being updated
+        if (updateDto.orderInNavbar !== undefined &&
+            updateDto.orderInNavbar !== null &&
+            updateDto.orderInNavbar !== existingTag.orderInNavbar) {
+
+            const hasDuplicate = await this.hasOrderInNavbarDuplicate(updateDto.orderInNavbar, id);
+            if (hasDuplicate) {
+                throw new HttpException(
+                    `A tag with navbar order ${updateDto.orderInNavbar} already exists. Please use a different order.`,
+                    HttpStatus.CONFLICT
+                );
+            }
+        }
 
         await this.tagRepository.update(id, updateDto);
         return this.findOne(id);

@@ -123,7 +123,7 @@ export function HeaderMegaMenu() {
 
   useEffect(() => {
     // Fetch the latest tags from the backend using the general axios instance
-    axiosInstance.get('/tags/top')
+    axiosInstance.get('/tags/navbar')
       .then((response) => {
         const fetchedTags = response.data.map((tag: any) => ({
           id: tag.id, // Store the tag ID for navigation

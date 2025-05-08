@@ -10,6 +10,10 @@ import {
     Badge,
     Stack,
     Tooltip,
+    TextInput,
+    ColorInput,
+    NumberInput,
+    Box,
 } from '@mantine/core';
 import { DataTable } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
@@ -19,6 +23,8 @@ import { IconEdit, IconTrash, IconPlus, IconDatabase } from '@tabler/icons-react
 import { useNavigate } from 'react-router-dom';
 import '@mantine/core/styles.layer.css';
 import 'mantine-datatable/styles.layer.css';
+import { useForm } from '@mantine/form';
+import { isHexColor } from '@/utils/validators';
 
 interface TagItem {
     id: number;
@@ -31,6 +37,13 @@ interface TagItem {
     datasetsCount?: number; // Added property for dataset count
 }
 
+interface TagFormValues {
+    name: string;
+    colour: string;
+    icon: string;
+    orderInNavbar?: number | null;
+}
+
 export function AdminTags() {
     const [tags, setTags] = useState<TagItem[]>([]);
     const [loading, setLoading] = useState(true);
@@ -38,11 +51,30 @@ export function AdminTags() {
     const [activePage, setActivePage] = useState(1);
     const [deleteModalOpened, setDeleteModalOpened] = useState(false);
     const [tagToDelete, setTagToDelete] = useState<TagItem | null>(null);
+    const [createModalOpened, setCreateModalOpened] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const itemsPerPage = 10;
     const navigate = useNavigate();
 
-    useEffect(() => {
+    // Form setup for creating a new tag
+    const form = useForm<TagFormValues>({
+        initialValues: {
+            name: '',
+            colour: '#1c7ed6',
+            icon: '🏷️',
+            orderInNavbar: null,
+        },
+        validate: {
+            name: (value) => (value.trim().length < 2 ? 'Name must be at least 2 characters' : null),
+            colour: (value) => (isHexColor(value) ? null : 'Must be a valid hex color (e.g. #FF5733)'),
+            icon: (value) => (value.trim().length === 0 ? 'Icon is required' : null),
+            orderInNavbar: (value) => (value !== null && value !== undefined && value < 0 ? 'Order must be a positive number' : null),
+        },
+    });
+
+    const fetchTags = () => {
+        setLoading(true);
         axiosInstance
             .get('/tags')
             .then((response) => {
@@ -59,6 +91,10 @@ export function AdminTags() {
                 setError('Failed to fetch tags.');
                 setLoading(false);
             });
+    };
+
+    useEffect(() => {
+        fetchTags();
     }, []);
 
     const handleDeleteTag = () => {
@@ -83,6 +119,58 @@ export function AdminTags() {
                     message: 'Failed to delete tag.',
                     color: 'red',
                 });
+            });
+    };
+
+    const handleCreateTag = (values: TagFormValues) => {
+        setIsSubmitting(true);
+
+        // Convert empty orderInNavbar to undefined so it doesn't get sent to the API
+        const payload = {
+            ...values,
+            orderInNavbar: values.orderInNavbar === null ? undefined : values.orderInNavbar
+        };
+
+        axiosInstance
+            .post('/tags', payload)
+            .then((response) => {
+                notifications.show({
+                    title: 'Success',
+                    message: `Tag "${values.name}" created successfully.`,
+                    color: 'green',
+                });
+                // Add the new tag to the list
+                setTags((prev) => [...prev, response.data]);
+                setCreateModalOpened(false);
+                form.reset();
+            })
+            .catch((error) => {
+                console.error('Error creating tag:', error);
+                const errorMessage = error.response?.data?.message || 'Failed to create tag.';
+
+                // Show different messages based on error status
+                if (error.response?.status === 400) {
+                    notifications.show({
+                        title: 'Validation Error',
+                        message: errorMessage,
+                        color: 'red',
+                    });
+                } else if (error.response?.status === 403) {
+                    notifications.show({
+                        title: 'Permission Denied',
+                        message: 'You don\'t have permission to create tags.',
+                        color: 'red',
+                    });
+                } else {
+                    notifications.show({
+                        title: 'Error',
+                        message: errorMessage,
+                        color: 'red',
+                    });
+                }
+            })
+            .finally(() => {
+                setIsSubmitting(false);
             });
     };
 
@@ -115,11 +203,7 @@ export function AdminTags() {
                 </Text>
                 <Button
                     leftSection={<IconPlus size={16} />}
-                    onClick={() => notifications.show({
-                        title: 'Feature Coming Soon',
-                        message: 'Creating new tags directly will be available in a future update.',
-                        color: 'blue',
-                    })}
+                    onClick={() => setCreateModalOpened(true)}
                 >
                     Add New Tag
                 </Button>
@@ -246,6 +330,87 @@ export function AdminTags() {
                         Delete
                     </Button>
                 </Group>
+            </Modal>
+
+            {/* Create Tag Modal */}
+            <Modal
+                opened={createModalOpened}
+                onClose={() => {
+                    setCreateModalOpened(false);
+                    form.reset();
+                }}
+                title="Create New Tag"
+                centered
+            >
+                <form onSubmit={form.onSubmit(handleCreateTag)}>
+                    <TextInput
+                        label="Tag Name"
+                        placeholder="Enter tag name"
+                        required
+                        mb="md"
+                        {...form.getInputProps('name')}
+                    />
+
+                    <ColorInput
+                        label="Tag Color"
+                        placeholder="Choose a color"
+                        format="hex"
+                        swatchesPerRow={7}
+                        required
+                        mb="md"
+                        {...form.getInputProps('colour')}
+                    />
+
+                    <TextInput
+                        label="Icon"
+                        description="Enter an emoji or icon character"
+                        placeholder="🏷️"
+                        required
+                        mb="md"
+                        {...form.getInputProps('icon')}
+                    />
+
+                    <NumberInput
+                        label="Navbar Order"
+                        description="Order in the navigation menu (optional)"
+                        placeholder="Leave empty if not in navbar"
+                        min={0}
+                        mb="xl"
+                        {...form.getInputProps('orderInNavbar')}
+                    />
+
+                    <Box mt="md">
+                        <Text fw={500} mb="xs">Preview:</Text>
+                        <Badge
+                            style={{
+                                backgroundColor: form.values.colour,
+                                color: getBestTextColor(form.values.colour)
+                            }}
+                            size="lg"
+                            leftSection={form.values.icon}
+                        >
+                            {form.values.name || 'Tag Name'}
+                        </Badge>
+                    </Box>
+
+                    <Group justify="right" mt="md">
+                        <Button
+                            variant="default"
+                            onClick={() => {
+                                setCreateModalOpened(false);
+                                form.reset();
+                            }}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="submit"
+                            loading={isSubmitting}
+                        >
+                            Create Tag
+                        </Button>
+                    </Group>
+                </form>
             </Modal>
         </Container>
     );
