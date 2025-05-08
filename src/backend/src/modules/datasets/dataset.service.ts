@@ -141,6 +141,7 @@ export class DatasetsService {
         if (!user) {
             throw new HttpException('User not found', HttpStatus.NOT_FOUND);
         }
+        createDatasetInstance.userId = userContext.userId;
 
         // Validation
         createDatasetInstance.validateTags();
@@ -186,10 +187,10 @@ export class DatasetsService {
         return this.datasetRepository.save(newDataset);
     }
 
-    async update(id: number, updateDto: UpdateDatasetDto, currentUserId: string): Promise<Dataset> {
+    async update(id: number, updateDto: UpdateDatasetDto, userContext: UserContext): Promise<Dataset> {
         const editDatasetInstance = plainToInstance(UpdateDatasetDto, updateDto);
 
-        const currentUser = await this.usersRepository.findOne({ where: { id: currentUserId } });
+        const currentUser = await this.usersRepository.findOne({ where: { id: userContext.userId } });
         if (!currentUser) {
             throw new Error('User not found');
         }
@@ -282,9 +283,16 @@ export class DatasetsService {
             sliderImages.push(savedImage);
         }
         existingDataset.sliderImages = sliderImages;
-        existingDataset.approvedAt = null; // Needs admin approval again
-        existingDataset.deniedAt = null; // Reset deniedAt if it was previously set
 
+        // Auto-approve dataset if user can create approved content
+        if (userContext.hasPermission(Permission.CREATE_APPROVED_CONTENT)) {
+            existingDataset.approvedAt = new Date();
+            existingDataset.deniedAt = null;
+
+        } else {
+            existingDataset.approvedAt = null; // Needs admin approval again
+            existingDataset.deniedAt = null;
+        }
 
         // Save the updated dataset
         await this.datasetRepository.save(existingDataset);
@@ -296,8 +304,21 @@ export class DatasetsService {
         });
     }
 
-    async remove(id: number): Promise<void> {
-        await this.datasetRepository.delete(id);
+    async remove(id: number, userContext: UserContext): Promise<void> {
+        const dataset = await this.datasetRepository.findOne({
+            where: { id },
+            relations: ['user'],
+        });
+        if (!dataset) {
+            throw new HttpException('Dataset not found', HttpStatus.NOT_FOUND);
+        }
+
+        if (this.authorisationService.canDeleteDataset(dataset, userContext)) {
+            await this.datasetRepository.delete(id);
+        } else {
+            throw new HttpException('You are not authorised to delete this dataset.', HttpStatus.FORBIDDEN);
+        }
+
     }
 
     async verifyMqttConnection(mqttAddress: string, mqttPort: number, mqttTopic: string, mqttUsername?: string, mqttPassword?: string): Promise<void> {

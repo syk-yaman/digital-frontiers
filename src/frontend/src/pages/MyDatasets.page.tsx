@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { DatasetCard } from '@/components/DatasetCard';
 import { Flex, Text, Center, Button, Stack, Breadcrumbs, Space, Loader } from '@mantine/core';
 import { Notifications, notifications } from '@mantine/notifications';
@@ -31,7 +31,9 @@ export function MyDatasetsPage() {
         { label: 'My Datasets', path: '/my-datasets' },
     ];
 
-    useEffect(() => {
+    // Function to fetch datasets
+    const fetchDatasets = useCallback(() => {
+        setLoading(true);
         axiosInstance
             .get('/datasets/search/me')
             .then((response) => {
@@ -50,6 +52,16 @@ export function MyDatasetsPage() {
                 setLoading(false);
             });
     }, []);
+
+    // Handler for dataset deletion
+    const handleDatasetDeleted = useCallback(() => {
+        // Refresh the dataset list after deletion
+        fetchDatasets();
+    }, [fetchDatasets]);
+
+    useEffect(() => {
+        fetchDatasets();
+    }, [fetchDatasets]);
 
     if (loading) {
         return (
@@ -178,6 +190,7 @@ export function MyDatasetsPage() {
                             name: tag.name,
                             icon: '',
                         }))}
+                        onDelete={handleDatasetDeleted}
                     />
                 ))}
             </Flex>

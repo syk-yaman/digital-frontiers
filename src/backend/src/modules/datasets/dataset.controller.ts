@@ -85,7 +85,6 @@ export class DatasetsController {
     @ApiBearerAuth()
     async create(@Body() createDto: CreateDatasetDto, @Request() req) {
         const userContext = this.userContextFactory.createFromRequest(req);
-        createDto.userId = req.user.userId;
         return this.datasetsService.create(createDto, userContext);
     }
 
@@ -98,22 +97,23 @@ export class DatasetsController {
     @Put(':id')
     @ApiBearerAuth()
     update(@Param('id') id: number, @Body() updateDto: UpdateDatasetDto, @Request() req) {
-        const currentUserId = req.user.userId;
-        return this.datasetsService.update(id, updateDto, currentUserId);
+        const userContext = this.userContextFactory.createFromRequest(req);
+
+        return this.datasetsService.update(id, updateDto, userContext);
     }
 
     @ApiOperation({
         summary: '[User-aware] Delete a dataset',
         description: `Authenticated endpoint that deletes a dataset.
          User can use it to delete his own datasets.
-         Admin can used it to delete and dataset (controlled, approved and not-approved).`
+         Admin can used it to delete any dataset (controlled, approved and not-approved).`
     })
     @Delete(':id')
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles('admin')
+    @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
-    remove(@Param('id') id: number) {
-        return this.datasetsService.remove(id);
+    remove(@Param('id') id: number, @Request() req) {
+        const userContext = this.userContextFactory.createFromRequest(req);
+        return this.datasetsService.remove(id, userContext);
     }
 
     @ApiOperation({

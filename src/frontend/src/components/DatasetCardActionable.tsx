@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { API_BASE_URL } from '@/config';
 import { IconEye, IconPencil, IconTrash } from '@tabler/icons-react';
 import axiosInstance from '@/utils/axiosInstance'; // Use the existing axios instance
+import { notifications } from '@mantine/notifications';
 
 interface DatasetCardProps {
     id: number;
@@ -16,6 +17,7 @@ interface DatasetCardProps {
     deniedAt: string | null;
     sliderImages: { id: number; fileName: string }[];
     tags: { name: string; icon: string }[];
+    onDelete?: () => void; // Callback function to notify parent of deletion
 }
 
 export function DatasetCardActionable({
@@ -29,6 +31,7 @@ export function DatasetCardActionable({
     deniedAt,
     sliderImages,
     tags,
+    onDelete,
 }: DatasetCardProps) {
     const navigate = useNavigate();
     const [deleteModalOpened, setDeleteModalOpened] = useState(false);
@@ -39,10 +42,21 @@ export function DatasetCardActionable({
         try {
             await axiosInstance.delete(`/datasets/${id}`); // Use axiosInstance for the delete request
             setDeleteModalOpened(false);
-            console.log(`Dataset with ID ${id} deleted`);
-            // Optionally, trigger a refresh or redirect
+            notifications.show({
+                title: 'Success',
+                message: 'Dataset deleted successfully.',
+                color: 'green',
+            });
+            // Call the onDelete callback if provided to trigger refresh in parent component
+            if (onDelete) {
+                onDelete();
+            }
         } catch (error) {
-            console.error('Failed to delete dataset:', error);
+            notifications.show({
+                title: 'Error',
+                message: 'Failed to delete dataset. Please try again.',
+                color: 'red',
+            });
         } finally {
             setIsDeleting(false);
         }

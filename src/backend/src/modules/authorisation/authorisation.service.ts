@@ -54,6 +54,26 @@ export class AuthorisationService {
         return false;
     }
 
+    canDeleteDataset(dataset: Dataset, userContext: UserContext): boolean {
+        // Admin can delete anything
+        if (userContext.hasPermission(Permission.EDIT_ALL_CONTENT)) {
+            return true;
+        }
+
+        // Users can delete their own content
+        if (userContext.userId === dataset.user.id) {
+            return true;
+        }
+
+        // Content owners with controlled dataset permission can delete controlled datasets
+        if (dataset.isControlled &&
+            userContext.hasPermission(Permission.EDIT_CONTROLLED_DATASETS)) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
         * Determines if a user can edit a specific dataset
         * 
