@@ -291,4 +291,13 @@ export class ShowcasesService {
 
         return this.showcaseRepository.save(showcase);
     }
+
+    async findLatest(): Promise<Showcase[]> {
+        return this.showcaseRepository.find({
+            relations: ['sliderImages', 'user', 'dataset'],
+            where: { approvedAt: Not(IsNull()) },
+            order: { createdAt: 'DESC' },
+            take: 4, // Limit to 4 latest showcases
+        });
+    }
 }

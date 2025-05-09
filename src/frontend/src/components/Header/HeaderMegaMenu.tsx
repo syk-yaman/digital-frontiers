@@ -189,17 +189,13 @@ export function HeaderMegaMenu() {
 
   return (
     <Box
-      //style={{ backgroundColor: '#94d1f1' }}
       style={{ backgroundColor: 'tansparent' }}
     >
       <header className={classes.header}
-        //style={{ borderBottom: '#173B3B' }}
         style={{
-          // borderBottom: 'none',
-          // backgroundColor: 'transparent',
           borderBottom: isHome ? 'none' : `none`,
           backgroundColor: isHome ? 'transparent' : '#1F5754',
-          position: isHome ? 'absolute' : 'relative', // Ensure the header stays on top of the background image
+          position: isHome ? 'absolute' : 'relative',
           width: '100%',
           zIndex: 1000,
         }}

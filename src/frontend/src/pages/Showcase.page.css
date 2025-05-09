@@ -1,0 +1,19 @@
+.breadcrumb-link {
+    color: #6bb8ff !important;
+    text-decoration: none;
+}
+
+.breadcrumb-link:hover {
+    text-decoration: underline;
+}
+
+.location-popup {
+    max-width: 300px;
+}
+
+.location-popup-image {
+    width: 100%;
+    max-height: 150px;
+    object-fit: cover;
+    border-radius: 4px;
+}

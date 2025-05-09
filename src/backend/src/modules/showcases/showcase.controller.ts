@@ -38,6 +38,13 @@ export class ShowcasesController {
         return this.showcasesService.findPendingApproval(userContext);
     }
 
+    @Get('latest')
+    @ApiOperation({ summary: '[Public] Get latest 4 showcases' })
+    @ApiResponse({ status: 200, description: 'Returns the latest 4 approved showcases' })
+    async findLatest() {
+        return this.showcasesService.findLatest();
+    }
+
     @Get(':id')
     @UseGuards(OptionalJwtAuthGuard)
     @ApiOperation({ summary: '[Public, User, Admin] Get showcase by ID' })
@@ -61,6 +68,8 @@ export class ShowcasesController {
         createDto.userId = userContext.userId;
         return this.showcasesService.create(createDto, userContext);
     }
+
+
 
     @Put(':id')
     @UseGuards(JwtAuthGuard)
@@ -147,4 +156,6 @@ export class ShowcasesController {
 
         return this.showcasesService.findByUser(userId);
     }
+
+
 }

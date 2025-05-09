@@ -1,5 +1,5 @@
 import '@mantine/carousel/styles.css';
-import { Text, Container, Image, Space, Center, Badge, Card, Group, Grid, SimpleGrid, Flex, Avatar, AspectRatio, Overlay, Box } from '@mantine/core';
+import { Text, Container, Image, Space, Center, Badge, Card, Group, Grid, SimpleGrid, Flex, Avatar, AspectRatio, Overlay, Box, Title, Button } from '@mantine/core';
 
 import React, { useEffect, useState } from 'react';
 
@@ -11,7 +11,7 @@ import { API_BASE_URL } from '@/config';
 import { Notifications, notifications } from '@mantine/notifications';
 import axiosInstance from '@/utils/axiosInstance';
 import { DatasetCard } from '@/components/DatasetCard';
-
+import { HomeShowcaseCard } from '@/components/HomeShowcaseCard';
 
 const partners = [
   {
@@ -65,6 +65,21 @@ interface DatasetItem {
   lastReading: string;
 }
 
+interface ShowcaseItem {
+  id: number;
+  title: string;
+  description: string;
+  youtubeLink?: string;
+  createdAt: string;
+  sliderImages: { id: number; fileName: string; isTeaser: boolean }[];
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    photoUrl?: string;
+  };
+}
+
 export function HomePage() {
   const PRIMARY_COL_HEIGHT = '600px';
   const SECONDARY_COL_HEIGHT = `calc(${PRIMARY_COL_HEIGHT} / 2 - var(--mantine-spacing-md) / 2)`;
@@ -75,6 +90,8 @@ export function HomePage() {
 
   const [imageSrc, setImageSrc] = useState('/imgs/qeop-hero7.jpg'); // Initial image source
   const [isFading, setIsFading] = useState(false);
+
+  const [latestShowcases, setLatestShowcases] = useState<ShowcaseItem[]>([]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -118,8 +135,25 @@ export function HomePage() {
         setLoading(false);
       });
 
+    // Fetch latest showcases
+    axiosInstance.get('/showcases/latest')
+      .then((response) => {
+        setLatestShowcases(response.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching latest showcases:', error);
+        notifications.show({
+          title: 'Error',
+          message: 'Failed to load latest showcases',
+          color: 'red',
+        });
+        setLoading(false);
+      });
+
     return () => clearTimeout(timer); // Cleanup the timer
   }, []);
+
 
 
   return (
@@ -222,68 +256,148 @@ export function HomePage() {
           <Space h="md" />
 
           <Container px={0} size="100rem" pr={'5%'} pl={'5%'}>
-            <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
-              <Card style={{ backgroundColor: '#1F5754' }} p="md" radius="md" component="a" href="#" className=".card">
-                <AspectRatio ratio={1920 / 1080}>
-                  <Image src="https://custom-images.strikinglycdn.com/res/hrscywv4p/image/upload/c_limit,fl_lossy,h_9000,w_1200,f_auto,q_auto/370342/567505_905654.jpg" />
-                </AspectRatio>
-                <Text c="#d1bd51" size="xs" tt="uppercase" fw={700} mt="md">
-                  September 9, 2022
-                </Text>
-                <Text c="white" size="xl" mt={5}>
-                  Mosa, a QEOP-based Startup to Enhance Bike Parking Security with Intelligent Solution
-                </Text>
-                <Text c="#dedede" mt={5}>
-                  As urban environments strive for sustainability, traditional bike racks and CCTV cameras often fall short in truly promoting cycling.
-                  But you see the bigger picture. Whether you’re a property manager, transport planner, or landlord, you understand the transformative
-                  potential of cycling and are eager to overcome the challenges that discourage two-wheeled transportation.
-                  Mosa shares your commitment to innovation and creating greener, more sustainable urban spaces.
-                  By integrating our intelligent, retrofit solutions, you can enhance bike parking security, encourage cycling,
-                  and make a meaningful impact on your community’s future.
-                </Text>
-              </Card>
-              <Grid gutter="md">
-                <Grid.Col>
-                  <Card style={{ backgroundColor: '#1F5754' }} p="md" radius="md" component="a" href="#" className=".card">
+            {latestShowcases.length > 0 ? (
+              <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+                {/* First showcase - larger card */}
+                {latestShowcases.length > 0 && (
+                  <Card
+                    style={{ backgroundColor: '#1F5754' }}
+                    p="md"
+                    radius="md"
+                    component={Link}
+                    to={`/showcase/${latestShowcases[0].id}`}
+                    className=".card"
+                  >
                     <AspectRatio ratio={1920 / 1080}>
-                      <Image src="https://www.queenelizabetholympicpark.co.uk/sites/default/files/styles/banner_image_contained/public/banner-slide-image/school-streets_summer-2023_sensors%20%281%29.jpg?itok=HRGamTq4" />
+                      <Image
+                        src={
+                          latestShowcases[0].sliderImages?.length > 0
+                            ? `${API_BASE_URL}/uploads/${latestShowcases[0].sliderImages[0].fileName}`
+                            : "/imgs/showcase-default.jpeg"
+                        }
+                      />
                     </AspectRatio>
                     <Text c="#d1bd51" size="xs" tt="uppercase" fw={700} mt="md">
-                      October 17, 2023
+                      {new Date(latestShowcases[0].createdAt).toLocaleDateString()}
                     </Text>
-                    <Text c="white" size="l" mt={5}>
-                      Air Quality improves at Hackney School after School Streets Initiative Introduced
+                    <Text c="white" size="xl" mt={5}>
+                      {latestShowcases[0].title}
                     </Text>
-                  </Card>
-                </Grid.Col>
-                <Grid.Col span={6}>
-                  <Card style={{ backgroundColor: '#1F5754' }} p="md" radius="md" component="a" href="#" className=".card">
-                    <AspectRatio ratio={1920 / 1080}>
-                      <Image src="https://cdn.prod.website-files.com/65d39eed3647e480025d413a/66d5a623c612ae2b74e5088d_product-screenshot-energy-report.png" />
-                    </AspectRatio>
-                    <Text c="#d1bd51" size="xs" tt="uppercase" fw={700} mt="md">
-                      September 9, 2022
-                    </Text>
-                    <Text c="white" size="m" mt={5}>
-                      MapMortar, Plan, track and scale your path to Net Zero
+                    <Text c="#dedede" mt={5}>
+                      {latestShowcases[0].description.length > 300
+                        ? `${latestShowcases[0].description.substring(0, 300)}...`
+                        : latestShowcases[0].description
+                      }
                     </Text>
                   </Card>
-                </Grid.Col>
-                <Grid.Col span={6}>
-                  <Card style={{ backgroundColor: '#1F5754' }} p="md" radius="md" component="a" href="#" className=".card">
-                    <AspectRatio ratio={1920 / 1080}>
-                      <Image src="https://connected-environments.org/wp-content/uploads/2019/11/echobox.jpg" />
-                    </AspectRatio>
-                    <Text c="#d1bd51" size="xs" tt="uppercase" fw={700} mt="md">
-                      November 5, 2019
-                    </Text>
-                    <Text c="white" size="m" mt={5}>
-                      Shazam for bats: Internet of Things for biodiversity monitoring
-                    </Text>
-                  </Card>
-                </Grid.Col>
-              </Grid>
-            </SimpleGrid>
+                )}
+
+                {/* Right side grid for three smaller showcases */}
+                <Grid gutter="md">
+                  {/* Second showcase - top slot */}
+                  {latestShowcases.length > 1 && (
+                    <Grid.Col>
+                      <Card
+                        style={{ backgroundColor: '#1F5754' }}
+                        p="md"
+                        radius="md"
+                        component={Link}
+                        to={`/showcase/${latestShowcases[1].id}`}
+                        className=".card"
+                      >
+                        <AspectRatio ratio={1920 / 1080}>
+                          <Image
+                            src={
+                              latestShowcases[1].sliderImages?.length > 0
+                                ? `${API_BASE_URL}/uploads/${latestShowcases[1].sliderImages[0].fileName}`
+                                : "/imgs/showcase-default.jpeg"
+                            }
+                          />
+                        </AspectRatio>
+                        <Text c="#d1bd51" size="xs" tt="uppercase" fw={700} mt="md">
+                          {new Date(latestShowcases[1].createdAt).toLocaleDateString()}
+                        </Text>
+                        <Text c="white" size="l" mt={5}>
+                          {latestShowcases[1].title}
+                        </Text>
+                      </Card>
+                    </Grid.Col>
+                  )}
+
+                  {/* Bottom grid for two small cards side by side */}
+                  <Grid.Col span={6}>
+                    {latestShowcases.length > 2 && (
+                      <Card
+                        style={{ backgroundColor: '#1F5754' }}
+                        p="md"
+                        radius="md"
+                        component={Link}
+                        to={`/showcase/${latestShowcases[2].id}`}
+                        className=".card"
+                      >
+                        <AspectRatio ratio={1920 / 1080}>
+                          <Image
+                            src={
+                              latestShowcases[2].sliderImages?.length > 0
+                                ? `${API_BASE_URL}/uploads/${latestShowcases[2].sliderImages[0].fileName}`
+                                : "/imgs/showcase-default.jpeg"
+                            }
+                          />
+                        </AspectRatio>
+                        <Text c="#d1bd51" size="xs" tt="uppercase" fw={700} mt="md">
+                          {new Date(latestShowcases[2].createdAt).toLocaleDateString()}
+                        </Text>
+                        <Text c="white" size="m" mt={5}>
+                          {latestShowcases[2].title}
+                        </Text>
+                      </Card>
+                    )}
+                  </Grid.Col>
+                  <Grid.Col span={6}>
+                    {latestShowcases.length > 3 && (
+                      <Card
+                        style={{ backgroundColor: '#1F5754' }}
+                        p="md"
+                        radius="md"
+                        component={Link}
+                        to={`/showcase/${latestShowcases[3].id}`}
+                        className=".card"
+                      >
+                        <AspectRatio ratio={1920 / 1080}>
+                          <Image
+                            src={
+                              latestShowcases[3].sliderImages?.length > 0
+                                ? `${API_BASE_URL}/uploads/${latestShowcases[3].sliderImages[0].fileName}`
+                                : "/imgs/showcase-default.jpeg"
+                            }
+                          />
+                        </AspectRatio>
+                        <Text c="#d1bd51" size="xs" tt="uppercase" fw={700} mt="md">
+                          {new Date(latestShowcases[3].createdAt).toLocaleDateString()}
+                        </Text>
+                        <Text c="white" size="m" mt={5}>
+                          {latestShowcases[3].title}
+                        </Text>
+                      </Card>
+                    )}
+                  </Grid.Col>
+                </Grid>
+              </SimpleGrid>
+            ) : (
+              <Text ta="center" c="white">No showcases available yet</Text>
+            )}
+
+            <Group justify="center" mt="xl">
+              <Button
+                component={Link}
+                to="/showcases"
+                variant="outline"
+                color="#FFC747"
+                size="md"
+              >
+                View All Showcases
+              </Button>
+            </Group>
           </Container>
 
           <Text mt="3rem" ta="center" className='title' c="white" >Partners</Text>
