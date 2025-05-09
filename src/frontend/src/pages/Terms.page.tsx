@@ -7,11 +7,11 @@ export function TermsPage() {
 
             <Title order={3} mt="md" mb="xs">Introduction</Title>
             <Text>
-                Welcome to the SHIFT Digital Frontiers Platform. By accessing and using data sets available on this platform, you agree to comply with these Terms of Use. These terms outline the rules for using both open data sets under standard licenses and closed data sets subject to specific agreements.
+                Welcome to the LLDC Digital Frontiers Platform. By accessing and using data sets available on this platform, you agree to comply with these Terms of Use. These terms outline the rules for using both open data sets under standard licenses and closed data sets subject to specific agreements.
             </Text>
 
             <Title order={3} mt="md" mb="xs">Categories of Data</Title>
-            <Text>SHIFT provides access to data under two primary categories:</Text>
+            <Text>LLDC provides access to data under two primary categories:</Text>
             <List withPadding>
                 <List.Item>
                     <Text fw={500}>Open Data Sets:</Text> These data sets are made available under standard open licenses such as MIT, Creative Commons (CC), or Open Government Licence (OGL).
@@ -32,14 +32,14 @@ export function TermsPage() {
             <Title order={3} mt="md" mb="xs">Use of Closed Data Sets</Title>
             <Text>Users accessing closed data sets must:</Text>
             <List withPadding>
-                <List.Item>Enter into a specific agreement with SHIFT or the data provider outlining permissible use cases.</List.Item>
+                <List.Item>Enter into a specific agreement with LLDC or the data provider outlining permissible use cases.</List.Item>
                 <List.Item>Use the data strictly for the agreed purposes and not share it with unauthorized parties.</List.Item>
                 <List.Item>Comply with any confidentiality, security, or ethical requirements imposed by the data provider.</List.Item>
             </List>
 
             <Title order={3} mt="md" mb="xs">Data Integrity and Responsibility</Title>
             <List withPadding>
-                <List.Item>SHIFT does not guarantee the accuracy, completeness, or reliability of any data set.</List.Item>
+                <List.Item>LLDC does not guarantee the accuracy, completeness, or reliability of any data set.</List.Item>
                 <List.Item>Users are responsible for verifying data suitability for their intended application.</List.Item>
                 <List.Item>Users must not manipulate or alter data in a misleading manner.</List.Item>
             </List>
@@ -47,20 +47,20 @@ export function TermsPage() {
             <Title order={3} mt="md" mb="xs">Compliance and Enforcement</Title>
             <List withPadding>
                 <List.Item>Any misuse of data may result in suspension or termination of access.</List.Item>
-                <List.Item>SHIFT reserves the right to audit data usage to ensure compliance with these terms.</List.Item>
+                <List.Item>LLDC reserves the right to audit data usage to ensure compliance with these terms.</List.Item>
                 <List.Item>Users must comply with all applicable laws and regulations regarding data usage and privacy.</List.Item>
             </List>
 
             <Title order={3} mt="md" mb="xs">Liability</Title>
             <List withPadding>
-                <List.Item>SHIFT and its data providers disclaim all liability for any direct, indirect, incidental, or consequential damages arising from the use of data sets.</List.Item>
+                <List.Item>LLDC and its data providers disclaim all liability for any direct, indirect, incidental, or consequential damages arising from the use of data sets.</List.Item>
                 <List.Item>Users assume full responsibility for any outcomes resulting from the use of the data.</List.Item>
-                <List.Item>SHIFT is not responsible for any third-party claims or losses incurred due to reliance on the data.</List.Item>
+                <List.Item>LLDC is not responsible for any third-party claims or losses incurred due to reliance on the data.</List.Item>
             </List>
 
             <Title order={3} mt="md" mb="xs">Modifications to Terms</Title>
             <Text>
-                SHIFT reserves the right to update these terms at any time. Continued use of the platform signifies acceptance of any modifications.
+                LLDC reserves the right to update these terms at any time. Continued use of the platform signifies acceptance of any modifications.
             </Text>
         </Container>
     );
