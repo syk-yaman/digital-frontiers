@@ -418,6 +418,7 @@ export function AddShowcase() {
                     placeholder="Provide a detailed description of this showcase"
                     minRows={4}
                     required
+                    autosize
                     mb="md"
                     {...form.getInputProps('description')}
                 />
@@ -491,11 +492,11 @@ export function AddShowcase() {
                                     }}
                                 >
                                     <Box mb="xs" style={{ height: '120px', overflow: 'hidden', position: 'relative' }}>
-                                        <img
+                                        {/* <img
                                             src={`/uploads/${image.fileName}`}
                                             alt={`Showcase image ${index + 1}`}
                                             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                        />
+                                        /> */}
                                         {image.isTeaser && (
                                             <Box style={{
                                                 position: 'absolute',

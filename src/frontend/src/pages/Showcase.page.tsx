@@ -328,11 +328,11 @@ export function ShowcasePage() {
                     {hasLocations && (
                         <Card withBorder mt="xl">
                             <Title order={3} mb="md">Location Map</Title>
-                            <div style={{ height: '500px', position: 'relative' }}>
+                            <div style={{ height: '800px', position: 'relative' }}>
                                 <Map
                                     initialViewState={{
-                                        longitude: mappedLocations[0]?.position[0] || INITIAL_VIEW_STATE.longitude,
-                                        latitude: mappedLocations[0]?.position[1] || INITIAL_VIEW_STATE.latitude,
+                                        longitude: INITIAL_VIEW_STATE.longitude,
+                                        latitude: INITIAL_VIEW_STATE.latitude,
                                         zoom: INITIAL_VIEW_STATE.zoom,
                                     }}
                                     mapStyle={{

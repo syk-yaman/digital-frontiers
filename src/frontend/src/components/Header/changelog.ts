@@ -1,6 +1,13 @@
 export const version = 'v0.3.1'
 export const changelog = [
     {
+        version: 'v0.4',
+        changes: [
+            "Showcases feature was added.",
+            "Advanced authorisation system was added from controlled datasets",
+        ],
+    },
+    {
         version: 'v0.3.1',
         changes: [
             "Major version update, including admin page and dataset management.",
