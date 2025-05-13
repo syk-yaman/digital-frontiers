@@ -1,4 +1,4 @@
-export const version = 'v0.3.1'
+export const version = 'v0.4'
 export const changelog = [
     {
         version: 'v0.4',
