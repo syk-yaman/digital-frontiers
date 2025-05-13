@@ -36,10 +36,10 @@ export class Showcase {
     @JoinColumn({ name: 'datasetId' })
     dataset?: Dataset;
 
-    @OneToMany(() => ShowcaseSliderImage, (image) => image.showcase, { cascade: true })
+    @OneToMany(() => ShowcaseSliderImage, (image) => image.showcase, { cascade: true, onDelete: 'CASCADE' })
     sliderImages!: ShowcaseSliderImage[];
 
-    @OneToMany(() => ShowcaseLocation, (location) => location.showcase, { cascade: true })
+    @OneToMany(() => ShowcaseLocation, (location) => location.showcase, { cascade: true, onDelete: 'CASCADE' })
     locations?: ShowcaseLocation[];
 
     @Column({ type: 'timestamp', nullable: true })
@@ -77,7 +77,7 @@ export class ShowcaseSliderImage {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @ManyToOne(() => Showcase, (showcase) => showcase.sliderImages, { onDelete: 'CASCADE' })
+    @ManyToOne(() => Showcase, (showcase) => showcase.sliderImages, { onDelete: 'CASCADE', nullable: false })
     showcase!: Showcase;
 
     @Column()
@@ -92,7 +92,7 @@ export class ShowcaseLocation {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @ManyToOne(() => Showcase, (showcase) => showcase.locations, { onDelete: 'CASCADE' })
+    @ManyToOne(() => Showcase, (showcase) => showcase.locations, { onDelete: 'CASCADE', nullable: false })
     showcase!: Showcase;
 
     @Column({ type: 'float' })

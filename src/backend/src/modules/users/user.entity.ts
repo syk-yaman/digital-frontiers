@@ -57,7 +57,7 @@ export class User {
     //@Column({ type: 'json', nullable: true })
     //controlledDatasetIds?: string[]; // Datasets this user has explicit access to
 
-    @OneToMany(() => Dataset, (dataset) => dataset.user, { cascade: true })
+    @OneToMany(() => Dataset, (dataset) => dataset.user, { cascade: true, onDelete: 'CASCADE' })
     datasets!: Dataset[];
 
     @CreateDateColumn()

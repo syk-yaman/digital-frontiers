@@ -62,13 +62,13 @@ export class Dataset {
     @Column({ type: 'text', nullable: true })
     dataExample?: string;
 
-    @OneToMany(() => DatasetLink, (link) => link.dataset, { cascade: true })
+    @OneToMany(() => DatasetLink, (link) => link.dataset, { cascade: true, onDelete: 'CASCADE' })
     links?: DatasetLink[];
 
-    @OneToMany(() => DatasetLocation, (location) => location.dataset, { cascade: true })
+    @OneToMany(() => DatasetLocation, (location) => location.dataset, { cascade: true, onDelete: 'CASCADE' })
     locations?: DatasetLocation[];
 
-    @OneToMany(() => DatasetSliderImage, (image) => image.dataset, { cascade: true })
+    @OneToMany(() => DatasetSliderImage, (image) => image.dataset, { cascade: true, onDelete: 'CASCADE' })
     sliderImages!: DatasetSliderImage[];
 
     @ManyToMany(() => DatasetTag, { cascade: true })
@@ -124,7 +124,7 @@ export class DatasetLink {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @ManyToOne(() => Dataset, (dataset) => dataset.links, { onDelete: 'CASCADE' })
+    @ManyToOne(() => Dataset, (dataset) => dataset.links, { onDelete: 'CASCADE', nullable: false })
     dataset!: Dataset;
 
     @Column()
@@ -139,7 +139,7 @@ export class DatasetLocation {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @ManyToOne(() => Dataset, (dataset) => dataset.locations, { onDelete: 'CASCADE' })
+    @ManyToOne(() => Dataset, (dataset) => dataset.locations, { onDelete: 'CASCADE', nullable: false })
     dataset!: Dataset;
 
     @Column({ type: 'float' })
@@ -154,7 +154,7 @@ export class DatasetSliderImage {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @ManyToOne(() => Dataset, (dataset) => dataset.sliderImages, { onDelete: 'CASCADE' })
+    @ManyToOne(() => Dataset, (dataset) => dataset.sliderImages, { onDelete: 'CASCADE', nullable: false })
     dataset!: Dataset;
 
     @Column()
