@@ -7,6 +7,8 @@ import {
     DeleteDateColumn,
     BeforeInsert,
     OneToMany,
+    Index,
+    Check,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Dataset } from '../datasets/dataset.entity';
@@ -26,6 +28,7 @@ export class User {
     id!: string;
 
     @Column({ unique: true })
+    @Index()
     email!: string;
 
     @Column()
@@ -41,6 +44,7 @@ export class User {
     password!: string;
 
     @Column({ type: 'enum', enum: UserType })
+    @Check(`"type" IN ('public_sector', 'sme', 'large_business', 'university', 'citizen_scientist', 'none')`)
     type!: UserType;
 
     @Column({ default: false })

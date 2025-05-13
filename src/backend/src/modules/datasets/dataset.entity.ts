@@ -10,6 +10,8 @@ import {
     UpdateDateColumn,
     DeleteDateColumn,
     JoinColumn,
+    Index,
+    Check,
 } from 'typeorm';
 import { User } from '../users/user.entity';
 
@@ -30,6 +32,7 @@ export enum UpdateFrequencyUnit {
 }
 
 @Entity('datasets')
+@Check(`"datasetType" IN ('open', 'controlled')`)
 export class Dataset {
     @PrimaryGeneratedColumn()
     id!: number;
@@ -39,6 +42,7 @@ export class Dataset {
     user!: User;
 
     @Column()
+    @Index({ unique: true })
     name!: string;
 
     @Column()
@@ -167,6 +171,7 @@ export class DatasetTag {
     id!: number;
 
     @Column()
+    @Index({ unique: true })
     name!: string;
 
     @Column()

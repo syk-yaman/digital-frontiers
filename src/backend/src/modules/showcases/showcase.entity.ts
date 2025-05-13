@@ -10,6 +10,7 @@ import {
     UpdateDateColumn,
     DeleteDateColumn,
     JoinColumn,
+    Index,
 } from 'typeorm';
 import { User } from '../users/user.entity';
 import { Dataset } from '../datasets/dataset.entity';
@@ -20,6 +21,7 @@ export class Showcase {
     id!: number;
 
     @Column()
+    @Index({ unique: true })
     title!: string;
 
     @Column({ type: 'text' })
