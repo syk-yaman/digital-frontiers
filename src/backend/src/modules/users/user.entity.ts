@@ -50,7 +50,7 @@ export class User {
     @Column({ default: false })
     isAdmin!: boolean;
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, select: false })
     emailVerificationToken?: string;
 
     @Column({ default: false })
