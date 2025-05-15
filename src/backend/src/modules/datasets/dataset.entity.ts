@@ -94,6 +94,9 @@ export class Dataset {
     @Column({ nullable: true })
     mqttPassword?: string;
 
+    @Column({ type: 'int', nullable: true })
+    orderInHomepage?: number;
+
     @Column({ type: 'timestamp', nullable: true })
     approvedAt?: Date;
 
@@ -163,6 +166,9 @@ export class DatasetSliderImage {
 
     @Column()
     fileName!: string;
+
+    @Column({ default: false })
+    isTeaser!: boolean;
 }
 
 @Entity('dataset_tags')
