@@ -377,7 +377,7 @@ export function ShowcasePage() {
                                                 )}
                                                 {popupInfo.imageLink && (
                                                     <Image
-                                                        src={popupInfo.imageLink}
+                                                        src={`${API_BASE_URL}/uploads/${popupInfo.imageLink}`}
                                                         alt="Location image"
                                                         height={150}
                                                         fit="cover"

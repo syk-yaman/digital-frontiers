@@ -169,7 +169,8 @@ export function AdminShowcases() {
                     {
                         accessor: 'title',
                         title: 'Title',
-                        render: (record) => <Text fw={500}>{record.title}</Text>,
+                        render: (record) => <Text fw={300}>{record.title}</Text>,
+                        width: 250,
                     },
                     {
                         accessor: 'user',
@@ -190,22 +191,17 @@ export function AdminShowcases() {
                     {
                         accessor: 'features',
                         title: 'Features',
+                        width: 150,
                         render: (record) => (
-                            <Group gap={8}>
+                            <Group gap={10}>
                                 {record.youtubeLink && (
-                                    <Badge color="red">
-                                        <Group gap={4}>
-                                            <IconVideo size={16} />
-                                            <Text>Video</Text>
-                                        </Group>
+                                    <Badge color="red" leftSection={<IconVideo size={12} />}>
+                                        Video
                                     </Badge>
                                 )}
                                 {record.locations && record.locations.length > 0 && (
-                                    <Badge color="blue">
-                                        <Group gap={4}>
-                                            <IconMap size={16} />
-                                            <Text>{record.locations.length} Locations</Text>
-                                        </Group>
+                                    <Badge color="blue" leftSection={<IconMap size={12} />}>
+                                        {record.locations.length} Locations
                                     </Badge>
                                 )}
                             </Group>

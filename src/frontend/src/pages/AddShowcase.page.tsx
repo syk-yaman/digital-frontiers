@@ -578,7 +578,7 @@ export function AddShowcase() {
                     You can add details for each location after placing it on the map.
                 </Text>
 
-                <Box mb="md" style={{ height: '500px', position: 'relative' }}>
+                <Box mb="md" style={{ height: '300px', position: 'relative' }}>
                     <DeckGL
                         initialViewState={INITIAL_VIEW_STATE}
                         controller={true}
@@ -591,8 +591,8 @@ export function AddShowcase() {
                                     isSelected: index === selectedLocationIndex
                                 })),
                                 getPosition: (d) => [d.lon, d.lat],
-                                getRadius: (d) => d.isSelected ? 15 : 10,
-                                getFillColor: (d) => d.isSelected ? [255, 140, 0] : [0, 200, 255],
+                                getRadius: (d) => d.isSelected ? 50 : 30,
+                                getFillColor: (d) => d.isSelected ? [0, 230, 95] : [0, 0, 255],
                                 pickable: true,
                                 onClick: (info) => {
                                     setSelectedLocationIndex(info.index);
@@ -642,9 +642,22 @@ export function AddShowcase() {
                     <Paper withBorder p="md" mb="md">
                         <Flex justify="space-between" align="center" mb="xs">
                             <Text fw={500}>Location Details</Text>
-                            <ActionIcon color="red" onClick={deleteSelectedLocation}>
-                                <IconTrash size={16} />
-                            </ActionIcon>
+                            <Group>
+                                <Button
+                                    onClick={() => setSelectedLocationIndex(null)}
+                                    leftSection={<IconCheck size={16} />}
+                                >
+                                    Done
+                                </Button>
+                                <Button
+                                    onClick={deleteSelectedLocation}
+                                    leftSection={<IconTrash size={16} />}
+                                    color="red"
+                                >
+                                    Delete
+                                </Button>
+
+                            </Group>
                         </Flex>
 
                         <TextInput
@@ -658,60 +671,60 @@ export function AddShowcase() {
                         <Text size="sm" fw={500} mt="md" mb="xs">
                             Image (optional)
                         </Text>
-                        <Dropzone
-                            onDrop={(files) => handleLocationImageUpload(files[0], selectedLocationIndex)}
-                            accept={['image/jpeg', 'image/png', 'image/gif']}
-                            maxFiles={1}
-                        >
-                            <Group justify="center" gap="xl" mih={120} style={{ pointerEvents: 'none' }}>
-                                <Dropzone.Accept>
-                                    <IconUpload size={40} stroke={1.5} />
-                                </Dropzone.Accept>
-                                <Dropzone.Reject>
-                                    <IconX size={40} stroke={1.5} />
-                                </Dropzone.Reject>
-                                <Dropzone.Idle>
-                                    <IconPhoto size={40} stroke={1.5} />
-                                </Dropzone.Idle>
-                                <Text size="sm" color="dimmed" inline>
-                                    Drag an image here or click to select a file
-                                </Text>
-                            </Group>
-                        </Dropzone>
+                        <Flex gap="md" align="flex-start">
+                            <Dropzone
+                                onDrop={(files) => handleLocationImageUpload(files[0], selectedLocationIndex)}
+                                accept={['image/jpeg', 'image/png', 'image/gif']}
+                                maxFiles={1}
+                                style={{ flex: 2 }}
+                            >
+                                <Group justify="center" gap="l" mih={170} style={{ pointerEvents: 'none' }}>
+                                    <Dropzone.Accept>
+                                        <IconUpload size={40} stroke={1.5} />
+                                    </Dropzone.Accept>
+                                    <Dropzone.Reject>
+                                        <IconX size={40} stroke={1.5} />
+                                    </Dropzone.Reject>
+                                    <Dropzone.Idle>
+                                        <IconPhoto size={40} stroke={1.5} />
+                                    </Dropzone.Idle>
+                                    <Text size="sm" color="dimmed" inline>
+                                        Drag an image here or click to select a file
+                                    </Text>
+                                </Group>
+                            </Dropzone>
 
-                        {pins[selectedLocationIndex]?.imageLink && (
-                            <Group mt="md">
-                                <img
-                                    src={`${API_BASE_URL}/uploads/${pins[selectedLocationIndex].imageLink}`}
-                                    alt="Location"
-                                    style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'contain' }}
-                                />
-                            </Group>
-                        )}
+                            {pins[selectedLocationIndex]?.imageLink && (
+                                <Box style={{ flex: 1, textAlign: 'center' }}>
+                                    <img
+                                        src={`${API_BASE_URL}/uploads/${pins[selectedLocationIndex].imageLink}`}
+                                        alt="Location"
+                                        style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'contain' }}
+                                    />
+                                </Box>
+                            )}
+                        </Flex>
 
-                        <TextInput
-                            label="Link Title (optional)"
-                            placeholder="Title for external link"
-                            mb="xs"
-                            value={pins[selectedLocationIndex]?.linkTitle || ''}
-                            onChange={(e) => updateLocationDetail('linkTitle', e.currentTarget.value)}
-                        />
+                        <Flex gap="md" align="flex-start">
+                            <TextInput
+                                label="Link Title (optional)"
+                                placeholder="Title for external link"
+                                mb="xs"
+                                style={{ flex: 1 }}
+                                value={pins[selectedLocationIndex]?.linkTitle || ''}
+                                onChange={(e) => updateLocationDetail('linkTitle', e.currentTarget.value)}
+                            />
+                            <TextInput
+                                label="Link Address (optional)"
+                                placeholder="URL for external resource"
+                                mb="xs"
+                                style={{ flex: 2 }}
+                                value={pins[selectedLocationIndex]?.linkAddress || ''}
+                                onChange={(e) => updateLocationDetail('linkAddress', e.currentTarget.value)}
+                            />
+                        </Flex>
 
-                        <TextInput
-                            label="Link Address (optional)"
-                            placeholder="URL for external resource"
-                            mb="xs"
-                            value={pins[selectedLocationIndex]?.linkAddress || ''}
-                            onChange={(e) => updateLocationDetail('linkAddress', e.currentTarget.value)}
-                        />
 
-                        <Button
-                            mt="sm"
-                            onClick={() => setSelectedLocationIndex(null)}
-                            leftSection={<IconCheck size={16} />}
-                        >
-                            Done
-                        </Button>
                     </Paper>
                 )}
 
