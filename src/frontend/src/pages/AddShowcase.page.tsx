@@ -21,6 +21,7 @@ import {
     IconCheck, IconMapPin, IconArrowRight, IconLink, IconStar
 } from '@tabler/icons-react';
 import proj4 from 'proj4';
+import { API_BASE_URL } from '@/config';
 
 // Map initial view - centered on London
 const INITIAL_VIEW_STATE = {
@@ -390,6 +391,38 @@ export function AddShowcase() {
         setSelectedLocationIndex(null);
     };
 
+    const handleLocationImageUpload = async (file: File, index: number) => {
+        const formData = new FormData();
+        formData.append('files', file);
+
+        try {
+            const response = await axiosInstance.post('/showcases/upload', formData);
+            const uploadedFileName = response.data[0]; // Ensure the response contains the correct file name
+
+            setPins((prevPins) => {
+                const updatedPins = [...prevPins];
+                updatedPins[index] = {
+                    ...updatedPins[index],
+                    imageLink: uploadedFileName, // Correctly set the uploaded file name
+                };
+                return updatedPins;
+            });
+
+            notifications.show({
+                title: 'Success',
+                message: 'Image uploaded successfully',
+                color: 'green',
+            });
+        } catch (error) {
+            console.error('Error uploading location image:', error);
+            notifications.show({
+                title: 'Error',
+                message: 'Failed to upload image',
+                color: 'red',
+            });
+        }
+    };
+
     if (loadingShowcase) {
         return (
             <Center style={{ height: '80vh' }}>
@@ -492,11 +525,11 @@ export function AddShowcase() {
                                     }}
                                 >
                                     <Box mb="xs" style={{ height: '120px', overflow: 'hidden', position: 'relative' }}>
-                                        {/* <img
-                                            src={`/uploads/${image.fileName}`}
+                                        <img
+                                            src={`${API_BASE_URL}/uploads/${image.fileName}`}
                                             alt={`Showcase image ${index + 1}`}
                                             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                        /> */}
+                                        />
                                         {image.isTeaser && (
                                             <Box style={{
                                                 position: 'absolute',
@@ -622,13 +655,39 @@ export function AddShowcase() {
                             onChange={(e) => updateLocationDetail('description', e.currentTarget.value)}
                         />
 
-                        <TextInput
-                            label="Image Link (optional)"
-                            placeholder="URL to an image for this location"
-                            mb="xs"
-                            value={pins[selectedLocationIndex]?.imageLink || ''}
-                            onChange={(e) => updateLocationDetail('imageLink', e.currentTarget.value)}
-                        />
+                        <Text size="sm" fw={500} mt="md" mb="xs">
+                            Image (optional)
+                        </Text>
+                        <Dropzone
+                            onDrop={(files) => handleLocationImageUpload(files[0], selectedLocationIndex)}
+                            accept={['image/jpeg', 'image/png', 'image/gif']}
+                            maxFiles={1}
+                        >
+                            <Group justify="center" gap="xl" mih={120} style={{ pointerEvents: 'none' }}>
+                                <Dropzone.Accept>
+                                    <IconUpload size={40} stroke={1.5} />
+                                </Dropzone.Accept>
+                                <Dropzone.Reject>
+                                    <IconX size={40} stroke={1.5} />
+                                </Dropzone.Reject>
+                                <Dropzone.Idle>
+                                    <IconPhoto size={40} stroke={1.5} />
+                                </Dropzone.Idle>
+                                <Text size="sm" color="dimmed" inline>
+                                    Drag an image here or click to select a file
+                                </Text>
+                            </Group>
+                        </Dropzone>
+
+                        {pins[selectedLocationIndex]?.imageLink && (
+                            <Group mt="md">
+                                <img
+                                    src={`${API_BASE_URL}/uploads/${pins[selectedLocationIndex].imageLink}`}
+                                    alt="Location"
+                                    style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'contain' }}
+                                />
+                            </Group>
+                        )}
 
                         <TextInput
                             label="Link Title (optional)"
