@@ -33,8 +33,8 @@ export class AccessRequest {
     @Column()
     contactEmail!: string;
 
-    @Column()
-    department!: string;
+    @Column({ nullable: true })
+    department?: string;
 
     @Column({ type: 'text' })
     projectDescription!: string;

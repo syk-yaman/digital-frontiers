@@ -19,9 +19,11 @@ import {
   Input,
   Grid,
   Tooltip,
+  Modal,
+  Textarea,
 } from '@mantine/core';
 import { Carousel } from '@mantine/carousel';
-import { IconClock, IconUser, IconLicense, IconCopy, IconReload, IconExternalLink } from '@tabler/icons-react';
+import { IconClock, IconUser, IconLicense, IconCopy, IconReload, IconExternalLink, IconLock } from '@tabler/icons-react';
 import { Map, Popup, useControl } from 'react-map-gl/maplibre';
 import { GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers';
 import DeckGL from '@deck.gl/react';
@@ -38,6 +40,8 @@ import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { Notifications, notifications } from '@mantine/notifications';
 import axiosInstance from '@/utils/axiosInstance';
 import { DatasetCard } from '@/components/DatasetCard';
+import { IconCheck, IconX } from '@tabler/icons-react';
+import { useForm } from '@mantine/form';
 
 const INITIAL_VIEW_STATE = {
   longitude: -0.0167,
@@ -117,6 +121,56 @@ export function Dataset() {
   const [geoJsonData, setGeoJsonData] = useState<FeatureCollection | null>(null);
   const [mappedData, setMappedData] = useState([]); //For map
   const [featuredDatasets, setFeaturedDatasets] = useState<DatasetItem[]>([]); // State for featured datasets
+  const [isAccessRequestOpen, setIsAccessRequestOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const accessRequestForm = useForm({
+    initialValues: {
+      jobTitle: '',
+      company: '',
+      contactEmail: '',
+      department: '',
+      projectDescription: '',
+      usageDetails: '',
+      endTime: '',
+    },
+    validate: {
+      jobTitle: (value) => (value.length > 2 ? null : 'Job title must be at least 3 characters'),
+      company: (value) => (value.length > 2 ? null : 'Company name must be at least 3 characters'),
+      contactEmail: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+      department: (value) => (value.length > 2 ? null : 'Department must be at least 3 characters'),
+      projectDescription: (value) => (value.length > 10 ? null : 'Project description must be at least 10 characters'),
+      usageDetails: (value) => (value.length > 10 ? null : 'Usage details must be at least 10 characters'),
+      endTime: (value) => (!value || new Date(value) > new Date() ? null : 'End time must be in the future'),
+    },
+  });
+
+  const handleAccessRequestSubmit = async (values: typeof accessRequestForm.values) => {
+    setIsSubmitting(true);
+    try {
+      await axiosInstance.post('/access-requests', {
+        ...values,
+        datasetId: dataset.id,
+      });
+      notifications.show({
+        title: 'Success',
+        message: 'Access request submitted successfully!',
+        color: 'green',
+        icon: <IconCheck />,
+      });
+      setIsAccessRequestOpen(false);
+    } catch (error) {
+      console.error('Error submitting access request:', error);
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to submit access request. Please try again.',
+        color: 'red',
+        icon: <IconX />,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   useEffect(() => {
 
@@ -260,6 +314,69 @@ export function Dataset() {
 
   return (
     <>
+      {/* Access Request Modal */}
+      <Modal
+        opened={isAccessRequestOpen}
+        onClose={() => setIsAccessRequestOpen(false)}
+        title="Request Access"
+
+        centered
+        size="lg"
+      >
+        <Text size='sm' mb="md" c={'dimmed'}>
+          To access this dataset, please fill out the form below. Your request will be reviewed by admin and forwarded to the owner for approval.
+        </Text>
+        <form onSubmit={accessRequestForm.onSubmit(handleAccessRequestSubmit)}>
+          <TextInput
+            label="Job Title"
+            placeholder="Enter your job title"
+            required
+            {...accessRequestForm.getInputProps('jobTitle')}
+          />
+          <TextInput
+            label="Company / Institution"
+            placeholder="Enter your company name"
+            required
+            {...accessRequestForm.getInputProps('company')}
+          />
+          <TextInput
+            label="Department"
+            placeholder="Enter your department (if any)"
+            {...accessRequestForm.getInputProps('department')}
+          />
+          <TextInput
+            label="Contact Email"
+            placeholder="Enter your email address"
+            required
+            {...accessRequestForm.getInputProps('contactEmail')}
+          />
+
+          <Textarea
+            label="Project Description"
+            placeholder="Describe the project that you are working on"
+            required
+            minRows={4}
+            rows={4}
+            {...accessRequestForm.getInputProps('projectDescription')}
+          />
+          <Textarea
+            label="Usage Details"
+            placeholder="Explain how you plan to use the dataset"
+            required
+            minRows={4}
+            rows={4}
+
+            {...accessRequestForm.getInputProps('usageDetails')}
+          />
+          <Space h="md" />
+          <Group >
+            <Button type="submit" loading={isSubmitting}>
+              Submit Request
+            </Button>
+          </Group>
+        </form>
+      </Modal>
+
       {/* Breadcrumbs */}
       <Space h="lg" />
       <div style={{ padding: '0 40px' }}>
@@ -391,107 +508,226 @@ export function Dataset() {
           <>
             <Text mt="xl" ta="center" className="title" c="white">Live MQTT details</Text>
             <Container size="l" mt="xl">
-              <Grid>
-                {[
-                  { title: 'MQTT Address', value: dataset.mqttAddress },
-                  { title: 'MQTT Port', value: dataset.mqttPort?.toString() },
-                  { title: 'MQTT Topic', value: dataset.mqttTopic },
-                  ...(dataset.mqttUsername
-                    ? [
-                      { title: 'MQTT Username', value: dataset.mqttUsername },
-                      { title: 'MQTT Password', value: dataset.mqttPassword || 'N/A' },
-                    ]
-                    : []),
-                ].map((item, index) => (
-                  <Grid.Col key={index} span={6}>
-                    <Text size="sm" mb="xs">{item.title}</Text>
-                    <Group align="center">
-                      <Input
-                        value={item.value}
-                        readOnly
-                        style={{
-                          flex: 1,
-                          backgroundColor: '#2F2C2C', // Input background color
-                          color: 'white', // Input text color
-                        }}
-                      />
-                      <Tooltip color="gray" label="Copy to clipboard" position="top" withArrow>
-                        <Button
-                          variant="light"
-                          onClick={() => navigator.clipboard.writeText(item.value || '')}
+              {dataset.datasetType === 'controlled' ? (
+                <div
+                  style={{
+                    position: 'relative',
+                    overflow: 'hidden',
+                    borderRadius: '8px',
+                    backgroundColor: '#1c1c1c',
+                    padding: '20px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div
+                    style={{
+                      filter: 'blur(6px)',
+                      opacity: 1,
+                      pointerEvents: 'none',
+                      padding: '20px',
+                    }}
+                  >
+                    <Text size="sm" c="dimmed" mb="sm">
+                      MQTT Address: **********************************************************************
+                    </Text>
+                    <Text size="sm" c="dimmed" mb="sm">
+                      MQTT Port: ********************************************************************************
+                    </Text>
+                    <Text size="sm" c="dimmed" mb="sm">
+                      MQTT Topic: ************************************************************************
+                    </Text>
+                    <Text size="sm" c="dimmed" mb="sm">
+                      MQTT Topic: **********************************************************************************
+                    </Text>
+
+                  </div>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      zIndex: 1,
+                    }}
+                  >
+                    <Text size="lg" fw={700} c="white" mb="sm">
+                      Permission needed to view MQTT details
+                    </Text>
+                    <Text size="sm" c="dimmed" mb="md">
+                      You can request access to this content and it will be available to you when the request is approved.
+                    </Text>
+                    <Button onClick={() => setIsAccessRequestOpen(true)}
+                      variant="gradient" color="blue" size="md" leftSection={<IconLock size={16} />}>
+                      Request Access
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <Grid>
+                  {[
+                    { title: 'MQTT Address', value: dataset.mqttAddress },
+                    { title: 'MQTT Port', value: dataset.mqttPort?.toString() },
+                    { title: 'MQTT Topic', value: dataset.mqttTopic },
+                    ...(dataset.mqttUsername
+                      ? [
+                        { title: 'MQTT Username', value: dataset.mqttUsername },
+                        { title: 'MQTT Password', value: dataset.mqttPassword || 'N/A' },
+                      ]
+                      : []),
+                  ].map((item, index) => (
+                    <Grid.Col key={index} span={6}>
+                      <Text size="sm" mb="xs">{item.title}</Text>
+                      <Group align="center">
+                        <Input
+                          value={item.value}
+                          readOnly
                           style={{
-                            height: '36px', // Match the height of the input field
-                            border: '1px solid #ccc', // Add boundaries
+                            flex: 1,
+                            backgroundColor: '#2F2C2C',
+                            color: 'white',
                           }}
-                        >
-                          <IconCopy size={16} />
-                        </Button>
-                      </Tooltip>
-                    </Group>
-                  </Grid.Col>
-                ))}
-              </Grid>
+                        />
+                        <Tooltip color="gray" label="Copy to clipboard" position="top" withArrow>
+                          <Button
+                            variant="light"
+                            onClick={() => navigator.clipboard.writeText(item.value || '')}
+                            style={{
+                              height: '36px',
+                              border: '1px solid #ccc',
+                            }}
+                          >
+                            <IconCopy size={16} />
+                          </Button>
+                        </Tooltip>
+                      </Group>
+                    </Grid.Col>
+                  ))}
+                </Grid>
+              )}
             </Container>
           </>
         )}
-        <Space h="xl" />
+
         {/* Links Section */}
         {dataset.links.length > 0 && (
           <>
             <Text mt="xl" ta="center" className="title" c="white">Links</Text>
             <Container size="l">
-              <Grid>
-                {dataset.links.map((link, index) => (
-                  <Grid.Col key={index} span={12}>
-                    <Text size="sm" mb="xs">{link.title}</Text>
-                    <Group align="center">
-                      <Input
-                        value={link.url}
-                        readOnly
-                        style={{
-                          flex: 1,
-                          backgroundColor: '#2F2C2C', // Input background color
-                          color: 'white', // Input text color
-                        }}
-                      />
-                      <Tooltip color="gray" label="Copy to clipboard" position="top" withArrow>
-                        <Button
-                          variant="light"
-                          onClick={() => navigator.clipboard.writeText(link.url)}
+              {dataset.datasetType === 'controlled' ? (
+                <div
+                  style={{
+                    position: 'relative',
+                    overflow: 'hidden',
+                    borderRadius: '8px',
+                    backgroundColor: '#1c1c1c',
+                    padding: '20px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div
+                    style={{
+                      filter: 'blur(6px)',
+                      opacity: 1,
+                      pointerEvents: 'none',
+                      padding: '20px',
+                    }}
+                  >
+                    <Text size="sm" c="dimmed" mb="sm">
+                      Dataset Download: **********************************************************************
+                    </Text>
+                    <Text size="sm" c="dimmed" mb="sm">
+                      Documentation link: ********************************************************************************
+                    </Text>
+                    <Text size="sm" c="dimmed" mb="sm">
+                      Link1: ************************************************************************
+                    </Text>
+                    <Text size="sm" c="dimmed" mb="sm">
+                      Link2: **********************************************************************************
+                    </Text>
+                    <Text size="sm" c="dimmed" mb="sm">
+                      Link3 *********************************************************************************
+                    </Text>
+                    <Text size="sm" c="dimmed" mb="sm">
+                      Link4 ************************************************************************************************
+                    </Text>
+                  </div>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      zIndex: 1,
+                    }}
+                  >
+                    <Text size="lg" fw={700} c="white" mb="sm">
+                      Permission needed to view links
+                    </Text>
+                    <Text size="sm" c="dimmed" mb="md">
+                      You can request access to this content and it will be available to you when the request is approved.
+                    </Text>
+
+                    <Button
+                      onClick={() => setIsAccessRequestOpen(true)}
+                      variant="gradient" color="blue" size="md" leftSection={<IconLock size={16} />}>
+                      Request Access
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <Grid>
+                  {dataset.links.map((link, index) => (
+                    <Grid.Col key={index} span={12}>
+                      <Text size="sm" mb="xs">{link.title}</Text>
+                      <Group align="center">
+                        <Input
+                          value={link.url}
+                          readOnly
                           style={{
-                            height: '36px', // Match the height of the input field
-                            border: '1px solid #ccc', // Add boundaries
+                            flex: 1,
+                            backgroundColor: '#2F2C2C',
+                            color: 'white',
                           }}
+                        />
+                        <Tooltip color="gray" label="Copy to clipboard" position="top" withArrow>
+                          <Button
+                            variant="light"
+                            onClick={() => navigator.clipboard.writeText(link.url)}
+                            style={{
+                              height: '36px',
+                              border: '1px solid #ccc',
+                            }}
+                          >
+                            <IconCopy size={16} />
+                          </Button>
+                        </Tooltip>
+                        <Tooltip
+                          color="gray"
+                          label={'Open link'}
+                          position="top"
+                          withArrow
                         >
-                          <IconCopy size={16} />
-                        </Button>
-                      </Tooltip>
-                      <Tooltip
-                        color="gray"
-                        label={'Open link'}
-                        position="top"
-                        withArrow
-                      >
-                        <Button
-                          variant="light"
-                          component={link.url.startsWith('http') ? 'a' : 'button'}
-                          href={link.url.startsWith('http') ? link.url : undefined}
-                          target={link.url.startsWith('http') ? '_blank' : undefined}
-                          rel={link.url.startsWith('http') ? 'noopener noreferrer' : undefined}
-                          disabled={!link.url.startsWith('http')}
-                          style={{
-                            height: '36px', // Match the height of the input field
-                            opacity: link.url.startsWith('http') ? 1 : 0.5, // Dim the button if disabled
-                            cursor: link.url.startsWith('http') ? 'pointer' : 'not-allowed', // Change cursor if disabled
-                          }}
-                        >
-                          <IconExternalLink size={16} />
-                        </Button>
-                      </Tooltip>
-                    </Group>
-                  </Grid.Col>
-                ))}
-              </Grid>
+                          <Button
+                            variant="light"
+                            component={link.url.startsWith('http') ? 'a' : 'button'}
+                            href={link.url.startsWith('http') ? link.url : undefined}
+                            target={link.url.startsWith('http') ? '_blank' : undefined}
+                            rel={link.url.startsWith('http') ? 'noopener noreferrer' : undefined}
+                            disabled={!link.url.startsWith('http')}
+                            style={{
+                              height: '36px',
+                              opacity: link.url.startsWith('http') ? 1 : 0.5,
+                              cursor: link.url.startsWith('http') ? 'pointer' : 'not-allowed',
+                            }}
+                          >
+                            <IconExternalLink size={16} />
+                          </Button>
+                        </Tooltip>
+                      </Group>
+                    </Grid.Col>
+                  ))}
+                </Grid>
+              )}
             </Container>
           </>
         )}
