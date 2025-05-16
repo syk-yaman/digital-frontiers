@@ -109,7 +109,7 @@ export function ShowcasesPage() {
                 Showcases & Projects
             </Title>
             <Text ta="center" size="lg" mb="xl" c="dimmed">
-                Explore innovative projects that utilize the Queen Elizabeth Olympic Park data
+                Explore innovative projects that utilise the Queen Elizabeth Olympic Park data
             </Text>
 
             {showcases.length === 0 ? (
