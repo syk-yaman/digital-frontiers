@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
     Container, Button, Text, TextInput, Group, Space, Center, Textarea, FileInput,
     Flex, Loader, Alert, Tooltip, ActionIcon, Box, Select, Title, Paper, Switch,
@@ -22,6 +22,7 @@ import {
 } from '@tabler/icons-react';
 import proj4 from 'proj4';
 import { API_BASE_URL } from '@/config';
+import { AuthContext } from '@/context/AuthContext';
 
 // Map initial view - centered on London
 const INITIAL_VIEW_STATE = {
@@ -70,6 +71,8 @@ export function AddShowcase() {
     const [loading, setLoading] = useState(false);
     const [sliderImages, setSliderImages] = useState<{ fileName: string; isTeaser: boolean }[]>([]);
     const navigate = useNavigate();
+    const authContext = useContext(AuthContext);
+    const isAdmin = authContext?.user?.isAdmin ?? false;
 
     // Form setup
     const form = useForm<ShowcaseFormValues>({
@@ -362,7 +365,7 @@ export function AddShowcase() {
             });
 
             // Navigate back to showcases list
-            setTimeout(() => navigate('/admin/showcases'), 1000);
+            setTimeout(() => navigate(isAdmin ? '/admin/showcases' : '/my-showcases'), 500);
         })
             .catch(error => {
                 console.error('Error saving showcase:', error);

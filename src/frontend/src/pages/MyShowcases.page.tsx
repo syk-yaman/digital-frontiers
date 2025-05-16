@@ -196,6 +196,7 @@ export function MyShowcasesPage() {
                         createdAt={showcase.createdAt}
                         sliderImages={showcase.sliderImages}
                         user={showcase.user}
+                        actionable={true}
                     />
                 ))}
             </Flex>
