@@ -9,6 +9,8 @@ import { AuthModule } from './modules/authentication/auth.module';
 import { AuthorisationModule } from './modules/authorisation/authorisation.module';
 import { ShowcasesModule } from './modules/showcases/showcases.module';
 import { Showcase, ShowcaseLocation, ShowcaseSliderImage } from './modules/showcases/showcase.entity';
+import { AccessRequestsModule } from './modules/access-requests/access-requests.module';
+import { AccessRequest } from './modules/access-requests/access-request.entity';
 
 @Module({
   imports: [
@@ -22,7 +24,8 @@ import { Showcase, ShowcaseLocation, ShowcaseSliderImage } from './modules/showc
       entities: [
         User,
         Dataset, DatasetLink, DatasetLocation, DatasetSliderImage, DatasetTag,
-        Showcase, ShowcaseSliderImage, ShowcaseLocation
+        Showcase, ShowcaseSliderImage, ShowcaseLocation,
+        AccessRequest
       ],
       synchronize: false, //to be off in production
       migrations: ['src/database/migrations/*-migration.ts'],
@@ -33,7 +36,8 @@ import { Showcase, ShowcaseLocation, ShowcaseSliderImage } from './modules/showc
     TagsModule,
     AuthModule,
     AuthorisationModule,
-    ShowcasesModule
+    ShowcasesModule,
+    AccessRequestsModule
   ],
   controllers: [],
   providers: [],

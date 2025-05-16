@@ -25,7 +25,7 @@ const menuData = [
         links: [
             { label: 'Manage all', link: '/admin/datasets' },
             { label: 'Add requests', link: '/admin/datasets/requests' },
-            { label: 'Access requests', link: '/admin/' },
+            { label: 'Access requests', link: '/admin/datasets/access-requests' }, // Updated
         ],
     },
     {

@@ -34,6 +34,8 @@ import { ShowcasesPage } from './pages/Showcases.page';
 import { ShowcasePage } from './pages/Showcase.page';
 import { PrivateAdminRoute } from './components/PrivateAdminRoute';
 import { MyShowcasesPage } from './pages/MyShowcases.page';
+import { MyAccessRequestsPage } from './pages/MyAccessRequests.page';
+import { AdminAccessRequestsPage } from './pages/AdminAccessRequests.page';
 
 export default function App() {
   return (
@@ -65,6 +67,7 @@ export default function App() {
               <Route index element={<PrivateAdminRoute><AdminHome /></PrivateAdminRoute>} />
               <Route path="datasets" element={<PrivateAdminRoute><AdminDatasets /></PrivateAdminRoute>} />
               <Route path="datasets/requests" element={<PrivateAdminRoute><AdminDatasetRequests /></PrivateAdminRoute>} />
+              <Route path="datasets/access-requests" element={<PrivateAdminRoute><AdminAccessRequestsPage /></PrivateAdminRoute>} />
               <Route path="tags" element={<PrivateAdminRoute><AdminTags /></PrivateAdminRoute>} />
               <Route path="tags/requests" element={<PrivateAdminRoute><AdminTagRequests /></PrivateAdminRoute>} />
               <Route path="showcases" element={<PrivateAdminRoute><AdminShowcases /></PrivateAdminRoute>} />
@@ -74,6 +77,7 @@ export default function App() {
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/my-datasets" element={<PrivateRoute><MyDatasetsPage /></PrivateRoute>} />
             <Route path="/my-showcases" element={<PrivateRoute><MyShowcasesPage /></PrivateRoute>} />
+            <Route path="/my-access-requests" element={<PrivateRoute><MyAccessRequestsPage /></PrivateRoute>} />
           </Routes>
           <FooterLinks />
         </BrowserRouter>
