@@ -47,6 +47,7 @@ export class AccessRequestService {
 
         accessRequest.approvedAt = new Date();
         accessRequest.deletedAt = null;
+        accessRequest.deniedAt = null;
         accessRequest.endTime = dto.accessEndDate ? new Date(dto.accessEndDate) : null;
 
         return this.accessRequestRepository.save(accessRequest);
@@ -64,6 +65,7 @@ export class AccessRequestService {
 
         accessRequest.deniedAt = new Date();
         accessRequest.approvedAt = null;
+        accessRequest.endTime = null;
 
         return this.accessRequestRepository.save(accessRequest);
     }

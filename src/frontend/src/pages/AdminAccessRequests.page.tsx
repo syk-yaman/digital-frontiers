@@ -17,6 +17,8 @@ import axiosInstance from '@/utils/axiosInstance';
 import { notifications } from '@mantine/notifications';
 import { IconEye, IconCheck, IconX } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
+import { DateInput } from '@mantine/dates';
+import '@mantine/dates/styles.css';
 
 interface AccessRequest {
     id: number;
@@ -48,6 +50,10 @@ export function AdminAccessRequestsPage() {
     const [groupBy, setGroupBy] = useState<'users' | 'datasets'>('datasets');
     const [viewRequestModalOpened, setViewRequestModalOpened] = useState(false);
     const [selectedRequest, setSelectedRequest] = useState<AccessRequest | null>(null);
+    const [approveRequestModalOpened, setApproveRequestModalOpened] = useState(false);
+    const [selectedRequestForApproval, setSelectedRequestForApproval] = useState<AccessRequest | null>(null);
+    const [accessEndDate, setAccessEndDate] = useState<Date | null>(null);
+    const [isApproving, setIsApproving] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -70,8 +76,18 @@ export function AdminAccessRequestsPage() {
     }, []);
 
     const handleApproveRequest = (id: number) => {
+        setSelectedRequestForApproval(accessRequests.find((request) => request.id === id) || null);
+        setApproveRequestModalOpened(true);
+    };
+
+    const confirmApproveRequest = () => {
+        if (!selectedRequestForApproval) return;
+
+        setIsApproving(true);
         axiosInstance
-            .put(`/access-requests/${id}/approve`)
+            .put(`/access-requests/${selectedRequestForApproval.id}/approve`, {
+                accessEndDate: accessEndDate ? accessEndDate.toISOString() : null,
+            })
             .then(() => {
                 notifications.show({
                     title: 'Success',
@@ -80,15 +96,19 @@ export function AdminAccessRequestsPage() {
                 });
                 setAccessRequests((prev) =>
                     prev.map((request) =>
-                        request.id === id
+                        request.id === selectedRequestForApproval.id
                             ? {
                                 ...request,
                                 approvedAt: new Date().toISOString(),
                                 deniedAt: null,
+                                endTime: accessEndDate ? accessEndDate.toISOString() : null,
                             }
                             : request
                     ) as AccessRequest[]
                 );
+                setApproveRequestModalOpened(false);
+                setSelectedRequestForApproval(null);
+                setAccessEndDate(null);
             })
             .catch((error) => {
                 console.error('Error approving access request:', error);
@@ -97,6 +117,9 @@ export function AdminAccessRequestsPage() {
                     message: 'Failed to approve access request.',
                     color: 'red',
                 });
+            })
+            .finally(() => {
+                setIsApproving(false);
             });
     };
 
@@ -294,7 +317,11 @@ export function AdminAccessRequestsPage() {
                             <Text
                                 fw={700}
                                 size="lg"
-                                style={{ color: '#1E90FF', cursor: 'pointer' }}
+                                style={{
+                                    color: '#1E90FF',
+                                    cursor: 'pointer',
+                                    textDecoration: 'underline',
+                                }}
                                 onClick={() => navigate(`/dataset/${selectedRequest.dataset.id}`)}
                             >
                                 {selectedRequest.dataset.name}
@@ -316,6 +343,14 @@ export function AdminAccessRequestsPage() {
                                         : 'Pending'}
                             </Badge>
                         </Group>
+                        <div style={{ marginBottom: '1rem' }}>
+                            <Text fw={500} size="sm" style={{ color: '#888888' }}>
+                                Requested By:
+                            </Text>
+                            <Text size="sm">
+                                {selectedRequest.user.firstName} {selectedRequest.user.lastName}
+                            </Text>
+                        </div>
                         <div style={{ marginBottom: '1rem' }}>
                             <Text fw={500} size="sm" style={{ color: '#888888' }}>
                                 Job Title:
@@ -358,16 +393,18 @@ export function AdminAccessRequestsPage() {
                                 {selectedRequest.usageDetails}
                             </Text>
                         </div>
-                        {selectedRequest.endTime && (
-                            <div style={{ marginBottom: '1rem' }}>
-                                <Text fw={500} size="sm" style={{ color: '#888888' }}>
-                                    Access End Time:
-                                </Text>
-                                <Text size="sm">
-                                    {new Date(selectedRequest.endTime).toLocaleDateString()}
-                                </Text>
-                            </div>
-                        )}
+
+                        <div style={{ marginBottom: '1rem' }}>
+                            <Text fw={500} size="sm" style={{ color: '#888888' }}>
+                                Access End Time:
+                            </Text>
+                            <Text size="sm">
+                                {selectedRequest.endTime != null ? (
+                                    new Date(selectedRequest.endTime).toLocaleDateString()
+                                ) : ('Unlimited')}
+                            </Text>
+                        </div>
+
                         <div style={{ marginBottom: '1rem' }}>
                             <Text fw={500} size="sm" style={{ color: '#888888' }}>
                                 Requested On:
@@ -396,15 +433,63 @@ export function AdminAccessRequestsPage() {
                                 </Text>
                             </div>
                         )}
-                        <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+                    </div>
+                )}
+            </Modal>
+
+            <Modal
+                opened={approveRequestModalOpened}
+                onClose={() => {
+                    setApproveRequestModalOpened(false);
+                    setSelectedRequestForApproval(null);
+                    setAccessEndDate(null);
+                }}
+                title="Approve Access Request"
+                yOffset={100}
+            >
+                {selectedRequestForApproval && (
+                    <div>
+                        <Text fw={500} mb="sm">
+                            Approving access request for dataset:
+                        </Text>
+                        <Text fw={700} mb="md" style={{ color: '#1E90FF' }}>
+                            {selectedRequestForApproval.dataset.name}
+                        </Text>
+                        <Text fw={500} mb="sm">
+                            Requested by:
+                        </Text>
+                        <Text mb="md">
+                            {selectedRequestForApproval.user.firstName} {selectedRequestForApproval.user.lastName}
+                        </Text>
+                        <DateInput
+                            label="Access End Date (optional)"
+                            placeholder="Select a date or leave empty for unlimited access"
+                            value={accessEndDate}
+                            onChange={setAccessEndDate}
+                            clearable
+                            maw={400}
+                            mx="auto"
+                        />
+                        <Group justify="right" mt="md">
                             <Button
-                                variant="outline"
-                                color="blue"
-                                onClick={() => setViewRequestModalOpened(false)}
+                                variant="default"
+                                onClick={() => {
+                                    setApproveRequestModalOpened(false);
+                                    setSelectedRequestForApproval(null);
+                                    setAccessEndDate(null);
+                                }}
+                                disabled={isApproving}
                             >
-                                Close
+                                Cancel
                             </Button>
-                        </div>
+                            <Button
+                                color="green"
+                                onClick={confirmApproveRequest}
+                                loading={isApproving}
+                            >
+                                Approve
+                            </Button>
+                        </Group>
                     </div>
                 )}
             </Modal>
