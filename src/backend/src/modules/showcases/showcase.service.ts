@@ -73,7 +73,7 @@ export class ShowcasesService {
     async findByUser(userId: string): Promise<Showcase[]> {
         return this.showcaseRepository.find({
             where: { user: { id: userId } },
-            relations: ['sliderImages', 'locations', 'dataset'],
+            relations: ['sliderImages', 'locations', 'dataset', 'user'],
             order: { createdAt: 'DESC' },
         });
     }

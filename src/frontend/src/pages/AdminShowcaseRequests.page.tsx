@@ -206,21 +206,15 @@ export function AdminShowcaseRequests() {
                         accessor: 'features',
                         title: 'Features',
                         render: (record) => (
-                            <Group gap={8}>
+                            <Group gap={10}>
                                 {record.youtubeLink && (
-                                    <Badge color="red">
-                                        <Group gap={4}>
-                                            <IconVideo size={16} />
-                                            <Text>Video</Text>
-                                        </Group>
+                                    <Badge color="red" leftSection={<IconVideo size={12} />}>
+                                        Video
                                     </Badge>
                                 )}
                                 {record.locations && record.locations.length > 0 && (
-                                    <Badge color="blue">
-                                        <Group gap={4}>
-                                            <IconMap size={16} />
-                                            <Text>{record.locations.length} Locations</Text>
-                                        </Group>
+                                    <Badge color="blue" leftSection={<IconMap size={12} />}>
+                                        {record.locations.length} Locations
                                     </Badge>
                                 )}
                             </Group>

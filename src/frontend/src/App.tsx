@@ -33,6 +33,7 @@ import { AddShowcase } from './pages/AddShowcase.page';
 import { ShowcasesPage } from './pages/Showcases.page';
 import { ShowcasePage } from './pages/Showcase.page';
 import { PrivateAdminRoute } from './components/PrivateAdminRoute';
+import { MyShowcasesPage } from './pages/MyShowcases.page';
 
 export default function App() {
   return (
@@ -72,6 +73,7 @@ export default function App() {
             </Route>
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/my-datasets" element={<PrivateRoute><MyDatasetsPage /></PrivateRoute>} />
+            <Route path="/my-showcases" element={<PrivateRoute><MyShowcasesPage /></PrivateRoute>} />
           </Routes>
           <FooterLinks />
         </BrowserRouter>

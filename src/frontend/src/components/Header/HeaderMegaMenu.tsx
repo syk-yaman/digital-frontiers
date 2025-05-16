@@ -163,7 +163,8 @@ export function HeaderMegaMenu() {
         to="/my-datasets" leftSection={<IconDatabase size={18} />}>
         Datasets
       </Menu.Item>
-      <Menu.Item style={{ cursor: 'not-allowed' }} leftSection={<IconNews size={18} />}>
+      <Menu.Item component={NavLink}
+        to="/my-showcases" leftSection={<IconNews size={18} />}>
         Showcases
       </Menu.Item>
       <Menu.Item style={{ cursor: 'not-allowed' }} leftSection={<IconCircleDashedCheck size={18} />}>

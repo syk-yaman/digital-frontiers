@@ -114,7 +114,6 @@ export function ShowcaseCard({
                     <Group mt="xs" justify="apart">
                         <Center>
                             <Avatar
-                                src={user.photoUrl ? `${API_BASE_URL}/uploads/${user.photoUrl}` : undefined}
                                 size={30}
                                 radius="xl"
                                 mr="xs"

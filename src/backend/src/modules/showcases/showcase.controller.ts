@@ -141,6 +141,19 @@ export class ShowcasesController {
         return files.map(file => file.filename);
     }
 
+    @ApiOperation({
+        summary: '[User] Get current user\'s showcases',
+        description: `Authenticated endpoint that returns showcases created by the current user.`,
+    })
+    @UseGuards(JwtAuthGuard)
+    @Get('user/me')
+    @ApiBearerAuth()
+    async findMyShowcases(@Request() req) {
+        const userId = req.user.userId;
+        return this.showcasesService.findByUser(userId);
+    }
+
+
     @Get('user/:userId')
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
