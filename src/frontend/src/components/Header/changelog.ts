@@ -1,5 +1,15 @@
-export const version = 'v0.4'
+export const version = 'v0.5'
 export const changelog = [
+    {
+        version: 'v0.5',
+        changes: [
+            "Controlled datasets feature was added.",
+            "Database structure was updated.",
+            "Tags colous and icons on map were added.",
+            "Several security updates and bug fixes.",
+            "Advanced authorisation system was added from controlled datasets",
+        ],
+    },
     {
         version: 'v0.4',
         changes: [
