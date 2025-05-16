@@ -1,7 +1,7 @@
 import '@mantine/carousel/styles.css';
-import { Text, Anchor, Breadcrumbs, Image, Center, rem, SegmentedControl, Space, Avatar, Badge, Group, Card, Flex } from '@mantine/core';
+import { Text, Anchor, Breadcrumbs, Image, Center, rem, SegmentedControl, Space, Avatar, Badge, Group, Card, Flex, Button } from '@mantine/core';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useContext } from 'react';
 import { GeoJsonLayer, LineLayer, ScatterplotLayer } from '@deck.gl/layers';
 
 import { Map, Popup, useControl } from 'react-map-gl/maplibre';
@@ -11,7 +11,7 @@ import '../style.css'
 import './Datamenu.page.css';
 
 import { MapboxOverlay as DeckOverlay, MapboxOverlayProps } from '@deck.gl/mapbox';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { IconEye, IconCode, IconExternalLink, IconMap, IconList } from '@tabler/icons-react';
 import { Feature, FeatureCollection, Position } from 'geojson';
 import { loadInBatches } from '@loaders.gl/core';
@@ -20,6 +20,7 @@ import proj4 from 'proj4';
 import { Notifications, notifications } from '@mantine/notifications';
 import axiosInstance from '@/utils/axiosInstance';
 import { DatasetCard } from '@/components/DatasetCard';
+import { AuthContext } from '@/context/AuthContext';
 
 const INITIAL_VIEW_STATE = {
   longitude: -0.0167, // Longitude for Olympic Park
@@ -80,6 +81,9 @@ interface PopupInfo {
 }
 
 export function Datamenu() {
+  const authContext = useContext(AuthContext); // Check if the user is signed in
+  const isAuthenticated = authContext?.isAuthenticated ?? false;
+
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
   const [view, setView] = useState('map');
 
@@ -216,7 +220,7 @@ export function Datamenu() {
     <>
       <Space h="md" />
       <Space h="md" />
-      <div style={{ paddingLeft: '40px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingLeft: '40px', paddingRight: '40px' }}>
         <Breadcrumbs separator=">">
           {breadcrumbs.map((crumb) => (
             <Link to={crumb.path} key={crumb.path} className="breadcrumb-link">
@@ -224,8 +228,13 @@ export function Datamenu() {
             </Link>
           ))}
         </Breadcrumbs>
+        {isAuthenticated && (
+          <Button variant="light" color="blue" component={NavLink} to="/add-dataset">
+            Add Dataset
+          </Button>
+        )}
       </div>
-      <Text ta="center" size="xl" c="blue" >Data Menu</Text>
+      <Text ta="center" size="xl" c="blue">Data Menu</Text>
       <Space h="md" />
       <Text ta="center" size="s" c="white" >Browse the data menu below using an interactive map. You can switch to traditional list view. </Text>
       <Center h={100}>
