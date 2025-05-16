@@ -2,7 +2,7 @@ import '@mantine/carousel/styles.css';
 import { Text, Anchor, Breadcrumbs, Image, Center, rem, SegmentedControl, Space, Avatar, Badge, Group, Card, Flex, Button } from '@mantine/core';
 
 import React, { useEffect, useMemo, useState, useContext } from 'react';
-import { GeoJsonLayer, LineLayer, ScatterplotLayer } from '@deck.gl/layers';
+import { GeoJsonLayer, LineLayer, ScatterplotLayer, TextLayer } from '@deck.gl/layers';
 
 import { Map, Popup, useControl } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -73,7 +73,7 @@ const items = [
 interface PopupInfo {
   id: number,
   position: [number, number];
-  image: string;
+  icon: string;
   title: string;
   owner: string;
   description: string;
@@ -103,6 +103,8 @@ export function Datamenu() {
         owner: item.dataOwnerName,
         description: item.description,
         tags: item.tags.map((tag) => tag.name), // Extract only tag names
+        colour: item.tags.length > 0 ? item.tags[0].colour : [0, 200, 255], // Use the color of the first tag or default
+        icon: item.tags.length > 0 ? item.tags[0].icon : "🏷️", // Use the color of the first tag or default
       }))
     );
   }, [dataItems]);
@@ -171,7 +173,8 @@ export function Datamenu() {
           updatedAt: item.updatedAt,
           tags: item.tags.map((tag) => ({
             name: tag.name,
-            icon: '',
+            icon: tag.icon,
+            colour: tag.colour,
           })),
           locations: item.locations,
         }));
@@ -206,14 +209,24 @@ export function Datamenu() {
     }),
     new ScatterplotLayer({
       id: 'deckgl-circle',
-      data: mappedData,  // ✅ Ensure it's updated dynamically
+      data: mappedData,
       getPosition: (d) => d.position,
-      getFillColor: [0, 200, 255],
+      getFillColor: (d) => {
+        if (typeof d.colour === 'string') {
+          // Convert hex color to RGB array
+          const hex = d.colour.replace('#', '');
+          const bigint = parseInt(hex, 16);
+          return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
+        }
+        return d.colour; // Default color
+      },
       getRadius: 20,
       pickable: true,
       onClick: (info) => setPopupInfo(info.object),
+      stroked: true, // Enable stroke
+      getLineColor: [0, 0, 0], // Black stroke color
+      lineWidthMinPixels: 2, // Stroke width
     }),
-
   ], [mappedData, geoJsonData]);
 
   return (
@@ -318,11 +331,13 @@ export function Datamenu() {
               onClose={() => setPopupInfo(null)}
             >
               <Group gap="sm" mb="sm">
-                <Avatar src={popupInfo.image} size={40} />
+                <Text fz="xl">
+                  {popupInfo.icon}
+                </Text>
                 <div>
                   <Link
                     to={`/dataset/${popupInfo.id}`}
-                    style={{ fontSize: 16, color: '#000000', fontWeight: 'bold' }}
+                    style={{ fontSize: 16, color: '#000000', fontWeight: 'bold', textDecoration: 'none' } /* Remove underline */}
                   >
                     {popupInfo.title}
                   </Link>
@@ -331,14 +346,18 @@ export function Datamenu() {
                   </Text>
                 </div>
               </Group>
-              <Text c="#333333">{popupInfo.description}</Text>
-              <Group gap="xs" mt="sm">
+              <Group gap="xs" mt="sm" mb="sm">
                 {popupInfo.tags.map((tag, index) => (
                   <Badge key={index} size="sm">
                     {tag}
                   </Badge>
                 ))}
               </Group>
+              <Text c="#333333">
+                {popupInfo.description.length > 100
+                  ? `${popupInfo.description.substring(0, 150)}...`
+                  : popupInfo.description}
+              </Text>
             </Popup>
           )}
           <DeckGLOverlay layers={layers} /*interleaved*/ />
