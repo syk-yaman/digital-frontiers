@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Dataset, DatasetTag } from 'src/modules/datasets/dataset.entity';
 import { Permission } from './enums/permissions.enum';
 import { UserContext } from './user-context';
@@ -12,6 +12,24 @@ import { UserContext } from './user-context';
  */
 @Injectable()
 export class AuthorisationService {
+    canViewControlledDatasetLinks(dataset: Dataset, userContext: UserContext) {
+        // For public datasets that are approved, anyone can view
+        if (!dataset.isControlled) {
+            return true;
+        }
+
+        // Admins can view any dataset
+        if (userContext.hasPermission(Permission.VIEW_CONTROLLED_DATASETS)) {
+            return true;
+        }
+
+        // If user is the owner, they can view their dataset regardless of approval status
+        if (userContext.userId === dataset.user.id) {
+            return true;
+        }
+
+        return false;
+    }
 
     /**
       * Determines if a user can view a specific dataset
@@ -22,6 +40,8 @@ export class AuthorisationService {
       */
     canViewDataset(dataset: Dataset, userContext: UserContext): boolean {
 
+        Logger.log('canViewDataset called with dataset:', dataset);
+        Logger.log('canViewDataset called with userContext:', userContext);
         // Public visitor can only see approved non-controlled datasets
         if (userContext.userId === null) {
             return dataset.isApproved && !dataset.isControlled;
@@ -29,6 +49,11 @@ export class AuthorisationService {
 
         // Admins can view any dataset
         if (userContext.hasPermission(Permission.VIEW_ALL_UNAPPROVED_CONTENT)) {
+            return true;
+        }
+
+        // Admins can view any dataset
+        if (userContext.hasPermission(Permission.VIEW_CONTROLLED_DATASETS)) {
             return true;
         }
 
@@ -48,8 +73,10 @@ export class AuthorisationService {
             return true;
         }
 
-        // For controlled datasets that are approved, only users with specific access can view
-        //return this.controlledDatasetIds.includes(dataset.id);
+        // For controlled datasets that are approved, anyone can view, links will be hidden later
+        if (dataset.isControlled) {
+            return true;
+        }
 
         return false;
     }

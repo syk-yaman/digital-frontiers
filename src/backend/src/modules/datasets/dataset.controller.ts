@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, Request, UploadedFiles, UseInterceptors, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, Request, UploadedFiles, UseInterceptors, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { DatasetsService } from './dataset.service';
 import { CreateDatasetDto, UpdateDatasetDto } from './dataset.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
@@ -33,8 +33,13 @@ export class DatasetsController {
         description: `Public endpoint that returns only public, approved and non-controlled datasets.`
     })
     @Get()
+    @UseGuards(OptionalJwtAuthGuard)
     async findAll(@Request() req) {
-        return this.datasetsService.findAll();
+        const userContext = req.user
+            ? this.userContextFactory.createFromRequest(req)
+            : this.userContextFactory.createPublicContext();
+
+        return this.datasetsService.findAll(userContext);
     }
 
     @ApiOperation({

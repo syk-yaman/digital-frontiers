@@ -502,67 +502,75 @@ export function Dataset() {
             />
           </DeckGL>
         </div>
+        <Space h="xl" />
+        {dataset.datasetType === 'controlled' &&
+          !dataset.mqttAddress &&
+          !dataset.mqttPort &&
+          !dataset.mqttTopic &&
+          !dataset.mqttUsername &&
+          !dataset.mqttPassword &&
+          dataset.links.length === 0 && (
+            <div
+              style={{
+                position: 'relative',
+                overflow: 'hidden',
+                borderRadius: '8px',
+                backgroundColor: '#1c1c1c',
+                padding: '20px',
+                textAlign: 'center',
+              }}
+            >
+              <div
+                style={{
+                  filter: 'blur(6px)',
+                  opacity: 1,
+                  pointerEvents: 'none',
+                  padding: '20px',
+                }}
+              >
+                <Text size="sm" c="dimmed" mb="sm">
+                  MQTT Address: **********************************************************************
+                </Text>
+                <Text size="sm" c="dimmed" mb="sm">
+                  MQTT Port: ********************************************************************************
+                </Text>
+                <Text size="sm" c="dimmed" mb="sm">
+                  MQTT Topic: ************************************************************************
+                </Text>
+                <Text size="sm" c="dimmed" mb="sm">
+                  MQTT Topic: **********************************************************************************
+                </Text>
+
+              </div>
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  zIndex: 1,
+                }}
+              >
+                <Text size="lg" fw={700} c="white" mb="sm">
+                  Permission needed to view MQTT details and links
+                </Text>
+                <Text size="sm" c="dimmed" mb="md">
+                  You can request access to this content and it will be available to you when the request is approved.
+                </Text>
+                <Button onClick={() => setIsAccessRequestOpen(true)}
+                  variant="gradient" color="blue" size="md" leftSection={<IconLock size={16} />}>
+                  Request Access
+                </Button>
+              </div>
+            </div>
+          )}
 
         {/* MQTT Section */}
         {dataset.mqttAddress && (
           <>
             <Text mt="xl" ta="center" className="title" c="white">Live MQTT details</Text>
             <Container size="l" mt="xl">
-              {dataset.datasetType === 'controlled' ? (
-                <div
-                  style={{
-                    position: 'relative',
-                    overflow: 'hidden',
-                    borderRadius: '8px',
-                    backgroundColor: '#1c1c1c',
-                    padding: '20px',
-                    textAlign: 'center',
-                  }}
-                >
-                  <div
-                    style={{
-                      filter: 'blur(6px)',
-                      opacity: 1,
-                      pointerEvents: 'none',
-                      padding: '20px',
-                    }}
-                  >
-                    <Text size="sm" c="dimmed" mb="sm">
-                      MQTT Address: **********************************************************************
-                    </Text>
-                    <Text size="sm" c="dimmed" mb="sm">
-                      MQTT Port: ********************************************************************************
-                    </Text>
-                    <Text size="sm" c="dimmed" mb="sm">
-                      MQTT Topic: ************************************************************************
-                    </Text>
-                    <Text size="sm" c="dimmed" mb="sm">
-                      MQTT Topic: **********************************************************************************
-                    </Text>
-
-                  </div>
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '50%',
-                      left: '50%',
-                      transform: 'translate(-50%, -50%)',
-                      zIndex: 1,
-                    }}
-                  >
-                    <Text size="lg" fw={700} c="white" mb="sm">
-                      Permission needed to view MQTT details
-                    </Text>
-                    <Text size="sm" c="dimmed" mb="md">
-                      You can request access to this content and it will be available to you when the request is approved.
-                    </Text>
-                    <Button onClick={() => setIsAccessRequestOpen(true)}
-                      variant="gradient" color="blue" size="md" leftSection={<IconLock size={16} />}>
-                      Request Access
-                    </Button>
-                  </div>
-                </div>
-              ) : (
+              {(
                 <Grid>
                   {[
                     { title: 'MQTT Address', value: dataset.mqttAddress },
@@ -613,121 +621,58 @@ export function Dataset() {
           <>
             <Text mt="xl" ta="center" className="title" c="white">Links</Text>
             <Container size="l">
-              {dataset.datasetType === 'controlled' ? (
-                <div
-                  style={{
-                    position: 'relative',
-                    overflow: 'hidden',
-                    borderRadius: '8px',
-                    backgroundColor: '#1c1c1c',
-                    padding: '20px',
-                    textAlign: 'center',
-                  }}
-                >
-                  <div
-                    style={{
-                      filter: 'blur(6px)',
-                      opacity: 1,
-                      pointerEvents: 'none',
-                      padding: '20px',
-                    }}
-                  >
-                    <Text size="sm" c="dimmed" mb="sm">
-                      Dataset Download: **********************************************************************
-                    </Text>
-                    <Text size="sm" c="dimmed" mb="sm">
-                      Documentation link: ********************************************************************************
-                    </Text>
-                    <Text size="sm" c="dimmed" mb="sm">
-                      Link1: ************************************************************************
-                    </Text>
-                    <Text size="sm" c="dimmed" mb="sm">
-                      Link2: **********************************************************************************
-                    </Text>
-                    <Text size="sm" c="dimmed" mb="sm">
-                      Link3 *********************************************************************************
-                    </Text>
-                    <Text size="sm" c="dimmed" mb="sm">
-                      Link4 ************************************************************************************************
-                    </Text>
-                  </div>
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '50%',
-                      left: '50%',
-                      transform: 'translate(-50%, -50%)',
-                      zIndex: 1,
-                    }}
-                  >
-                    <Text size="lg" fw={700} c="white" mb="sm">
-                      Permission needed to view links
-                    </Text>
-                    <Text size="sm" c="dimmed" mb="md">
-                      You can request access to this content and it will be available to you when the request is approved.
-                    </Text>
-
-                    <Button
-                      onClick={() => setIsAccessRequestOpen(true)}
-                      variant="gradient" color="blue" size="md" leftSection={<IconLock size={16} />}>
-                      Request Access
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <Grid>
-                  {dataset.links.map((link, index) => (
-                    <Grid.Col key={index} span={12}>
-                      <Text size="sm" mb="xs">{link.title}</Text>
-                      <Group align="center">
-                        <Input
-                          value={link.url}
-                          readOnly
+              <Grid>
+                {dataset.links.map((link, index) => (
+                  <Grid.Col key={index} span={12}>
+                    <Text size="sm" mb="xs">{link.title}</Text>
+                    <Group align="center">
+                      <Input
+                        value={link.url}
+                        readOnly
+                        style={{
+                          flex: 1,
+                          backgroundColor: '#2F2C2C',
+                          color: 'white',
+                        }}
+                      />
+                      <Tooltip color="gray" label="Copy to clipboard" position="top" withArrow>
+                        <Button
+                          variant="light"
+                          onClick={() => navigator.clipboard.writeText(link.url)}
                           style={{
-                            flex: 1,
-                            backgroundColor: '#2F2C2C',
-                            color: 'white',
+                            height: '36px',
+                            border: '1px solid #ccc',
                           }}
-                        />
-                        <Tooltip color="gray" label="Copy to clipboard" position="top" withArrow>
-                          <Button
-                            variant="light"
-                            onClick={() => navigator.clipboard.writeText(link.url)}
-                            style={{
-                              height: '36px',
-                              border: '1px solid #ccc',
-                            }}
-                          >
-                            <IconCopy size={16} />
-                          </Button>
-                        </Tooltip>
-                        <Tooltip
-                          color="gray"
-                          label={'Open link'}
-                          position="top"
-                          withArrow
                         >
-                          <Button
-                            variant="light"
-                            component={link.url.startsWith('http') ? 'a' : 'button'}
-                            href={link.url.startsWith('http') ? link.url : undefined}
-                            target={link.url.startsWith('http') ? '_blank' : undefined}
-                            rel={link.url.startsWith('http') ? 'noopener noreferrer' : undefined}
-                            disabled={!link.url.startsWith('http')}
-                            style={{
-                              height: '36px',
-                              opacity: link.url.startsWith('http') ? 1 : 0.5,
-                              cursor: link.url.startsWith('http') ? 'pointer' : 'not-allowed',
-                            }}
-                          >
-                            <IconExternalLink size={16} />
-                          </Button>
-                        </Tooltip>
-                      </Group>
-                    </Grid.Col>
-                  ))}
-                </Grid>
-              )}
+                          <IconCopy size={16} />
+                        </Button>
+                      </Tooltip>
+                      <Tooltip
+                        color="gray"
+                        label={'Open link'}
+                        position="top"
+                        withArrow
+                      >
+                        <Button
+                          variant="light"
+                          component={link.url.startsWith('http') ? 'a' : 'button'}
+                          href={link.url.startsWith('http') ? link.url : undefined}
+                          target={link.url.startsWith('http') ? '_blank' : undefined}
+                          rel={link.url.startsWith('http') ? 'noopener noreferrer' : undefined}
+                          disabled={!link.url.startsWith('http')}
+                          style={{
+                            height: '36px',
+                            opacity: link.url.startsWith('http') ? 1 : 0.5,
+                            cursor: link.url.startsWith('http') ? 'pointer' : 'not-allowed',
+                          }}
+                        >
+                          <IconExternalLink size={16} />
+                        </Button>
+                      </Tooltip>
+                    </Group>
+                  </Grid.Col>
+                ))}
+              </Grid>
             </Container>
           </>
         )}

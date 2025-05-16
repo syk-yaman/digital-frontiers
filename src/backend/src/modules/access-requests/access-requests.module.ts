@@ -9,6 +9,6 @@ import { AuthorisationModule } from '../authorisation/authorisation.module';
     imports: [TypeOrmModule.forFeature([AccessRequest]), AuthorisationModule],
     providers: [AccessRequestService],
     controllers: [AccessRequestController],
-    exports: [AccessRequestService],
+    exports: [AccessRequestService, TypeOrmModule], // Export TypeOrmModule to provide AccessRequestRepository
 })
 export class AccessRequestsModule { }

@@ -1,6 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Not, IsNull } from 'typeorm';
+import { Repository, Not, IsNull, MoreThan } from 'typeorm';
 import { Dataset, DatasetLink, DatasetLocation, DatasetSliderImage, DatasetTag } from './dataset.entity';
 import { CreateDatasetDto, UpdateDatasetDto } from './dataset.dto';
 import { User } from '../users/user.entity';
@@ -10,6 +10,8 @@ import { AuthorisationService } from '../authorisation/authorisation.service';
 import { TagsService } from '../tags/tags.service';
 import { Permission } from '../authorisation/enums/permissions.enum';
 import { UserContext } from '../authorisation/user-context';
+import { AccessRequest } from '../access-requests/access-request.entity';
+import { UserRole } from '../authorisation/enums/user-roles.enum';
 
 @Injectable()
 export class DatasetsService {
@@ -25,20 +27,18 @@ export class DatasetsService {
         private usersRepository: Repository<User>,
         private authorisationService: AuthorisationService,
         private tagsService: TagsService,
+        @InjectRepository(AccessRequest)
+        private accessRequestRepository: Repository<AccessRequest>,
     ) { }
 
-    async findAll(): Promise<Dataset[]> {
+    async findAll(userContext: UserContext): Promise<Dataset[]> {
         const datasets = await this.datasetRepository.find({
             relations: ['links', 'locations', 'sliderImages', 'tags', 'user'],
             where: { approvedAt: Not(IsNull()) },
             order: { createdAt: 'DESC' },
         });
 
-        return datasets;
-
-        //return datasets.filter(dataset =>
-        //    this.authorisationService.canViewDataset(dataset, userContext)
-        //);
+        return Promise.all(datasets.map((dataset) => this.filterDatasetDetails(dataset, userContext)));
     }
 
     async findOne(id: number, userContext: UserContext): Promise<Dataset | null> {
@@ -56,7 +56,41 @@ export class DatasetsService {
             throw new HttpException('Dataset not found or not approved yet', HttpStatus.NOT_FOUND);
         }
 
+        return this.filterDatasetDetails(dataset, userContext);
+    }
+
+    private async filterDatasetDetails(dataset: Dataset, userContext: UserContext): Promise<Dataset> {
+        if (dataset.isControlled && !this.authorisationService.canViewControlledDatasetLinks(dataset, userContext)) {
+            const hasValidAccess = await this.hasValidAccessRequest(dataset.id, userContext.userId);
+
+            if (!hasValidAccess) {
+                // Hide sensitive details for controlled datasets
+                dataset.links = [];
+                dataset.mqttAddress = null;
+                dataset.mqttPort = null;
+                dataset.mqttTopic = null;
+                dataset.mqttUsername = null;
+                dataset.mqttPassword = null;
+            }
+        }
+
         return dataset;
+    }
+
+    private async hasValidAccessRequest(datasetId: number, userId: string | null): Promise<boolean> {
+        if (!userId) return false;
+
+        const accessRequest = await this.accessRequestRepository.findOne({
+            where: {
+                dataset: { id: datasetId },
+                user: { id: userId },
+                approvedAt: Not(IsNull()),
+                deniedAt: IsNull(),
+                endTime: IsNull() || MoreThan(new Date()), // Check if endTime is null or in the future
+            },
+        });
+
+        return !!accessRequest;
     }
 
     findRecent(): Promise<Dataset[]> {

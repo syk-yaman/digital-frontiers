@@ -1,6 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Not, IsNull, MoreThan } from 'typeorm';
 import { AccessRequest } from './access-request.entity';
 import { UserContext } from '../authorisation/user-context';
 import { AuthorisationService } from '../authorisation/authorisation.service';
@@ -100,5 +100,19 @@ export class AccessRequestService {
 
     async getRequestsForDataset(datasetId: number): Promise<AccessRequest[]> {
         return this.accessRequestRepository.find({ where: { dataset: { id: datasetId } }, relations: ['user'] });
+    }
+
+    async hasValidAccess(datasetId: number, userId: string): Promise<boolean> {
+        const accessRequest = await this.accessRequestRepository.findOne({
+            where: {
+                dataset: { id: datasetId },
+                user: { id: userId },
+                approvedAt: Not(IsNull()),
+                deniedAt: IsNull(),
+                endTime: IsNull() || MoreThan(new Date()), // Check if endTime is null or in the future
+            },
+        });
+
+        return !!accessRequest;
     }
 }
