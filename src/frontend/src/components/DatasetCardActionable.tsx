@@ -17,6 +17,7 @@ interface DatasetCardProps {
     deniedAt: string | null;
     sliderImages: { id: number; fileName: string }[];
     tags: { name: string; icon: string }[];
+    isControlled: boolean;
     onDelete?: () => void; // Callback function to notify parent of deletion
 }
 
@@ -31,6 +32,7 @@ export function DatasetCardActionable({
     deniedAt,
     sliderImages,
     tags,
+    isControlled,
     onDelete,
 }: DatasetCardProps) {
     const navigate = useNavigate();
@@ -127,6 +129,21 @@ export function DatasetCardActionable({
                             })
                             : 'Unknown'}
                     </Badge>
+                    {isControlled && (
+                        <Badge
+                            size="sm"
+                            variant="filled"
+                            style={{
+                                position: 'absolute',
+                                bottom: 10,
+                                right: 10,
+                                backgroundColor: '#f7bf3c',
+                                color: '#1f5754',
+                            }}
+                        >
+                            Controlled
+                        </Badge>
+                    )}
                 </Card.Section>
 
                 <Card.Section className="section" mt="md">

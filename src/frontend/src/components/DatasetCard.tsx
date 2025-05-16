@@ -9,6 +9,7 @@ interface DatasetCardProps {
     dataOwnerPhoto: string;
     description: string;
     createdAt: string;
+    isControlled: boolean;
     sliderImages: { id: number; fileName: string }[];
     tags: { name: string; icon: string }[];
 }
@@ -21,6 +22,7 @@ export function DatasetCard({
     description,
     createdAt,
     sliderImages,
+    isControlled,
     tags,
 }: DatasetCardProps) {
     return (
@@ -52,7 +54,7 @@ export function DatasetCard({
                         height={180}
                     />
 
-                    {/* Badge positioned at the bottom-left of the image */}
+                    {/* Last updated badge */}
                     <Badge
                         size="sm"
                         variant="dark"
@@ -74,6 +76,23 @@ export function DatasetCard({
                             })
                             : 'Unknown'}
                     </Badge>
+
+                    {/* Controlled badge */}
+                    {isControlled && (
+                        <Badge
+                            size="sm"
+                            variant="filled"
+                            style={{
+                                position: 'absolute',
+                                bottom: 10,
+                                right: 10,
+                                backgroundColor: '#f7bf3c',
+                                color: '#1f5754',
+                            }}
+                        >
+                            Controlled
+                        </Badge>
+                    )}
                 </Card.Section>
 
                 <Card.Section className="section" mt="md">

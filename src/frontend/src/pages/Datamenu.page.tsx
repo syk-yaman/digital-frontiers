@@ -166,6 +166,7 @@ export function Datamenu() {
           id: item.id,
           sliderImages: item.sliderImages,
           name: item.name,
+          datasetType: item.datasetType,
           dataOwnerName: item.dataOwnerName,
           dataOwnerPhoto: item.dataOwnerPhoto,
           description: item.description,
@@ -386,6 +387,7 @@ export function Datamenu() {
               createdAt={card.createdAt}
               sliderImages={card.sliderImages}
               tags={card.tags}
+              isControlled={card.datasetType === 'controlled'}
             />
           ))}
         </Flex>

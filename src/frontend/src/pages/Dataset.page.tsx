@@ -203,6 +203,7 @@ export function Dataset() {
           description: item.description,
           createdAt: item.createdAt,
           sliderImages: item.sliderImages,
+          datasetType: item.datasetType,
           tags: item.tags.map((tag) => ({
             name: tag.name,
             icon: '',
@@ -525,6 +526,7 @@ export function Dataset() {
                 createdAt={dataset.createdAt}
                 sliderImages={dataset.sliderImages}
                 tags={dataset.tags}
+                isControlled={dataset.datasetType === 'controlled'}
               />
             ))}
           </Flex>

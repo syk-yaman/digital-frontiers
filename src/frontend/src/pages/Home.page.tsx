@@ -115,6 +115,7 @@ export function HomePage() {
           dataOwnerName: item.dataOwnerName,
           dataOwnerPhoto: item.dataOwnerPhoto,
           description: item.description,
+          datasetType: item.datasetType,
           tags: item.tags.map((tag) => ({
             name: tag.name,
             icon: '',
@@ -245,6 +246,7 @@ export function HomePage() {
                   createdAt={card.createdAt}
                   sliderImages={card.sliderImages}
                   tags={card.tags}
+                  isControlled={card.datasetType === 'controlled'}
                 />
               ))}
             </Flex>

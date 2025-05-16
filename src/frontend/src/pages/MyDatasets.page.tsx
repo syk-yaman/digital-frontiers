@@ -17,6 +17,7 @@ interface DatasetItem {
     approvedAt: string | null;
     deniedAt: string | null;
     sliderImages: { id: number; fileName: string }[];
+    datasetType: string;
     tags: { name: string; icon: string }[];
 }
 
@@ -181,6 +182,7 @@ export function MyDatasetsPage() {
                         name={dataset.name}
                         dataOwnerName={dataset.dataOwnerName}
                         dataOwnerPhoto={dataset.dataOwnerPhoto}
+                        isControlled={dataset.datasetType === 'controlled'}
                         description={dataset.description}
                         createdAt={dataset.createdAt}
                         approvedAt={dataset.approvedAt}
