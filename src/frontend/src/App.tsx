@@ -32,6 +32,7 @@ import { AdminShowcaseRequests } from './pages/AdminShowcaseRequests.page';
 import { AddShowcase } from './pages/AddShowcase.page';
 import { ShowcasesPage } from './pages/Showcases.page';
 import { ShowcasePage } from './pages/Showcase.page';
+import { PrivateAdminRoute } from './components/PrivateAdminRoute';
 
 export default function App() {
   return (
@@ -59,15 +60,15 @@ export default function App() {
             <Route path="/edit-dataset/:id" element={<PrivateRoute><AddDatasetPage /></PrivateRoute>} />
             <Route path="/add-showcase" element={<PrivateRoute><AddShowcase /></PrivateRoute>} />
             <Route path="/edit-showcase/:id" element={<PrivateRoute><AddShowcase /></PrivateRoute>} />
-            <Route path="/admin" element={<PrivateRoute><AdminPage /></PrivateRoute>}>
-              <Route index element={<AdminHome />} />
-              <Route path="datasets" element={<AdminDatasets />} />
-              <Route path="datasets/requests" element={<AdminDatasetRequests />} />
-              <Route path="tags" element={<AdminTags />} />
-              <Route path="tags/requests" element={<AdminTagRequests />} />
-              <Route path="showcases" element={<AdminShowcases />} />
-              <Route path="showcases/requests" element={<AdminShowcaseRequests />} />
-              <Route path="users" element={<AdminUsers />} />
+            <Route path="/admin" element={<PrivateAdminRoute><AdminPage /></PrivateAdminRoute>}>
+              <Route index element={<PrivateAdminRoute><AdminHome /></PrivateAdminRoute>} />
+              <Route path="datasets" element={<PrivateAdminRoute><AdminDatasets /></PrivateAdminRoute>} />
+              <Route path="datasets/requests" element={<PrivateAdminRoute><AdminDatasetRequests /></PrivateAdminRoute>} />
+              <Route path="tags" element={<PrivateAdminRoute><AdminTags /></PrivateAdminRoute>} />
+              <Route path="tags/requests" element={<PrivateAdminRoute><AdminTagRequests /></PrivateAdminRoute>} />
+              <Route path="showcases" element={<PrivateAdminRoute><AdminShowcases /></PrivateAdminRoute>} />
+              <Route path="showcases/requests" element={<PrivateAdminRoute><AdminShowcaseRequests /></PrivateAdminRoute>} />
+              <Route path="users" element={<PrivateAdminRoute><AdminUsers /></PrivateAdminRoute>} />
             </Route>
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/my-datasets" element={<PrivateRoute><MyDatasetsPage /></PrivateRoute>} />

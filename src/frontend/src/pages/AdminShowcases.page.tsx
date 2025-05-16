@@ -170,7 +170,7 @@ export function AdminShowcases() {
                         accessor: 'title',
                         title: 'Title',
                         render: (record) => <Text fw={300}>{record.title}</Text>,
-                        width: 250,
+                        width: 200,
                     },
                     {
                         accessor: 'user',
