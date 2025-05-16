@@ -327,7 +327,14 @@ export function AddShowcase() {
     // Handle form submission
     const handleSubmit = () => {
         const { hasErrors } = form.validate();
-        if (hasErrors) return;
+        if (hasErrors) {
+            notifications.show({
+                title: 'Validation Error',
+                message: 'Please correct the errors in the form before submitting.',
+                color: 'red',
+            });
+            return;
+        }
 
         setIsSubmitting(true);
 
