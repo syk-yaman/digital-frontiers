@@ -347,7 +347,16 @@ export function HomePage() {
                         <Text c="#d1bd51" size="xs" tt="uppercase" fw={700} mt="md">
                           {new Date(latestShowcases[2].createdAt).toLocaleDateString()}
                         </Text>
-                        <Text c="white" size="m" mt={5}>
+                        <Text
+                          c="white"
+                          size="m"
+                          mt={5}
+                          style={{
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
                           {latestShowcases[2].title}
                         </Text>
                       </Card>
@@ -375,7 +384,16 @@ export function HomePage() {
                         <Text c="#d1bd51" size="xs" tt="uppercase" fw={700} mt="md">
                           {new Date(latestShowcases[3].createdAt).toLocaleDateString()}
                         </Text>
-                        <Text c="white" size="m" mt={5}>
+                        <Text
+                          c="white"
+                          size="m"
+                          mt={5}
+                          style={{
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
                           {latestShowcases[3].title}
                         </Text>
                       </Card>
