@@ -338,7 +338,7 @@ export function Dataset() {
 
 
         {/* Dataset Description */}
-        <Text ta="left" mt="lg" mx="auto" >
+        <Text ta="left" mt="lg" mx="auto" style={{ whiteSpace: 'pre-wrap' }}>
           {dataset.description}</Text>
 
 
