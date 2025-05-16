@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
     Container, Stepper, Button, Text, TextInput, Select, Checkbox, Group, Space, Center, Textarea, FileInput,
     List, Flex, Loader,
@@ -24,6 +24,7 @@ import { notifications, Notifications } from '@mantine/notifications';
 import '@mantine/notifications/styles.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import axiosInstance from '@/utils/axiosInstance';
+import { AuthContext } from '@/context/AuthContext';
 
 
 const INITIAL_VIEW_STATE = {
@@ -52,6 +53,8 @@ interface Link {
 }
 
 export function AddDatasetPage() {
+    const authContext = useContext(AuthContext);
+    const isAdmin = authContext?.user?.isAdmin ?? false;
     const { id: datasetId } = useParams(); // Get dataset ID from URL
     const [isEditMode, setIsEditMode] = useState(false); // Track if in edit mode
     const [loadingDataset, setLoadingDataset] = useState(false); // Track dataset loading state
@@ -210,7 +213,7 @@ export function AddDatasetPage() {
                     icon: <IconCheck />,
                 });
                 setSubmissionSuccess(true);
-                setTimeout(() => navigate('/my-datasets'), 500);
+                setTimeout(() => navigate(isAdmin ? '/admin/datasets' : '/my-datasets'), 500);
             })
             .catch((error) => {
                 console.error(isEditMode ? 'Update failed:' : 'Submission failed:', error);
@@ -1032,7 +1035,13 @@ export function AddDatasetPage() {
                             loading={isSubmitting} // Use Mantine's loading prop
                             disabled={submissionSuccess} // Disable the button after successful submission
                         >
-                            {submissionSuccess ? 'Submitted!' : isEditMode ? 'Update Dataset' : 'Submit for Approval'}
+                            {submissionSuccess
+                                ? 'Submitted!'
+                                : isAdmin
+                                    ? 'Save and publish'
+                                    : isEditMode
+                                        ? 'Update and submit for approval'
+                                        : 'Submit for approval'}
                         </Button>
                     </Center>
                 </>
