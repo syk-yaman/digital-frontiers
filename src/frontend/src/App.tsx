@@ -36,6 +36,7 @@ import { PrivateAdminRoute } from './components/PrivateAdminRoute';
 import { MyShowcasesPage } from './pages/MyShowcases.page';
 import { MyAccessRequestsPage } from './pages/MyAccessRequests.page';
 import { AdminAccessRequestsPage } from './pages/AdminAccessRequests.page';
+import { AboutPage } from './pages/About.page';
 
 export default function App() {
   return (
@@ -78,6 +79,7 @@ export default function App() {
             <Route path="/my-datasets" element={<PrivateRoute><MyDatasetsPage /></PrivateRoute>} />
             <Route path="/my-showcases" element={<PrivateRoute><MyShowcasesPage /></PrivateRoute>} />
             <Route path="/my-access-requests" element={<PrivateRoute><MyAccessRequestsPage /></PrivateRoute>} />
+            <Route path="/about" element={<AboutPage />} />
           </Routes>
           <FooterLinks />
         </BrowserRouter>
