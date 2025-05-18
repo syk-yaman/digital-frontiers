@@ -19,7 +19,7 @@ export class AccessRequestController {
     @Post()
     @UseGuards(JwtAuthGuard)
     async createAccessRequest(@Body() dto: CreateAccessRequestDto, @Request() req) {
-        const userContext = this.userContextFactory.createFromRequest(req);
+        const userContext = await this.userContextFactory.createFromRequest(req);
         return this.accessRequestService.createAccessRequest(dto, userContext);
     }
 
@@ -28,7 +28,7 @@ export class AccessRequestController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('admin')
     async approveAccessRequest(@Param('id') id: number, @Body() dto: ApproveAccessRequestDto, @Request() req) {
-        const userContext = this.userContextFactory.createFromRequest(req);
+        const userContext = await this.userContextFactory.createFromRequest(req);
         return this.accessRequestService.approveAccessRequest(id, dto, userContext);
     }
 
@@ -37,7 +37,7 @@ export class AccessRequestController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('admin')
     async denyAccessRequest(@Param('id') id: number, @Request() req) {
-        const userContext = this.userContextFactory.createFromRequest(req);
+        const userContext = await this.userContextFactory.createFromRequest(req);
         return this.accessRequestService.denyAccessRequest(id, userContext);
     }
 
@@ -46,7 +46,7 @@ export class AccessRequestController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('admin')
     async deleteAccessRequest(@Param('id') id: number, @Request() req) {
-        const userContext = this.userContextFactory.createFromRequest(req);
+        const userContext = await this.userContextFactory.createFromRequest(req);
         return this.accessRequestService.deleteAccessRequest(id, userContext);
     }
 

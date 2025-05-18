@@ -3,7 +3,7 @@
 export enum UserRole {
     PUBLIC_VISITOR = 'public',
     GENERAL_USER = 'user',
-    CONTROLLED_DATASET_USER = 'controlled_dataset_user',
+    CONTROLLED_DATASET_GRANTED_USER = 'controlled_dataset_granted_user',
     CONTENT_OWNER = 'content_owner',
     ADMIN = 'admin'
 }

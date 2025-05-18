@@ -31,8 +31,8 @@ export class TagsController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('admin')
     @ApiBearerAuth()
-    findPendingApproval(@Request() req) {
-        const userContext = this.userContextFactory.createFromRequest(req);
+    async findPendingApproval(@Request() req) {
+        const userContext = await this.userContextFactory.createFromRequest(req);
         return this.tagsService.findPendingApproval(userContext);
     }
 
@@ -57,7 +57,7 @@ export class TagsController {
     @ApiResponse({ status: 200, description: 'Returns the tag with the specified ID.' })
     async findOne(@Param('id') id: number, @Request() req) {
         const userContext = req.user ?
-            this.userContextFactory.createFromRequest(req) :
+            await this.userContextFactory.createFromRequest(req) :
             this.userContextFactory.createPublicContext();
 
         return this.tagsService.findOne(id, userContext);
@@ -71,7 +71,7 @@ export class TagsController {
     @ApiResponse({ status: 201, description: 'The tag has been successfully created.' })
     @ApiBody({ type: CreateDatasetTagDto })
     async create(@Body() createTagDto: CreateDatasetTagDto, @Request() req) {
-        const userContext = this.userContextFactory.createFromRequest(req);
+        const userContext = await this.userContextFactory.createFromRequest(req);
         return this.tagsService.create(createTagDto, userContext);
     }
 
@@ -105,7 +105,7 @@ export class TagsController {
     @Roles('admin')
     @ApiBearerAuth()
     async approveDataset(@Param('id') id: number, @Request() req) {
-        const userContext = this.userContextFactory.createFromRequest(req);
+        const userContext = await this.userContextFactory.createFromRequest(req);
         return this.tagsService.approveTag(id, userContext);
     }
 }

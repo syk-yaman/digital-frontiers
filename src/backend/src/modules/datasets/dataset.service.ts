@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Not, IsNull, MoreThan } from 'typeorm';
 import { Dataset, DatasetLink, DatasetLocation, DatasetSliderImage, DatasetTag } from './dataset.entity';
@@ -32,65 +32,76 @@ export class DatasetsService {
     ) { }
 
     async findAll(userContext: UserContext): Promise<Dataset[]> {
-        const datasets = await this.datasetRepository.find({
-            relations: ['links', 'locations', 'sliderImages', 'tags', 'user'],
-            where: { approvedAt: Not(IsNull()) },
-            order: { createdAt: 'DESC' },
-        });
+        var datasetsQueryBuilder = await this.datasetRepository
+            .createQueryBuilder('dataset')
+            .leftJoinAndSelect('dataset.locations', 'locations')
+            .leftJoinAndSelect('dataset.sliderImages', 'sliderImages')
+            .leftJoinAndSelect('dataset.tags', 'tags')
+            .leftJoinAndSelect('dataset.user', 'user')
 
-        return Promise.all(datasets.map((dataset) => this.filterDatasetDetails(dataset, userContext)));
+
+        if (userContext.hasRole(UserRole.ADMIN)) {
+            datasetsQueryBuilder = datasetsQueryBuilder.addSelect([
+                'dataset.mqttAddress',
+                'dataset.mqttPort',
+                'dataset.mqttTopic',
+                'dataset.mqttUsername',
+                'dataset.mqttPassword',
+                'dataset.dataExample'
+            ]);
+        }
+
+        const datasets = datasetsQueryBuilder
+            .where('dataset.approvedAt IS NOT NULL')
+            .orderBy('dataset.createdAt', 'DESC')
+            .getMany();
+
+        return datasets;
     }
 
     async findOne(id: number, userContext: UserContext): Promise<Dataset | null> {
-        const dataset = await this.datasetRepository.findOne({
-            where: { id },
-            relations: ['links', 'locations', 'sliderImages', 'tags', 'user'],
-        });
+        Logger.log(`Finding dataset with userContext : ${id}`, await this.authorisationService.canViewDataset(id, userContext));
+        // Check if user can view this dataset
+        if (!await this.authorisationService.canViewDataset(id, userContext)) {
+            throw new HttpException('Dataset not found or not approved yet', HttpStatus.NOT_FOUND);
+        }
+
+        const currentUserCanViewDetails = await this.authorisationService
+            .canViewDatasetDetails(id, userContext);
+
+        var datasetsQueryBuilder = this.datasetRepository
+            .createQueryBuilder('dataset')
+            .leftJoinAndSelect('dataset.locations', 'locations')
+            .leftJoinAndSelect('dataset.sliderImages', 'sliderImages')
+            .leftJoinAndSelect('dataset.tags', 'tags')
+            .leftJoinAndSelect('dataset.user', 'user')
+
+        if (currentUserCanViewDetails) {
+            datasetsQueryBuilder = datasetsQueryBuilder
+                .leftJoinAndSelect('dataset.links', 'links')
+                .addSelect([
+                    'dataset.mqttAddress',
+                    'dataset.mqttPort',
+                    'dataset.mqttTopic',
+                    'dataset.mqttUsername',
+                    'dataset.mqttPassword',
+                    'dataset.dataExample'
+                ]);
+        }
+
+        const dataset = await datasetsQueryBuilder
+            .where('dataset.approvedAt IS NOT NULL')
+            .where('dataset.id = :id', { id })
+            .orderBy('dataset.createdAt', 'DESC')
+            .getOne();
 
         if (!dataset) {
             throw new HttpException('Dataset not found', HttpStatus.NOT_FOUND);
         }
 
-        // Check if user can view this dataset
-        if (!this.authorisationService.canViewDataset(dataset, userContext)) {
-            throw new HttpException('Dataset not found or not approved yet', HttpStatus.NOT_FOUND);
-        }
-
-        return this.filterDatasetDetails(dataset, userContext);
-    }
-
-    private async filterDatasetDetails(dataset: Dataset, userContext: UserContext): Promise<Dataset> {
-        if (dataset.isControlled && !this.authorisationService.canViewControlledDatasetLinks(dataset, userContext)) {
-            const hasValidAccess = await this.hasValidAccessRequest(dataset.id, userContext.userId);
-
-            if (!hasValidAccess) {
-                // Hide sensitive details for controlled datasets
-                dataset.links = [];
-                dataset.mqttAddress = null;
-                dataset.mqttPort = null;
-                dataset.mqttTopic = null;
-                dataset.mqttUsername = null;
-                dataset.mqttPassword = null;
-            }
-        }
+        dataset.canUserSeeDetails = currentUserCanViewDetails;
 
         return dataset;
-    }
-
-    private async hasValidAccessRequest(datasetId: number, userId: string | null): Promise<boolean> {
-        if (!userId) return false;
-
-        const accessRequest = await this.accessRequestRepository.findOne({
-            where: {
-                dataset: { id: datasetId },
-                user: { id: userId },
-                approvedAt: Not(IsNull()),
-                deniedAt: IsNull(),
-                endTime: IsNull() || MoreThan(new Date()), // Check if endTime is null or in the future
-            },
-        });
-
-        return !!accessRequest;
     }
 
     findRecent(): Promise<Dataset[]> {
@@ -98,7 +109,7 @@ export class DatasetsService {
             where: { approvedAt: Not(IsNull()) },
             order: { createdAt: 'DESC' },
             take: 3,
-            relations: ['links', 'locations', 'sliderImages', 'tags'],
+            relations: ['locations', 'sliderImages', 'tags'],
         });
     }
 
@@ -106,14 +117,14 @@ export class DatasetsService {
     findByUser(userId: string): Promise<Dataset[]> {
         return this.datasetRepository.find({
             where: { user: { id: userId } },
-            relations: ['links', 'locations', 'sliderImages', 'tags'],
+            relations: ['locations', 'sliderImages', 'tags'],
             order: { createdAt: 'DESC' },
         });
     }
 
     async findPendingApproval(userContext: UserContext): Promise<Dataset[]> {
         // Only admins can see all pending datasets
-        if (!this.authorisationService.canViewAllUnapprovedContent(userContext)) {
+        if (!await this.authorisationService.canViewAllUnapprovedContent(userContext)) {
             throw new HttpException('Not authorised', HttpStatus.FORBIDDEN);
         }
 
@@ -122,13 +133,13 @@ export class DatasetsService {
                 approvedAt: IsNull(),
                 deniedAt: IsNull()
             },
-            relations: ['links', 'locations', 'sliderImages', 'tags', 'user'],
+            relations: ['locations', 'sliderImages', 'tags', 'user'],
             order: { createdAt: 'DESC' },
         });
     }
 
     async approveDataset(id: number, userContext: UserContext): Promise<Dataset> {
-        if (!this.authorisationService.canApproveContent(userContext)) {
+        if (!await this.authorisationService.canApproveContent(userContext)) {
             throw new HttpException('Not authorized', HttpStatus.FORBIDDEN);
         }
 
@@ -169,7 +180,6 @@ export class DatasetsService {
     async create(createDto: CreateDatasetDto, userContext: UserContext): Promise<Dataset> {
         // Transform plain object into an instance of CreateDatasetDto
         const createDatasetInstance = plainToInstance(CreateDatasetDto, createDto);
-        console.log('createDatasetInstance', createDto);
 
         const user = await this.usersRepository.findOne({ where: { id: createDatasetInstance.userId } });
         if (!user) {
@@ -347,7 +357,7 @@ export class DatasetsService {
             throw new HttpException('Dataset not found', HttpStatus.NOT_FOUND);
         }
 
-        if (this.authorisationService.canDeleteDataset(dataset, userContext)) {
+        if (await this.authorisationService.canDeleteDataset(dataset, userContext)) {
             await this.datasetRepository.delete(id);
         } else {
             throw new HttpException('You are not authorised to delete this dataset.', HttpStatus.FORBIDDEN);
@@ -418,7 +428,7 @@ export class DatasetsService {
                 tags: { id: tagId },
                 approvedAt: Not(IsNull()) // Only return approved datasets
             },
-            relations: ['links', 'locations', 'sliderImages', 'tags'],
+            relations: ['locations', 'sliderImages', 'tags'],
             order: { createdAt: 'DESC' },
         });
     }

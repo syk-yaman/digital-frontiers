@@ -1,5 +1,6 @@
 import { UserRole } from './enums/user-roles.enum';
 import { Permission } from './enums/permissions.enum';
+import { Logger } from '@nestjs/common';
 
 /**
  * UserContext Class
@@ -20,9 +21,9 @@ export class UserContext {
     constructor(
         public readonly userId: string | null,
         public readonly roles: UserRole[] = [UserRole.PUBLIC_VISITOR],
-        public readonly controlledDatasetIds: string[] = []
+        public readonly controlledDatasetIds: number[] = []
     ) {
-        console.log('UserContext created:', { userId, roles, controlledDatasetIds });
+        Logger.log('UserContext created:', { userId, roles, controlledDatasetIds });
     }
 
     /**
@@ -51,26 +52,18 @@ export class UserContext {
 
             case Permission.CREATE_UNAPPROVED_CONTENT:
             case Permission.EDIT_OWN_CONTENT:
-            case Permission.CREATE_CONTROLLED_DATASETS:
                 // These permissions are available to all authenticated users except public visitors
                 return this.roles.some(role => [
                     UserRole.GENERAL_USER,
-                    UserRole.CONTROLLED_DATASET_USER,
+                    UserRole.CONTROLLED_DATASET_GRANTED_USER,
                     UserRole.CONTENT_OWNER,
                     UserRole.ADMIN
                 ].includes(role));
 
-            case Permission.VIEW_CONTROLLED_DATASETS:
-                // Only users with elevated roles can view controlled datasets
+            case Permission.VIEW_CONTROLLED_DATASET_DETAILS:
+                // Only users with elevated roles can view controlled dataset details
                 return this.roles.some(role => [
-                    UserRole.CONTROLLED_DATASET_USER,
-                    UserRole.CONTENT_OWNER,
-                    UserRole.ADMIN
-                ].includes(role));
-
-            case Permission.EDIT_CONTROLLED_DATASETS:
-                // Only content owners and admins can edit controlled datasets
-                return this.roles.some(role => [
+                    UserRole.CONTROLLED_DATASET_GRANTED_USER,
                     UserRole.CONTENT_OWNER,
                     UserRole.ADMIN
                 ].includes(role));

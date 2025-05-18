@@ -34,7 +34,7 @@ export class ShowcasesController {
     @ApiOperation({ summary: '[Admin] Get pending approval showcases' })
     @ApiResponse({ status: 200, description: 'Returns showcases pending approval' })
     async findPendingApproval(@Request() req) {
-        const userContext = this.userContextFactory.createFromRequest(req);
+        const userContext = await this.userContextFactory.createFromRequest(req);
         return this.showcasesService.findPendingApproval(userContext);
     }
 
@@ -51,7 +51,7 @@ export class ShowcasesController {
     @ApiResponse({ status: 200, description: 'Returns the showcase with the given ID' })
     async findOne(@Param('id') id: number, @Request() req) {
         const userContext = req.user ?
-            this.userContextFactory.createFromRequest(req) :
+            await this.userContextFactory.createFromRequest(req) :
             this.userContextFactory.createPublicContext();
 
         return this.showcasesService.findOne(id, userContext);
@@ -64,7 +64,7 @@ export class ShowcasesController {
     @ApiResponse({ status: 201, description: 'The showcase has been created' })
     @ApiBody({ type: CreateShowcaseDto })
     async create(@Body() createDto: CreateShowcaseDto, @Request() req) {
-        const userContext = this.userContextFactory.createFromRequest(req);
+        const userContext = await this.userContextFactory.createFromRequest(req);
         createDto.userId = userContext.userId;
         return this.showcasesService.create(createDto, userContext);
     }
@@ -78,7 +78,7 @@ export class ShowcasesController {
     @ApiResponse({ status: 200, description: 'The showcase has been updated' })
     @ApiBody({ type: UpdateShowcaseDto })
     async update(@Param('id') id: number, @Body() updateDto: UpdateShowcaseDto, @Request() req) {
-        const userContext = this.userContextFactory.createFromRequest(req);
+        const userContext = await this.userContextFactory.createFromRequest(req);
         return this.showcasesService.update(id, updateDto, userContext);
     }
 
@@ -88,7 +88,7 @@ export class ShowcasesController {
     @ApiOperation({ summary: '[User, Admin] Delete a showcase' })
     @ApiResponse({ status: 200, description: 'The showcase has been deleted' })
     async remove(@Param('id') id: number, @Request() req) {
-        const userContext = this.userContextFactory.createFromRequest(req);
+        const userContext = await this.userContextFactory.createFromRequest(req);
         return this.showcasesService.remove(id, userContext);
     }
 
@@ -99,7 +99,7 @@ export class ShowcasesController {
     @ApiOperation({ summary: '[Admin] Approve a showcase' })
     @ApiResponse({ status: 200, description: 'The showcase has been approved' })
     async approveShowcase(@Param('id') id: number, @Request() req) {
-        const userContext = this.userContextFactory.createFromRequest(req);
+        const userContext = await this.userContextFactory.createFromRequest(req);
         return this.showcasesService.approveShowcase(id, userContext);
     }
 
@@ -110,7 +110,7 @@ export class ShowcasesController {
     @ApiOperation({ summary: '[Admin] Deny a showcase' })
     @ApiResponse({ status: 200, description: 'The showcase has been denied' })
     async denyShowcase(@Param('id') id: number, @Request() req) {
-        const userContext = this.userContextFactory.createFromRequest(req);
+        const userContext = await this.userContextFactory.createFromRequest(req);
         return this.showcasesService.denyShowcase(id, userContext);
     }
 
@@ -160,7 +160,7 @@ export class ShowcasesController {
     @ApiOperation({ summary: '[User, Admin] Get showcases by user ID' })
     @ApiResponse({ status: 200, description: "Returns a user's showcases" })
     async findByUser(@Param('userId') userId: string, @Request() req) {
-        const userContext = this.userContextFactory.createFromRequest(req);
+        const userContext = await this.userContextFactory.createFromRequest(req);
 
         // Users can only see their own showcases, admins can see any user's showcases
         if (userId !== userContext.userId && !userContext.hasPermission(Permission.VIEW_ALL_UNAPPROVED_CONTENT)) {

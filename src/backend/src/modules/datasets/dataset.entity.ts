@@ -63,7 +63,7 @@ export class Dataset {
     @Column({ type: 'enum', enum: UpdateFrequencyUnit })
     updateFrequencyUnit!: UpdateFrequencyUnit;
 
-    @Column({ type: 'text', nullable: true })
+    @Column({ type: 'text', nullable: true, select: false })
     dataExample?: string;
 
     @OneToMany(() => DatasetLink, (link) => link.dataset, { cascade: true, onDelete: 'CASCADE' })
@@ -79,19 +79,19 @@ export class Dataset {
     @JoinTable()
     tags!: DatasetTag[];
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, select: false })
     mqttAddress?: string;
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, select: false })
     mqttPort?: number;
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, select: false })
     mqttTopic?: string;
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, select: false })
     mqttUsername?: string;
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, select: false })
     mqttPassword?: string;
 
     @Column({ type: 'int', nullable: true })
@@ -111,6 +111,10 @@ export class Dataset {
 
     @DeleteDateColumn()
     deletedAt?: Date;  // Soft delete column
+
+    // The current user has been granted access to this dataset if it's controlled, or
+    // the dataset is public
+    canUserSeeDetails?: boolean;
 
     // Helper method for domain logic
     get isControlled(): boolean {

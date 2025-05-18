@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Not, IsNull, MoreThan } from 'typeorm';
 import { UserContext } from '../user-context';
 import { UserRole } from '../enums/user-roles.enum';
 import { User } from 'src/modules/users/user.entity';
+import { AccessRequest } from 'src/modules/access-requests/access-request.entity';
 
 /**
  * JwtUserContextFactory
@@ -21,6 +22,8 @@ export class JwtUserContextFactory {
     constructor(
         @InjectRepository(User)
         private usersRepository: Repository<User>,
+        @InjectRepository(AccessRequest)
+        private accessRequestRepository: Repository<AccessRequest>,
     ) { }
 
     /**
@@ -30,11 +33,11 @@ export class JwtUserContextFactory {
      * @returns A UserContext object representing the authenticated user
      * @throws Error if user information is not found in the request
      */
-    createFromRequest(req: any): UserContext | undefined {
+    async createFromRequest(req: any): Promise<UserContext | undefined> {
         if (!req.user) {
             throw new Error('User not found in request');
         }
-        console.log('User found in request:', req.user);
+        Logger.log('User found in request:----', req.user);
         const { userId, isAdmin } = req.user;
 
         // Default role for authenticated users
@@ -45,7 +48,10 @@ export class JwtUserContextFactory {
             roles.push(UserRole.ADMIN);
         }
 
-        return new UserContext(userId, roles);
+        // Fetch controlled dataset IDs the user has access to
+        const controlledDatasetIds = await this.getGrantedControlledDatasetIdsForUser(userId);
+
+        return new UserContext(userId, roles, controlledDatasetIds);
     }
 
     /**
@@ -69,10 +75,12 @@ export class JwtUserContextFactory {
             roles.push(UserRole.ADMIN);
         }
 
+        const controlledDatasetIds = await this.getGrantedControlledDatasetIdsForUser(user.id);
+
         return new UserContext(
             user.id,
             roles,
-            //user.controlledDatasetIds || []
+            controlledDatasetIds
         );
     }
 
@@ -83,5 +91,20 @@ export class JwtUserContextFactory {
      */
     createPublicContext(): UserContext {
         return new UserContext(null);
+    }
+
+    private async getGrantedControlledDatasetIdsForUser(userId: string): Promise<number[]> {
+        if (!userId) return [];
+        const accessRequests = await this.accessRequestRepository.find({
+            where: {
+                user: { id: userId },
+                approvedAt: Not(IsNull()),
+                deniedAt: IsNull(),
+                // endTime is either null or in the future
+                endTime: IsNull() || MoreThan(new Date()),
+            },
+            relations: ['dataset'],
+        });
+        return accessRequests.map(ar => ar.dataset.id);
     }
 }
