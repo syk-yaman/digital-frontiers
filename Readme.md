@@ -21,12 +21,8 @@ This repository contains comprehensive documentation and resources for the Digit
     Contains versioning plans and related diagrams.
 
 - **`tech-stack/`**  
-  - [`tech-stack-v3.jpg`](docs/tech-stack/tech-stack-v3.jpg)  
-  - 
-- **`database/`**  
-  - [`ER-Diagram-v3.png`](docs/database/ER-Diagram-v3.png)  
-    ![Database ER Diagram v3](docs/database/ER-Diagram-v3.png)  
-    Entity-Relationship diagram for the platform's database schema.
+  - [`tech-stack-v3.jpg`](docs/tech-stack/tech-stack-v3.jpg) 
+  ![`tech-stack-v3](docs/tech-stack/tech-stack-v3.jpg)
 
 - **`personas/`**  
   User personas and user journey documentation.
