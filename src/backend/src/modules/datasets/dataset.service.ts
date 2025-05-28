@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Not, IsNull, MoreThan } from 'typeorm';
-import { Dataset, DatasetLink, DatasetLocation, DatasetSliderImage, DatasetTag } from './dataset.entity';
+import { Dataset, DatasetLink, DatasetLocation, DatasetSliderImage, DatasetTag, UpdateFrequencyUnit } from './dataset.entity';
 import { CreateDatasetDto, UpdateDatasetDto } from './dataset.dto';
 import { User } from '../users/user.entity';
 import { plainToInstance } from 'class-transformer';
@@ -12,6 +12,8 @@ import { Permission } from '../authorisation/enums/permissions.enum';
 import { UserContext } from '../authorisation/user-context';
 import { AccessRequest } from '../access-requests/access-request.entity';
 import { UserRole } from '../authorisation/enums/user-roles.enum';
+import axios from 'axios';
+import { NodeRedFlowService } from './node-red-flow.service';
 
 @Injectable()
 export class DatasetsService {
@@ -29,6 +31,7 @@ export class DatasetsService {
         private tagsService: TagsService,
         @InjectRepository(AccessRequest)
         private accessRequestRepository: Repository<AccessRequest>,
+        private nodeRedFlowService: NodeRedFlowService,
     ) { }
 
     async findAll(userContext: UserContext): Promise<Dataset[]> {
@@ -60,7 +63,7 @@ export class DatasetsService {
     }
 
     async findOne(id: number, userContext: UserContext): Promise<Dataset | null> {
-        Logger.log(`Finding dataset with userContext : ${id}`, await this.authorisationService.canViewDataset(id, userContext));
+        Logger.log(`Finding dataset with ID : ${id}`, userContext);
         // Check if user can view this dataset
         if (!await this.authorisationService.canViewDataset(id, userContext)) {
             throw new HttpException('Dataset not found or not approved yet', HttpStatus.NOT_FOUND);
@@ -228,7 +231,13 @@ export class DatasetsService {
             newDataset.approvedAt = new Date();
         }
 
-        return this.datasetRepository.save(newDataset);
+        var savedDataset = await this.datasetRepository.save(newDataset);
+        if (savedDataset.updateFrequencyUnit != UpdateFrequencyUnit.ONLY_ONCE) {
+            this.nodeRedFlowService.addNodeRedFlowForDataset(savedDataset).catch((error) => {
+                Logger.error(`Failed to add Node-RED flow for dataset ${savedDataset.id}: ${error.message}`);
+            });
+        }
+        return savedDataset;
     }
 
     async update(id: number, updateDto: UpdateDatasetDto, userContext: UserContext): Promise<Dataset> {
@@ -359,6 +368,9 @@ export class DatasetsService {
 
         if (await this.authorisationService.canDeleteDataset(dataset, userContext)) {
             await this.datasetRepository.delete(id);
+            this.nodeRedFlowService.removeNodeRedFlowForDataset(id).catch((error) => {
+                Logger.error(`Failed to remove Node-RED flow for dataset ${id}: ${error.message}`);
+            });
         } else {
             throw new HttpException('You are not authorised to delete this dataset.', HttpStatus.FORBIDDEN);
         }

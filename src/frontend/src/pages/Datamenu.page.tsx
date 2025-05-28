@@ -1,5 +1,5 @@
 import '@mantine/carousel/styles.css';
-import { Text, Anchor, Breadcrumbs, Image, Center, rem, SegmentedControl, Space, Avatar, Badge, Group, Card, Flex, Button } from '@mantine/core';
+import { Text, Anchor, Breadcrumbs, Image, Center, rem, SegmentedControl, Space, Avatar, Badge, Group, Card, Flex, Button, MultiSelect } from '@mantine/core';
 
 import React, { useEffect, useMemo, useState, useContext } from 'react';
 import { GeoJsonLayer, LineLayer, ScatterplotLayer, TextLayer } from '@deck.gl/layers';
@@ -109,6 +109,33 @@ export function Datamenu() {
     );
   }, [dataItems]);
 
+  // Gather all unique tags from dataItems
+  const allTags = useMemo(() => {
+    // Use globalThis.Map to ensure the built-in Map is used
+    const tagMap = new (globalThis.Map as {
+      new(): Map<string, { name: string; colour: string; icon: string }>;
+    })();
+    dataItems.forEach(item => {
+      item.tags.forEach(tag => {
+        if (!tagMap.has(tag.name)) {
+          tagMap.set(tag.name, tag);
+        }
+      });
+    });
+    return Array.from(tagMap.values());
+  }, [dataItems]);
+
+  // State for selected tags
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  // Filtered mappedData based on selected tags
+  const filteredMappedData = useMemo(() => {
+    if (selectedTags.length === 0) return mappedData;
+    return mappedData.filter(d =>
+      d.tags.some(tag => selectedTags.includes(tag))
+    );
+  }, [mappedData, selectedTags]);
+
   useEffect(() => {
     async function loadShapefileFromURL() {
       const shpUrl = "/maps/MDC_Boundary_2024.shp";
@@ -210,7 +237,7 @@ export function Datamenu() {
     }),
     new ScatterplotLayer({
       id: 'deckgl-circle',
-      data: mappedData,
+      data: filteredMappedData, // <-- use filtered data
       getPosition: (d) => d.position,
       getFillColor: (d) => {
         if (typeof d.colour === 'string') {
@@ -228,7 +255,7 @@ export function Datamenu() {
       getLineColor: [0, 0, 0], // Black stroke color
       lineWidthMinPixels: 2, // Stroke width
     }),
-  ], [mappedData, geoJsonData]);
+  ], [filteredMappedData, geoJsonData]);
 
   return (
     <>
@@ -289,6 +316,38 @@ export function Datamenu() {
           position: 'relative',
         }}
       >
+        {/* Floating tag filter */}
+        <Card
+          shadow="md"
+          padding="md"
+          radius="md"
+          withBorder={true}
+          style={{
+            position: 'absolute',
+            top: 20,
+            right: 20,
+            zIndex: 100,
+            minWidth: 300,
+            maxWidth: 300,
+            background: 'rgba(49, 49, 49, 0.97)',
+            borderColor: 'rgb(104, 104, 104)',
+          }}
+        >
+          <Text c="white" fw={500} mb={8} size="sm">Filter by tags</Text>
+          <MultiSelect
+            data={allTags.map(tag => ({
+              value: tag.name,
+              label: `${tag.icon ? tag.icon + ' ' : ''}${tag.name}`,
+            }))}
+            value={selectedTags}
+            onChange={setSelectedTags}
+            placeholder="Select tags"
+            clearable
+            searchable
+            maxDropdownHeight={200}
+            size="sm"
+          />
+        </Card>
         <Map
           initialViewState={INITIAL_VIEW_STATE}
           mapStyle={{
