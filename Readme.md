@@ -13,10 +13,6 @@ This repository contains comprehensive documentation and resources for the Digit
   Markdown table outlining user roles and permissions across the platform.
 
 - **`conceptual-diagram/`**  
-  - [`conceptual-diagram-v0.png`](docs/conceptual-diagram/conceptual-diagram-v0.png)  
-    ![Conceptual Diagram v0](docs/conceptual-diagram/conceptual-diagram-v0.png)
-  - [`conceptual-diagram-v1.jpg`](docs/conceptual-diagram/conceptual-diagram-v1.jpg)  
-    ![Conceptual Diagram v1](docs/conceptual-diagram/conceptual-diagram-v1.jpg)
   - [`conceptual-diagram-v2.jpg`](docs/conceptual-diagram/conceptual-diagram-v2.jpg)  
     ![Conceptual Diagram v2](docs/conceptual-diagram/conceptual-diagram-v2.jpg)
   - [`conceptual-diagram.drawio`](docs/conceptual-diagram/conceptual-diagram.drawio)  
@@ -24,6 +20,9 @@ This repository contains comprehensive documentation and resources for the Digit
   - `v2-versioning-plan/`  
     Contains versioning plans and related diagrams.
 
+- **`tech-stack/`**  
+  - [`tech-stack-v3.jpg`](docs/tech-stack/tech-stack-v3.jpg)  
+  - 
 - **`database/`**  
   - [`ER-Diagram-v3.png`](docs/database/ER-Diagram-v3.png)  
     ![Database ER Diagram v3](docs/database/ER-Diagram-v3.png)  
