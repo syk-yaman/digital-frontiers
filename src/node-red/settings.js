@@ -1,4 +1,5 @@
 module.exports = {
+    //credentialSecret: false,
     //adminAuth: {
     //    type: "credentials",
     //    users: [{
