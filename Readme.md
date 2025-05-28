@@ -22,7 +22,7 @@ This repository contains comprehensive documentation and resources for the Digit
 
 - **`tech-stack/`**  
   - [`tech-stack-v3.jpg`](docs/tech-stack/tech-stack-v3.jpg) 
-  ![`tech-stack-v3](docs/tech-stack/tech-stack-v3.jpg)
+  ![`tech-stack-v3](docs/tech-stack/tech-stack-v3.png)
 
 - **`personas/`**  
   User personas and user journey documentation.
