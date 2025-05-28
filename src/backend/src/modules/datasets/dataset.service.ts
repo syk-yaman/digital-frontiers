@@ -117,10 +117,10 @@ export class DatasetsService {
     }
 
     // Update the findByUser method to be more explicit about ownership
-    findByUser(userId: string): Promise<Dataset[]> {
+    async findByUser(userId: string): Promise<Dataset[]> {
         return this.datasetRepository.find({
             where: { user: { id: userId } },
-            relations: ['locations', 'sliderImages', 'tags'],
+            relations: ['locations', 'sliderImages', 'tags', 'user'],
             order: { createdAt: 'DESC' },
         });
     }
@@ -184,7 +184,7 @@ export class DatasetsService {
         // Transform plain object into an instance of CreateDatasetDto
         const createDatasetInstance = plainToInstance(CreateDatasetDto, createDto);
 
-        const user = await this.usersRepository.findOne({ where: { id: createDatasetInstance.userId } });
+        const user = await this.usersRepository.findOne({ where: { id: userContext.userId } });
         if (!user) {
             throw new HttpException('User not found', HttpStatus.NOT_FOUND);
         }
@@ -298,6 +298,11 @@ export class DatasetsService {
                     if (existingTag) {
                         return existingTag;
                     }
+                }
+                // Check by name to avoid duplicates
+                let existingTagByName = await this.tagRepository.findOne({ where: { name: tagDto.name } });
+                if (existingTagByName) {
+                    return existingTagByName;
                 }
                 tagDto.colour = tagDto.colour || `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
                 tagDto.icon = tagDto.icon || '🏷️';
