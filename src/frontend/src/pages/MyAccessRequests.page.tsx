@@ -122,7 +122,13 @@ export function MyAccessRequestsPage() {
                         }}
                     >
                         <Group mb="md">
-                            <Text fw={700} size="lg" style={{ color: '#FFC747' }}>
+                            <Text
+                                fw={700}
+                                size="lg"
+                                style={{ color: '#FFC747', cursor: 'pointer', textDecoration: 'underline' }}
+                                component={Link}
+                                to={`/dataset/${request.dataset.id}`}
+                            >
                                 {request.dataset.name}
                             </Text>
                             <Badge

@@ -28,7 +28,6 @@ const data = [
       { label: 'Facebook', link: 'https://www.facebook.com/queenelizabetholympicpark' },
       { label: 'X', link: 'https://x.com/noordinarypark' },
       { label: 'Instagram', link: 'https://www.instagram.com/queenelizabetholympicpark/' },
-      { label: 'YouTube', link: 'https://www.youtube.com/@NoOrdinaryPark' },
       { label: 'LinkedIn', link: 'https://www.linkedin.com/company/the-london-legacy-development-corporation/' },
       { label: 'TikTok', link: 'https://www.tiktok.com/@noordinarypark' },
     ],
