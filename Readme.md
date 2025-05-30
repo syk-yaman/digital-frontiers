@@ -19,14 +19,12 @@ This repository contains comprehensive documentation and resources for the Digit
     - Architecture
     - Wireframes
     - Tech stack
-    - [Code structure](docs/code-structure.md)
-    - Deployment notes (AWS, EC2, SES, Cloudflare, etc. + future optimisation [EC2 tiers, locations: money vs. performance vs. data protection...])
+    - Code structure
+    - Deployment notes
     - Backlog (next version)
         - Garnet
         - Wisdom layer
-        - Incoming from feedback
-    - Feedbacks
-    - Presentations
+    - Feedbacks and Presentations
 
 ---
 
@@ -96,6 +94,25 @@ Please refer to the LLDC Drive for access to the video.
 
 - **Wireframes & UI Design:**  
   Explore [`wireframes/`](docs/wireframes/) for early-stage UI/UX designs.
+
+---
+
+## 🚀 Deployment Notes
+
+The platform is deployed using the following stack:
+
+- **AWS EC2**: Hosts Docker containers for backend, frontend, and database.
+- **AWS SES**: Handles transactional and notification emails.
+- **Cloudflare**: Sits in front of the reverse proxy for DNS, SSL, and security.
+- **Nginx Proxy Manager**: Used as a reverse proxy to route traffic to the correct services.
+
+### EC2 Tiers & Regions
+
+Currently, the platform runs on an xlarge EC2 instance with 16 GB of RAM. This is sufficient for the expected low user numbers at present, and there are no immediate plans to upgrade.
+
+The deployment uses the `us-east-1` AWS region, which is the most cost-effective option. However, this region does not provide optimal performance for users based in London, as it introduces higher latency.
+
+If user numbers grow significantly, or if data protection requirements (such as GDPR or UK-specific regulations) become more stringent, it may be necessary to migrate to a UK or EU region (e.g., `eu-west-2` for London). This would improve performance for UK-based users and ensure compliance with local data protection laws, but would also increase hosting costs.
 
 ---
 
