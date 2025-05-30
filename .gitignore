@@ -5,3 +5,5 @@ src/backend/uploads
 src/docker-test
 nginx.conf
 .env
+src/node-red/data
+model.json
