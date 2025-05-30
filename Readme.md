@@ -4,26 +4,14 @@ This repository contains comprehensive documentation and resources for the Digit
 
 ---
 
-## 📚 Documentation Structure
+## 📚 Content Guide
 
-- **General video (covers manager and users) (For ID)**
-    - A comprehensive video tutorial about the Digital Frontiers platform is available on LLDC's Drive. The tutorial covers:
-        - Platform introduction and explanation of all features.
-        - How-to-use guides for both normal users and admins.
-        - Overview of admin responsibilities.
-        - User-oriented scenarios, including:
-            - Demonstration of a normal user creating showcases and datasets.
-            - How admins approve requests, with practical notes.
-        - Platform settings, user management, and statistics in the admin dashboard.
-    - Please refer to the LLDC Drive for access to the video.
+- **General video (covers manager and users)**
+    - A comprehensive video tutorial about the Digital Frontiers platform is available on LLDC's Drive.
 
 - **Platform manager**
     - [Admin responsibilities & approval process](docs/admin-responsibilities.md)
-    - Manage datasets & tags
-    - Manage showcases
-    - Manage users
-    - Settings
-
+  
 - **Platform design**
     - Conceptual diagram
     - Database
@@ -42,9 +30,9 @@ This repository contains comprehensive documentation and resources for the Digit
 
 ---
 
-## 📁 `docs/` Folder Structure
+## 📁 docs/ Folder Structure
 
-- **`conceptual-diagram/`**  
+- **Conceptual diagram**
   - [`conceptual-diagram-v2.jpg`](docs/conceptual-diagram/conceptual-diagram-v2.jpg)  
     ![Conceptual Diagram v2](docs/conceptual-diagram/conceptual-diagram-v2.jpg)
   - [`conceptual-diagram.drawio`](docs/conceptual-diagram/conceptual-diagram.drawio)  
@@ -52,21 +40,47 @@ This repository contains comprehensive documentation and resources for the Digit
   - `v2-versioning-plan/`  
     Contains versioning plans and related diagrams.
 
-- **`tech-stack/`**  
-  - [`tech-stack-v3.jpg`](docs/tech-stack/tech-stack-v3.jpg) 
-  ![`tech-stack-v3](docs/tech-stack/tech-stack-v3.png)
+- **Database**
+  - [`ER-Diagram-v3.png`](docs/database/ER-Diagram-v3.png)  
+    Entity-relationship diagram for the platform database.
 
-- **`personas/`**  
-  User personas and user journey documentation.
+- **Personas**
+  - [`personas/`](docs/personas/)  
+    User personas and user journey documentation.
 
-- **`resources/`**  
-  Additional documentation resources and references.
+- **Architecture**
+  - [`libraries-arch.drawio`](docs/libraries-arch.drawio)  
+    Editable diagram file showing the libraries and architecture used in the project.
 
-- **`tech-stack/`**  
-  Details and diagrams about the technology stack used.
+- **Wireframes**
+  - [`wireframes/`](docs/wireframes/)  
+    UI/UX wireframes and design assets.
 
-- **`wireframes/`**  
-  UI/UX wireframes and design assets.
+- **Code structure**
+  - [`tech-stack/`](docs/tech-stack/)  
+    Details and diagrams about the technology stack used.
+  - [`tech-stack-v3.jpg`](docs/tech-stack/tech-stack-v3.jpg)  
+    ![tech-stack-v3](docs/tech-stack/tech-stack-v3.png)
+
+- **License BOM**
+  - [`resources/`](docs/resources/)  
+    Additional documentation resources and references.
+
+---
+
+## 🎥 General Video
+
+A comprehensive video tutorial about the Digital Frontiers platform is available on LLDC's Drive. The tutorial covers:
+
+- Platform introduction and explanation of all features.
+- How-to-use guides for both normal users and admins.
+- Overview of admin responsibilities.
+- User-oriented scenarios, including:
+    - Demonstration of a normal user creating showcases and datasets.
+    - How admins approve requests, with practical notes.
+- Platform settings, user management, and statistics in the admin dashboard.
+
+Please refer to the LLDC Drive for access to the video.
 
 ---
 
