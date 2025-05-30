@@ -1,6 +1,23 @@
-import { Card, Text, Group, SimpleGrid, RingProgress, Progress, Badge } from '@mantine/core';
+import { Card, Text, Group, SimpleGrid, Progress, Badge } from '@mantine/core';
+import { LineChart } from '@mantine/charts';
+import { useEffect, useState } from 'react';
+import axiosInstance from '@/utils/axiosInstance';
 
 export function AdminHome() {
+    const [stats, setStats] = useState<any>(null);
+
+    useEffect(() => {
+        async function fetchStats() {
+            try {
+                const res = await axiosInstance.get('/stats/admin-home');
+                setStats(res.data);
+            } catch (e) {
+                setStats(null);
+            }
+        }
+        fetchStats();
+    }, []);
+
     return (
         <div>
             <Text size="xl" fw={700} mb="lg">
@@ -10,36 +27,29 @@ export function AdminHome() {
                 <Card shadow="sm" padding="lg">
                     <Group justify="space-between" mb="xs">
                         <Text >Total Users</Text>
-                        <Badge color="blue" variant="light">
-                            +5% this month
-                        </Badge>
+
                     </Group>
                     <Text size="xl" w={700}>
-                        145
+                        {stats?.totalUsers ?? '...'}
                     </Text>
                 </Card>
 
                 <Card shadow="sm" padding="lg">
                     <Group justify="space-between" mb="xs">
                         <Text >Datasets Added</Text>
-                        <Badge color="green" variant="light">
-                            +12% this month
-                        </Badge>
+
                     </Group>
                     <Text size="xl" >
-                        342
+                        {stats?.totalDatasets ?? '...'}
                     </Text>
                 </Card>
 
                 <Card shadow="sm" padding="lg">
                     <Group justify="space-between" mb="xs">
                         <Text >Live datasets</Text>
-                        <Badge color="red" variant="light">
-                            -3% this month
-                        </Badge>
                     </Group>
                     <Text size="xl" >
-                        89
+                        {stats?.liveDatasets ?? '...'}
                     </Text>
                 </Card>
             </SimpleGrid>
@@ -50,15 +60,15 @@ export function AdminHome() {
             <SimpleGrid cols={2} spacing="lg" >
                 <Card shadow="sm" padding="lg">
                     <Text mb="xs">
-                        User activated
+                        User growth over time
                     </Text>
-                    <RingProgress
-                        sections={[{ value: 75, color: 'blue' }]}
-                        label={
-                            <Text size="xs" style={{ textAlign: 'center' }}>
-                                75%
-                            </Text>
-                        }
+                    <LineChart
+                        h={220}
+                        data={stats?.userGrowth ?? []}
+                        dataKey="date"
+                        series={[{ name: 'count', color: 'blue', label: 'Users' }]}
+                        withDots
+                        valueFormatter={(value: number) => value.toString()}
                     />
                 </Card>
 
@@ -66,9 +76,9 @@ export function AdminHome() {
                     <Text mb="xs">
                         Dataset approved
                     </Text>
-                    <Progress value={60} color="green" size="lg" />
+                    <Progress value={stats?.approvedPercent ?? 0} color="green" size="lg" />
                     <Text size="sm" mt="xs">
-                        65% of total datasets added
+                        {stats?.approvedPercent ?? 0}% of total datasets added
                     </Text>
                 </Card>
             </SimpleGrid>

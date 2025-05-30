@@ -11,6 +11,7 @@ import { ShowcasesModule } from './modules/showcases/showcases.module';
 import { Showcase, ShowcaseLocation, ShowcaseSliderImage } from './modules/showcases/showcase.entity';
 import { AccessRequestsModule } from './modules/access-requests/access-requests.module';
 import { AccessRequest } from './modules/access-requests/access-request.entity';
+import { StatsModule } from './modules/stats/stats.module';
 
 @Module({
   imports: [
@@ -37,7 +38,8 @@ import { AccessRequest } from './modules/access-requests/access-request.entity';
     AuthModule,
     AuthorisationModule,
     ShowcasesModule,
-    AccessRequestsModule
+    AccessRequestsModule,
+    StatsModule
   ],
   controllers: [],
   providers: [],
