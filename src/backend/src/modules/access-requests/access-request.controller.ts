@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Request, Param, Delete, Get, Put } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Request, Param, Delete, Get, Put, Logger } from '@nestjs/common';
 import { AccessRequestService } from './access-request.service';
 import { CreateAccessRequestDto, ApproveAccessRequestDto } from './access-request.dto';
 import { JwtAuthGuard } from '../authentication/jwt-auth.guard';
@@ -62,7 +62,8 @@ export class AccessRequestController {
     @Get('user/me')
     @UseGuards(JwtAuthGuard)
     async getMyRequests(@Request() req) {
-        return this.accessRequestService.getRequestsForUser(req.user.id);
+        const userId = req.user.userId;
+        return this.accessRequestService.getRequestsForUser(userId);
     }
 
     @ApiBearerAuth()

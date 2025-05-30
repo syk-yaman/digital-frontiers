@@ -29,4 +29,9 @@ axiosInstance.interceptors.response.use(
     }
 );
 
+// Export a plain axios instance for cases where you don't want interceptors (e.g., sign-in page)
+export const plainAxios = axios.create({
+    baseURL: API_BASE_URL,
+});
+
 export default axiosInstance;

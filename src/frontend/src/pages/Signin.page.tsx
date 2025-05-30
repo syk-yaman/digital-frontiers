@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import axiosInstance from '@/utils/axiosInstance';
+import axiosInstance, { plainAxios } from '@/utils/axiosInstance';
 import {
     Container,
     Text,
@@ -49,7 +49,7 @@ export function SigninPage() {
     });
 
     const handleSignIn = () => {
-        axiosInstance
+        plainAxios
             .post(`/auth/signin`, {
                 email: form.values.email,
                 password: form.values.password,

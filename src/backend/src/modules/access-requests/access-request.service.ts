@@ -88,13 +88,16 @@ export class AccessRequestService {
     }
 
     async getRequestsForUser(userId: string): Promise<AccessRequest[]> {
-        return this.accessRequestRepository.find({ where: { user: { id: userId } }, relations: ['dataset'] });
+        return this.accessRequestRepository.find({
+            where: { user: { id: userId } },
+            relations: ['dataset']
+        });
     }
 
     async getRequestForUserAndDataset(userId: string, datasetId: number): Promise<AccessRequest | null> {
         return this.accessRequestRepository.findOne({
             where: { user: { id: userId }, dataset: { id: datasetId } },
-            relations: ['dataset'],
+            relations: ['dataset', 'user'],
         });
     }
 
