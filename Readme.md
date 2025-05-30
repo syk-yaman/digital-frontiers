@@ -18,8 +18,8 @@ This repository contains comprehensive documentation and resources for the Digit
     - Personas
     - Architecture
     - Wireframes
-    - Code structure
-    - License BOM
+    - Tech stack
+    - [Code structure](docs/code-structure.md)
     - Deployment notes (AWS, EC2, SES, Cloudflare, etc. + future optimisation [EC2 tiers, locations: money vs. performance vs. data protection...])
     - Backlog (next version)
         - Garnet
@@ -56,15 +56,14 @@ This repository contains comprehensive documentation and resources for the Digit
   - [`wireframes/`](docs/wireframes/)  
     UI/UX wireframes and design assets.
 
-- **Code structure**
+- **Tech stack**
   - [`tech-stack/`](docs/tech-stack/)  
     Details and diagrams about the technology stack used.
-  - [`tech-stack-v3.jpg`](docs/tech-stack/tech-stack-v3.jpg)  
-    ![tech-stack-v3](docs/tech-stack/tech-stack-v3.png)
+  - [`tech-stack-v3.jpg`](docs/tech-stack/tech-stack-v4.jpg)  
+    ![tech-stack-v3](docs/tech-stack/tech-stack-v4.png)
 
-- **License BOM**
-  - [`resources/`](docs/resources/)  
-    Additional documentation resources and references.
+- **Code structure**
+  - See [`docs/code-structure.md`](docs/code-structure.md) for the detailed code structure documentation.
 
 ---
 
