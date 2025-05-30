@@ -1,16 +1,48 @@
 # Digital Frontiers Documentation Overview
 
-This repository contains comprehensive documentation and resources for the Digital Frontiers platform. Below is an overview of the contents of the [`docs/`](docs/) folder, including visual assets and diagrams that illustrate the system architecture, conceptual models, and other key aspects of the project.
+This repository contains comprehensive documentation and resources for the Digital Frontiers platform.
+
+---
+
+## 📚 Documentation Structure
+
+- **General video (covers manager and users) (For ID)**
+    - A comprehensive video tutorial about the Digital Frontiers platform is available on LLDC's Drive. The tutorial covers:
+        - Platform introduction and explanation of all features.
+        - How-to-use guides for both normal users and admins.
+        - Overview of admin responsibilities.
+        - User-oriented scenarios, including:
+            - Demonstration of a normal user creating showcases and datasets.
+            - How admins approve requests, with practical notes.
+        - Platform settings, user management, and statistics in the admin dashboard.
+    - Please refer to the LLDC Drive for access to the video.
+
+- **Platform manager**
+    - [Admin responsibilities & approval process](docs/admin-responsibilities.md)
+    - Manage datasets & tags
+    - Manage showcases
+    - Manage users
+    - Settings
+
+- **Platform design**
+    - Conceptual diagram
+    - Database
+    - Personas
+    - Architecture
+    - Wireframes
+    - Code structure
+    - License BOM
+    - Deployment notes (AWS, EC2, SES, Cloudflare, etc. + future optimisation [EC2 tiers, locations: money vs. performance vs. data protection...])
+    - Backlog (next version)
+        - Garnet
+        - Wisdom layer
+        - Incoming from feedback
+    - Feedbacks
+    - Presentations
 
 ---
 
 ## 📁 `docs/` Folder Structure
-
-- **[`libraries-arch.drawio`](docs/libraries-arch.drawio)**  
-  Editable diagram file showing the libraries and architecture used in the project.
-
-- **[`PermissionMatrix.md`](docs/PermissionMatrix.md)**  
-  Markdown table outlining user roles and permissions across the platform.
 
 - **`conceptual-diagram/`**  
   - [`conceptual-diagram-v2.jpg`](docs/conceptual-diagram/conceptual-diagram-v2.jpg)  
@@ -38,29 +70,6 @@ This repository contains comprehensive documentation and resources for the Digit
 
 ---
 
-## 📸 Visual Documentation
-
-Below are some of the key diagrams and images included in the documentation:
-
-### System Architecture
-
-![Libraries Architecture](docs/libraries-arch.drawio)
-
-### Conceptual Diagrams
-
-- **Version 0:**  
-  ![Conceptual Diagram v0](docs/conceptual-diagram/conceptual-diagram-v0.png)
-- **Version 1:**  
-  ![Conceptual Diagram v1](docs/conceptual-diagram/conceptual-diagram-v1.jpg)
-- **Version 2:**  
-  ![Conceptual Diagram v2](docs/conceptual-diagram/conceptual-diagram-v2.jpg)
-
-### Database Design
-
-![ER Diagram v3](docs/database/ER-Diagram-v3.png)
-
----
-
 ## 📄 Other Documentation
 
 - **Permission Matrix:**  
@@ -74,22 +83,6 @@ Below are some of the key diagrams and images included in the documentation:
 
 - **Wireframes & UI Design:**  
   Explore [`wireframes/`](docs/wireframes/) for early-stage UI/UX designs.
-
----
-
-## 🎥 Video Tutorial
-
-A comprehensive video tutorial about the Digital Frontiers platform is available on LLDC's Drive. The tutorial covers:
-
-- Platform introduction and explanation of all features.
-- How-to-use guides for both normal users and admins.
-- Overview of admin responsibilities.
-- User-oriented scenarios, including:
-  - Demonstration of a normal user creating showcases and datasets.
-  - How admins approve requests, with practical notes.
-- Platform settings, user management, and statistics in the admin dashboard.
-
-Please refer to the LLDC Drive for access to the video.
 
 ---
 
