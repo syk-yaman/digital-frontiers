@@ -93,19 +93,19 @@ services:
     env_file:
       - .env
 
-  nodered:
-    image: nodered/node-red:latest
-    container_name: nodered
-    ports:
-      - "1880:1880"
-    volumes:
-      - ./node-red-data:/data
-      - ./settings.js:/data/settings.js   # Optional: custom settings
-    restart: unless-stopped
-    networks:
-      - df-network
-    env_file:
-      - .env
+  #nodered:
+  #  image: nodered/node-red:latest
+  #  container_name: nodered
+  #  ports:
+  #    - "1880:1880"
+  #  volumes:
+  #    - ./node-red-data:/data
+  #    - ./settings.js:/data/settings.js   # Optional: custom settings
+  #  restart: unless-stopped
+  #  networks:
+  #    - df-network
+  #  env_file:
+  #    - .env
 
 networks:
   df-network:

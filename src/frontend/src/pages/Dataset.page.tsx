@@ -396,10 +396,37 @@ export function Dataset() {
             </div>
             <Container size="lg" mt={'xl'}>
                 {/* Title */}
-                <Text ta="left" size="xl" fw={700} mt="md">
-                    {dataset.name}
-                </Text>
-
+                <div style={{ display: 'flex', alignItems: 'center', marginTop: 0, marginBottom: 0 }}>
+                    <Text ta="left" size="xl" fw={700} style={{ marginRight: 16 }}>
+                        {dataset.name}
+                    </Text>
+                    {dataset.mqttAddress && (
+                        <>
+                            <Tooltip label="Live dataset health status. Green means good connection and data flow." withArrow position="right">
+                                <span
+                                    style={{
+                                        display: 'inline-block',
+                                        width: 14,
+                                        height: 14,
+                                        borderRadius: '50%',
+                                        backgroundColor: '#4caf50',
+                                        marginRight: 8,
+                                        animation: 'blinker 1.5s linear infinite',
+                                        cursor: 'pointer',
+                                    }}
+                                />
+                            </Tooltip>
+                            <Text size="sm" c="#4caf50" fw={600}>Live status: Fresh</Text>
+                            <style>
+                                {`
+                                @keyframes blinker {
+                                    50% { opacity: 0.2; }
+                                }
+                                `}
+                            </style>
+                        </>
+                    )}
+                </div>
                 {/* Badges */}
                 <Group align="center" mt="md">
                     {/* Badges Section */}

@@ -1,5 +1,19 @@
-export const version = 'v0.5.1'
+export const version = 'v1.0'
 export const changelog = [
+    {
+        version: 'v0.6',
+        changes: [
+            "Main release.",
+        ],
+    },
+    {
+        version: 'v0.6',
+        changes: [
+            "Bug fixes for controlled datasets.",
+            "Another upgrade for the authorisation system.",
+            "Changed main logo.",
+        ],
+    },
     {
         version: 'v0.5.1',
         changes: [
