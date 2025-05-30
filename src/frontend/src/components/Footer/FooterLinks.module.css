@@ -6,7 +6,7 @@
 }
 
 .logo {
-  max-width: 200px;
+  max-width: 380px;
 
   @media (max-width: $mantine-breakpoint-sm) {
     display: flex;

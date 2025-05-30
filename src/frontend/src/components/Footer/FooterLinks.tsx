@@ -1,52 +1,72 @@
 import { IconBrandInstagram, IconBrandTwitter, IconBrandYoutube } from '@tabler/icons-react';
 import { ActionIcon, Container, Group, Text } from '@mantine/core';
 import { MantineLogo } from '@mantinex/mantine-logo';
+import { Link as RouterLink } from 'react-router-dom';
 import classes from './FooterLinks.module.css';
 
 const data = [
   {
-    title: 'About',
+    title: 'Links',
     links: [
-      { label: 'Home', link: '#' },
-      { label: 'Data menu', link: '#' },
-      { label: 'Showcases', link: '#' },
-      { label: 'About', link: '#' },
+      { label: 'Home', link: '/' },
+      { label: 'Data menu', link: '/data-menu' },
+      { label: 'Showcases', link: '/showcases' },
+      { label: 'About', link: '/about' },
     ],
   },
   {
-    title: 'Project',
+    title: 'Open Source',
     links: [
-      { label: 'Contribute', link: '#' },
-      { label: 'Media assets', link: '#' },
-      { label: 'Changelog', link: '#' },
-      { label: 'Releases', link: '#' },
+      { label: 'GitHub repository', link: 'https://github.com/syk-yaman/digital-frontiers' },
+      { label: 'GitHub discussions', link: 'https://github.com/syk-yaman/digital-frontiers/issues' },
     ],
   },
   {
-    title: 'Community',
+    title: 'Stay in touch',
     links: [
-      { label: 'Follow on Bluesky', link: '#' },
-      { label: 'Follow on Twitter', link: '#' },
-      { label: 'Email newsletter', link: '#' },
-      { label: 'GitHub discussions', link: '#' },
+      { label: 'Facebook', link: 'https://www.facebook.com/queenelizabetholympicpark' },
+      { label: 'X', link: 'https://x.com/noordinarypark' },
+      { label: 'Instagram', link: 'https://www.instagram.com/queenelizabetholympicpark/' },
+      { label: 'YouTube', link: 'https://www.youtube.com/@NoOrdinaryPark' },
+      { label: 'LinkedIn', link: 'https://www.linkedin.com/company/the-london-legacy-development-corporation/' },
+      { label: 'TikTok', link: 'https://www.tiktok.com/@noordinarypark' },
     ],
   },
 ];
 
 export function FooterLinks() {
   const groups = data.map((group) => {
-    const links = group.links.map((link, index) => (
-      <Text<'a'>
-        key={index}
-        className={classes.link}
-        component="a"
-        href={link.link}
-        onClick={(event) => event.preventDefault()}
-        c="white"
-      >
-        {link.label}
-      </Text>
-    ));
+    const links = group.links.map((link, index) => {
+      // Use RouterLink for internal links, <a> for external
+      const isExternal = link.link.startsWith('http');
+      if (isExternal) {
+        return (
+          <Text<'a'>
+            key={index}
+            className={classes.link}
+            component="a"
+            href={link.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            c="white"
+          >
+            {link.label}
+          </Text>
+        );
+      } else {
+        return (
+          <Text
+            key={index}
+            className={classes.link}
+            component={RouterLink}
+            to={link.link}
+            c="white"
+          >
+            {link.label}
+          </Text>
+        );
+      }
+    });
 
     return (
       <div className={classes.wrapper} key={group.title}>
@@ -63,27 +83,15 @@ export function FooterLinks() {
           <Text fw={700} c="white" size="lg">Digital Frontiers</Text>
 
           <Text size="xs" c="white" className={classes.description}>
-            A DaaS platform for the Olympic Park
+            A Data-as-a-Service (DaaS) platform for the Queen Elizabeth Olympic Park Innovation District
           </Text>
         </div>
         <div className={classes.groups}>{groups}</div>
       </Container>
       <Container className={classes.afterFooter}>
         <Text c="white" size="sm">
-          <span style={{ color: '#FFC747' }}>©</span> 2025 LLDC.  All rights reserved.
+          <span style={{ color: '#FFC747' }}>©</span> {new Date().getFullYear()} LLDC.  All rights reserved.
         </Text>
-
-        <Group gap={0} className={classes.social} justify="flex-end" wrap="nowrap">
-          <ActionIcon size="lg" color="#FFC747" variant="subtle">
-            <IconBrandTwitter size={18} stroke={1.5} />
-          </ActionIcon>
-          <ActionIcon size="lg" color="#FFC747" variant="subtle">
-            <IconBrandYoutube size={18} stroke={1.5} />
-          </ActionIcon>
-          <ActionIcon size="lg" color="#FFC747" variant="subtle">
-            <IconBrandInstagram size={18} stroke={1.5} />
-          </ActionIcon>
-        </Group>
       </Container>
     </footer>
   );
