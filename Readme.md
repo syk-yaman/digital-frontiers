@@ -20,9 +20,10 @@ This repository contains comprehensive documentation and resources for the Digit
     - Wireframes
     - Tech stack
     - Code structure
-    - Deployment notes
+    - [Deployment notes](docs/deployment-notes.md)
     - Backlog (next version)
         - [Next version: Garnet & Wisdom layer](docs/next-version.md)
+    - BOM (Bill of Materials)
     - Feedbacks and Presentations
 
 ---
@@ -96,22 +97,20 @@ Please refer to the LLDC Drive for access to the video.
 
 ---
 
-## 🚀 Deployment Notes
+## 📦 Bill of Materials (BOM)
 
-The platform is deployed using the following stack:
+For a full list of dependencies and build/runtime requirements, see:
+- [Dockerfiles](./Dockerfile)
+- [Backend package.json](./src/backend/package.json)
+- [Frontend package.json](./src/frontend/package.json)
 
-- **AWS EC2**: Hosts Docker containers for backend, frontend, and database.
-- **AWS SES**: Handles transactional and notification emails.
-- **Cloudflare**: Sits in front of the reverse proxy for DNS, SSL, and security.
-- **Nginx Proxy Manager**: Used as a reverse proxy to route traffic to the correct services.
+---
 
-### EC2 Tiers & Regions
+## 📢 Feedbacks and Presentations
 
-Currently, the platform runs on an xlarge EC2 instance with 16 GB of RAM. This is sufficient for the expected low user numbers at present, and there are no immediate plans to upgrade.
-
-The deployment uses the `us-east-1` AWS region, which is the most cost-effective option. However, this region does not provide optimal performance for users based in London, as it introduces higher latency.
-
-If user numbers grow significantly, or if data protection requirements (such as GDPR or UK-specific regulations) become more stringent, it may be necessary to migrate to a UK or EU region (e.g., `eu-west-2` for London). This would improve performance for UK-based users and ensure compliance with local data protection laws, but would also increase hosting costs.
+Feedbacks and presentations are available in the shared Drive folder.  
+- **Feedbacks**: Collected from the "Here and There" workshop at UCL, which had strong user engagement and valuable insights.
+- **Presentations**: All major presentations and slides are also included in the Drive.
 
 ---
 
