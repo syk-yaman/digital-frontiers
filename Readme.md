@@ -66,11 +66,30 @@ Below are some of the key diagrams and images included in the documentation:
 - **Permission Matrix:**  
   See [`PermissionMatrix.md`](docs/PermissionMatrix.md) for a detailed breakdown of user roles and access rights.
 
+- **Admin Responsibilities & Approval Process:**  
+  See [`admin-responsibilities.md`](docs/admin-responsibilities.md) for a comprehensive guide to admin tasks, approvals, and management features.
+
 - **Personas & User Journeys:**  
   The [`personas/`](docs/personas/) folder contains documents describing typical users and their interactions with the platform.
 
 - **Wireframes & UI Design:**  
   Explore [`wireframes/`](docs/wireframes/) for early-stage UI/UX designs.
+
+---
+
+## 🎥 Video Tutorial
+
+A comprehensive video tutorial about the Digital Frontiers platform is available on LLDC's Drive. The tutorial covers:
+
+- Platform introduction and explanation of all features.
+- How-to-use guides for both normal users and admins.
+- Overview of admin responsibilities.
+- User-oriented scenarios, including:
+  - Demonstration of a normal user creating showcases and datasets.
+  - How admins approve requests, with practical notes.
+- Platform settings, user management, and statistics in the admin dashboard.
+
+Please refer to the LLDC Drive for access to the video.
 
 ---
 
