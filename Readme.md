@@ -22,8 +22,7 @@ This repository contains comprehensive documentation and resources for the Digit
     - Code structure
     - Deployment notes
     - Backlog (next version)
-        - Garnet
-        - Wisdom layer
+        - [Next version: Garnet & Wisdom layer](docs/next-version.md)
     - Feedbacks and Presentations
 
 ---
@@ -39,7 +38,7 @@ This repository contains comprehensive documentation and resources for the Digit
     Contains versioning plans and related diagrams.
 
 - **Database**
-  - [`ER-Diagram-v3.png`](docs/database/ER-Diagram-v3.png)  
+  - [`ER-Diagram-v6.png`](docs/database/ER-Diagram-v6.png)  
     Entity-relationship diagram for the platform database.
 
 - **Personas**
