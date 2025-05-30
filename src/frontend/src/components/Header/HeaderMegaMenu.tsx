@@ -312,7 +312,8 @@ export function HeaderMegaMenu() {
                 fontWeight: 'normal',
                 padding: '2px 0px',
                 transition: 'all 0.3s ease',
-                fontSize: '13px'
+                fontSize: '13px',
+                visibility: 'hidden'
               }}
               onClick={openModal}>
               {version}
