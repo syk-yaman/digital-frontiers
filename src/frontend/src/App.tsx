@@ -37,53 +37,58 @@ import { MyShowcasesPage } from './pages/MyShowcases.page';
 import { MyAccessRequestsPage } from './pages/MyAccessRequests.page';
 import { AdminAccessRequestsPage } from './pages/AdminAccessRequests.page';
 import { AboutPage } from './pages/About.page';
+import { AdminSettingsPage } from './pages/AdminSettings.page';
+import { SettingsProvider } from './context/SettingsContext';
 
 export default function App() {
   return (
     <AuthProvider>
-      <MantineProvider
-        theme={{
-          fontFamily: 'Public Sans, sans-serif',
-          colors: {},
-        }}
-        defaultColorScheme="dark"
-      >
-        <BrowserRouter>
-          <ScrollToTop />
-          <Notifications />
-          <HeaderMegaMenu />
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/data-menu" element={<Datamenu />} />
-            <Route path="/data-menu/tag/:tagId" element={<TagDatasets />} />
-            <Route path="/dataset/:id" element={<Dataset />} />
-            <Route path="/showcases" element={<ShowcasesPage />} />
-            <Route path="/showcase/:id" element={<ShowcasePage />} />
-            <Route path="/signin" element={<SigninPage />} />
-            <Route path="/add-dataset" element={<PrivateRoute><AddDatasetPage /></PrivateRoute>} />
-            <Route path="/edit-dataset/:id" element={<PrivateRoute><AddDatasetPage /></PrivateRoute>} />
-            <Route path="/add-showcase" element={<PrivateRoute><AddShowcase /></PrivateRoute>} />
-            <Route path="/edit-showcase/:id" element={<PrivateRoute><AddShowcase /></PrivateRoute>} />
-            <Route path="/admin" element={<PrivateAdminRoute><AdminPage /></PrivateAdminRoute>}>
-              <Route index element={<PrivateAdminRoute><AdminHome /></PrivateAdminRoute>} />
-              <Route path="datasets" element={<PrivateAdminRoute><AdminDatasets /></PrivateAdminRoute>} />
-              <Route path="datasets/requests" element={<PrivateAdminRoute><AdminDatasetRequests /></PrivateAdminRoute>} />
-              <Route path="datasets/access-requests" element={<PrivateAdminRoute><AdminAccessRequestsPage /></PrivateAdminRoute>} />
-              <Route path="tags" element={<PrivateAdminRoute><AdminTags /></PrivateAdminRoute>} />
-              <Route path="tags/requests" element={<PrivateAdminRoute><AdminTagRequests /></PrivateAdminRoute>} />
-              <Route path="showcases" element={<PrivateAdminRoute><AdminShowcases /></PrivateAdminRoute>} />
-              <Route path="showcases/requests" element={<PrivateAdminRoute><AdminShowcaseRequests /></PrivateAdminRoute>} />
-              <Route path="users" element={<PrivateAdminRoute><AdminUsers /></PrivateAdminRoute>} />
-            </Route>
-            <Route path="/terms" element={<TermsPage />} />
-            <Route path="/my-datasets" element={<PrivateRoute><MyDatasetsPage /></PrivateRoute>} />
-            <Route path="/my-showcases" element={<PrivateRoute><MyShowcasesPage /></PrivateRoute>} />
-            <Route path="/my-access-requests" element={<PrivateRoute><MyAccessRequestsPage /></PrivateRoute>} />
-            <Route path="/about" element={<AboutPage />} />
-          </Routes>
-          <FooterLinks />
-        </BrowserRouter>
-      </MantineProvider>
+      <SettingsProvider>
+        <MantineProvider
+          theme={{
+            fontFamily: 'Public Sans, sans-serif',
+            colors: {},
+          }}
+          defaultColorScheme="dark"
+        >
+          <BrowserRouter>
+            <ScrollToTop />
+            <Notifications />
+            <HeaderMegaMenu />
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/data-menu" element={<Datamenu />} />
+              <Route path="/data-menu/tag/:tagId" element={<TagDatasets />} />
+              <Route path="/dataset/:id" element={<Dataset />} />
+              <Route path="/showcases" element={<ShowcasesPage />} />
+              <Route path="/showcase/:id" element={<ShowcasePage />} />
+              <Route path="/signin" element={<SigninPage />} />
+              <Route path="/add-dataset" element={<PrivateRoute><AddDatasetPage /></PrivateRoute>} />
+              <Route path="/edit-dataset/:id" element={<PrivateRoute><AddDatasetPage /></PrivateRoute>} />
+              <Route path="/add-showcase" element={<PrivateRoute><AddShowcase /></PrivateRoute>} />
+              <Route path="/edit-showcase/:id" element={<PrivateRoute><AddShowcase /></PrivateRoute>} />
+              <Route path="/admin" element={<PrivateAdminRoute><AdminPage /></PrivateAdminRoute>}>
+                <Route index element={<PrivateAdminRoute><AdminHome /></PrivateAdminRoute>} />
+                <Route path="datasets" element={<PrivateAdminRoute><AdminDatasets /></PrivateAdminRoute>} />
+                <Route path="datasets/requests" element={<PrivateAdminRoute><AdminDatasetRequests /></PrivateAdminRoute>} />
+                <Route path="datasets/access-requests" element={<PrivateAdminRoute><AdminAccessRequestsPage /></PrivateAdminRoute>} />
+                <Route path="tags" element={<PrivateAdminRoute><AdminTags /></PrivateAdminRoute>} />
+                <Route path="tags/requests" element={<PrivateAdminRoute><AdminTagRequests /></PrivateAdminRoute>} />
+                <Route path="showcases" element={<PrivateAdminRoute><AdminShowcases /></PrivateAdminRoute>} />
+                <Route path="showcases/requests" element={<PrivateAdminRoute><AdminShowcaseRequests /></PrivateAdminRoute>} />
+                <Route path="users" element={<PrivateAdminRoute><AdminUsers /></PrivateAdminRoute>} />
+                <Route path="settings" element={<PrivateAdminRoute><AdminSettingsPage /></PrivateAdminRoute>} />
+              </Route>
+              <Route path="/terms" element={<TermsPage />} />
+              <Route path="/my-datasets" element={<PrivateRoute><MyDatasetsPage /></PrivateRoute>} />
+              <Route path="/my-showcases" element={<PrivateRoute><MyShowcasesPage /></PrivateRoute>} />
+              <Route path="/my-access-requests" element={<PrivateRoute><MyAccessRequestsPage /></PrivateRoute>} />
+              <Route path="/about" element={<AboutPage />} />
+            </Routes>
+            <FooterLinks />
+          </BrowserRouter>
+        </MantineProvider>
+      </SettingsProvider>
     </AuthProvider>
   );
 }

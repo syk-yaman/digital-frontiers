@@ -12,6 +12,7 @@ const data = [
       { label: 'Data menu', link: '/data-menu' },
       { label: 'Showcases', link: '/showcases' },
       { label: 'About', link: '/about' },
+      { label: 'Terms of Service', link: '/terms' },
     ],
   },
   {

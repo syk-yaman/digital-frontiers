@@ -11,6 +11,7 @@ import { LinksGroup } from '@/components/NavbarLinksGroup/NavbarLinksGroup';
 import { changelog, version } from '@/components/Header/changelog';
 import { useDisclosure } from '@mantine/hooks';
 import { Outlet, NavLink } from 'react-router-dom';
+import { AdminSettingsPage } from './AdminSettings.page';
 
 const menuData = [
     {

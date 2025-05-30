@@ -25,6 +25,7 @@ import '@mantine/notifications/styles.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import axiosInstance from '@/utils/axiosInstance';
 import { AuthContext } from '@/context/AuthContext';
+import { useSettings } from '@/context/SettingsContext';
 
 
 const INITIAL_VIEW_STATE = {
@@ -58,6 +59,7 @@ export function AddDatasetPage() {
     const { id: datasetId } = useParams(); // Get dataset ID from URL
     const [isEditMode, setIsEditMode] = useState(false); // Track if in edit mode
     const [loadingDataset, setLoadingDataset] = useState(false); // Track dataset loading state
+    const { settings } = useSettings();
 
     useEffect(() => {
         if (datasetId) {
@@ -1019,7 +1021,9 @@ export function AddDatasetPage() {
                     <Center mt="xl" style={{ flexDirection: 'column', textAlign: 'center' }}>
                         <Text size="lg">Part 4: Confirmation</Text>
                         <Text c="dimmed" size="sm" mb="lg">
-                            Please review all the information you have provided. If everything looks good, click the button below to submit your dataset for approval.
+                            {settings?.dataset_submission_message?.trim()
+                                ? settings.dataset_submission_message
+                                : 'Please review all the information you have provided. If everything looks good, click the button below to submit your dataset for approval.'}
                         </Text>
                     </Center>
                     <Center mt="xl">

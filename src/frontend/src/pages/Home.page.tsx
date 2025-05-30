@@ -12,73 +12,7 @@ import { Notifications, notifications } from '@mantine/notifications';
 import axiosInstance from '@/utils/axiosInstance';
 import { DatasetCard } from '@/components/DatasetCard';
 import { HomeShowcaseCard } from '@/components/HomeShowcaseCard';
-
-const partners = [
-  {
-    id: 1,
-    title: 'University College London',
-    date: '',
-    imageUrl:
-      'https://www.ucl.ac.uk/brand/sites/brand/files/styles/small_image/public/ucl-logo-black-on-grey.jpg?itok=ooOI6Tcx',
-  },
-  {
-    id: 2,
-    title: 'Queen Elizabeth Park',
-    date: '',
-    imageUrl:
-      'https://www.stratfordcross.co.uk/globalassets/uk/stratford-cross/eat-drink-shop-play/logos/amenity_logos_queen-elizabeth.jpg?width=300&height=400&upscale=false&mode=max&quality=80',
-  },
-  {
-    id: 3,
-    title: 'Greater London Authority',
-    date: '',
-    imageUrl:
-      'https://www.siriusopensource.com/sites/default/files/2020-04/gla_0.png',
-  },
-  {
-    id: 4,
-    title: 'Amazon Web Services',
-    date: '',
-    imageUrl:
-      'https://i0.wp.com/experientialexecutive.com/wp-content/uploads/2023/02/AWS-Logo-Gray.png',
-  },
-];
-
-interface DatasetItem {
-  id: number;
-  name: string;
-  dataOwnerName: string;
-  dataOwnerEmail: string;
-  dataOwnerPhoto: string;
-  datasetType: string;
-  description: string;
-  updateFrequency: number;
-  updateFrequencyUnit: string;
-  dataExample: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-  links: any[]; // Replace 'any' with a proper type if you know the structure
-  locations: any[];
-  sliderImages: { id: number; fileName: string }[];
-  tags: { id: number; name: string; colour: string; icon: string }[];
-  lastReading: string;
-}
-
-interface ShowcaseItem {
-  id: number;
-  title: string;
-  description: string;
-  youtubeLink?: string;
-  createdAt: string;
-  sliderImages: { id: number; fileName: string; isTeaser: boolean }[];
-  user: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    photoUrl?: string;
-  };
-}
+import { useSettings } from '@/context/SettingsContext';
 
 export function HomePage() {
   const PRIMARY_COL_HEIGHT = '600px';
@@ -92,6 +26,99 @@ export function HomePage() {
   const [isFading, setIsFading] = useState(false);
 
   const [latestShowcases, setLatestShowcases] = useState<ShowcaseItem[]>([]);
+
+  const { settings } = useSettings();
+
+  // Use partners from settings if available, otherwise fallback
+  let partners: any[] = [];
+  if (settings?.partners) {
+    let raw = settings.partners;
+    if (typeof raw === 'string') {
+      try {
+        raw = JSON.parse(raw);
+      } catch {
+        raw = [];
+      }
+    }
+    partners = Array.isArray(raw) ? raw : [];
+  }
+  if (!partners.length) {
+    partners = [
+      {
+        id: 1,
+        name: 'University College London',
+        date: '',
+        imageLink:
+          'https://www.ucl.ac.uk/brand/sites/brand/files/styles/small_image/public/ucl-logo-black-on-grey.jpg?itok=ooOI6Tcx',
+      },
+      {
+        id: 2,
+        name: 'Queen Elizabeth Park',
+        date: '',
+        imageLink:
+          'https://www.stratfordcross.co.uk/globalassets/uk/stratford-cross/eat-drink-shop-play/logos/amenity_logos_queen-elizabeth.jpg?width=300&height=400&upscale=false&mode=max&quality=80',
+      },
+      {
+        id: 3,
+        name: 'Greater London Authority',
+        date: '',
+        imageLink:
+          'https://www.siriusopensource.com/sites/default/files/2020-04/gla_0.png',
+      },
+      {
+        id: 4,
+        name: 'Amazon Web Services',
+        date: '',
+        imageLink:
+          'https://i0.wp.com/experientialexecutive.com/wp-content/uploads/2023/02/AWS-Logo-Gray.png',
+      },
+    ];
+  }
+
+  // Use hero_main_text and hero_secondary_text from settings if available
+  const heroMainText = settings?.hero_main_text?.trim()
+    ? settings.hero_main_text
+    : 'A Data Platform for <span style="color: #FFC747;">Digital Innovators</span> to Collaborate, Test and Showcase';
+
+  const heroSecondaryText = settings?.hero_secondary_text?.trim()
+    ? settings.hero_secondary_text
+    : 'Digital Frontiers provides innovators with a set of curated data streams and product showcasing tools. <br />All data is hyperlocal, co-located in Queen Elizabeth Olympic Park and is ready for plug and play collaboration.';
+
+  interface DatasetItem {
+    id: number;
+    name: string;
+    dataOwnerName: string;
+    dataOwnerEmail: string;
+    dataOwnerPhoto: string;
+    datasetType: string;
+    description: string;
+    updateFrequency: number;
+    updateFrequencyUnit: string;
+    dataExample: string;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string | null;
+    links: any[]; // Replace 'any' with a proper type if you know the structure
+    locations: any[];
+    sliderImages: { id: number; fileName: string }[];
+    tags: { id: number; name: string; colour: string; icon: string }[];
+    lastReading: string;
+  }
+
+  interface ShowcaseItem {
+    id: number;
+    title: string;
+    description: string;
+    youtubeLink?: string;
+    createdAt: string;
+    sliderImages: { id: number; fileName: string; isTeaser: boolean }[];
+    user: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      photoUrl?: string;
+    };
+  }
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -212,9 +239,10 @@ export function HomePage() {
         <div style={{ marginRight: '5%', marginLeft: '5%' }}>
 
           <Text ta="center" className='title' c="white" fw={500} >
-            A Data Platform for <span style={{ color: '#FFC747' }}>Digital Innovators</span> to Collaborate, Test and Showcase</Text>
-          <Text ta="center" size="lg" c="white" style={{ "marginLeft": "50px", "marginRight": "50px" }} >
-            Digital Frontiers provides innovators with a set of curated data streams and product showcasing tools. <br />All data is hyperlocal, co-located in Queen Elizabeth Olympic Park and is ready for plug and play collaboration.
+            <span dangerouslySetInnerHTML={{ __html: heroMainText }} />
+          </Text>
+          <Text ta="center" size="lg" c="white" style={{ marginLeft: "50px", marginRight: "50px" }}>
+            <span dangerouslySetInnerHTML={{ __html: heroSecondaryText }} />
           </Text>
           <Space h="xl" />
           <Space h="xl" />
@@ -434,13 +462,11 @@ export function HomePage() {
                   className={'.card'}
                 >
                   <AspectRatio ratio={1920 / 1080}>
-                    <Image src={partner.imageUrl} />
+                    <Image src={partner.imageLink} />
                   </AspectRatio>
-                  <Text c="white" size="xs" tt="uppercase" fw={700} mt="md">
-                    {partner.date}
-                  </Text>
+
                   <Text c="white" className={'.title'} mt={5}>
-                    {partner.title}
+                    {partner.name}
                   </Text>
                 </Card>
               ))}
@@ -452,3 +478,4 @@ export function HomePage() {
     </>
   );
 }
+

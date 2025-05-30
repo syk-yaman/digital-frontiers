@@ -12,6 +12,8 @@ import { Showcase, ShowcaseLocation, ShowcaseSliderImage } from './modules/showc
 import { AccessRequestsModule } from './modules/access-requests/access-requests.module';
 import { AccessRequest } from './modules/access-requests/access-request.entity';
 import { StatsModule } from './modules/stats/stats.module';
+import { SettingsModule } from './modules/settings/settings.module';
+import { Setting } from './modules/settings/settings.entity';
 
 @Module({
   imports: [
@@ -26,7 +28,7 @@ import { StatsModule } from './modules/stats/stats.module';
         User,
         Dataset, DatasetLink, DatasetLocation, DatasetSliderImage, DatasetTag,
         Showcase, ShowcaseSliderImage, ShowcaseLocation,
-        AccessRequest
+        AccessRequest, Setting
       ],
       synchronize: false, //to be off in production
       migrations: ['src/database/migrations/*-migration.ts'],
@@ -39,6 +41,7 @@ import { StatsModule } from './modules/stats/stats.module';
     AuthorisationModule,
     ShowcasesModule,
     AccessRequestsModule,
+    SettingsModule,
     StatsModule
   ],
   controllers: [],
