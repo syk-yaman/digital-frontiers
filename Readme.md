@@ -100,7 +100,7 @@ Please refer to the LLDC Drive for access to the video.
 ## 📦 Bill of Materials (BOM)
 
 For a full list of dependencies and build/runtime requirements, see:
-- [Dockerfiles](./Dockerfile)
+- [Dockerfiles](./src/docker-compose.yml)
 - [Backend package.json](./src/backend/package.json)
 - [Frontend package.json](./src/frontend/package.json)
 
