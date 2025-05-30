@@ -1,5 +1,7 @@
 # Digital Frontiers Documentation Overview
 
+![Digital Frontiers Home](docs/DigitalFrontiersHome.png)
+
 This repository contains comprehensive documentation and resources for the Digital Frontiers platform.
 
 ---
