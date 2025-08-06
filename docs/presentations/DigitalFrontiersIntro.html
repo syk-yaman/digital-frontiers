@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Digital Frontiers - An Open-Source Data-as-a-Service Platform</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reset.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/simple.min.css">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/monokai.min.css">
+
+    <style>
+        /* Custom styles with updated color scheme */
+        :root {
+            --r-main-font: "Inter", sans-serif;
+            --r-heading-font: "Inter", sans-serif;
+            --r-main-font-size: 32px;
+
+            /* Color scheme with consistent usage mapping */
+            --df-teal: #1C5350;
+            /* Primary text, borders, footers */
+            --df-gold: #FFC747;
+            /* Highlights, accents, emphasis */
+            --df-mint: #00C399;
+            /* Main section slides, buttons */
+            --df-gray: #DFDFDF;
+            /* Inner/subsection slides, neutral backgrounds */
+        }
+
+        .reveal .slides section {
+            text-align: left;
+            /* Ensure full slide coverage */
+        }
+
+        .reveal h1,
+        .reveal h2,
+        .reveal h3 {
+            text-transform: none;
+            font-weight: 700;
+            color: var(--df-teal);
+        }
+
+        .section-header {
+            border-bottom: 3px solid var(--df-gold);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        /* Accent/tint only: gold for borders, highlights, not backgrounds */
+        .reveal .slides section.accent-section {
+            /* Use gray as base */
+            color: var(--df-teal);
+            min-height: 100vh;
+        }
+
+        .accent-section .split-layout .split-text,
+        .accent-section .section-header {
+            border-left: 5px solid var(--df-gold);
+            border-bottom: 3px solid var(--df-gold);
+        }
+
+        .split-layout {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .split-layout>div {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .split-layout .split-text {
+            background-color: rgba(240, 240, 240, 0.85);
+            /* light tint for contrast on white */
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid var(--df-mint);
+        }
+
+        .dark-section .split-layout .split-text {
+            background-color: rgba(255, 255, 255, 0.85);
+            border-left: 5px solid var(--df-gold);
+        }
+
+        .accent-section .split-layout .split-text {
+            border-left: 5px solid var(--df-gold);
+        }
+
+        .split-layout .split-text-clear {
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        .split-layout img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Button styling */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--df-mint);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: var(--df-teal);
+        }
+
+        .dark-section .btn {
+            background-color: var(--df-gold);
+            color: var(--df-teal);
+        }
+
+        .accent-section .btn {
+            background-color: var(--df-teal);
+            color: var(--df-gray);
+        }
+
+        .main-section .btn {
+            background-color: var(--df-teal);
+            color: var(--df-gray);
+        }
+
+        /* Highlight text */
+        .highlight {
+            color: var(--df-gold);
+            font-weight: bold;
+        }
+
+        .dark-section .highlight {
+            color: var(--df-mint);
+        }
+
+        /* Check mark list */
+        .check-list li::before {
+            content: "✓";
+            color: var(--df-mint);
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        /* Caption for images */
+        .img-caption {
+            text-align: center;
+            font-style: italic;
+            margin-top: 10px;
+            color: var(--df-teal);
+            font-size: 0.8em;
+        }
+
+        /* Tech cards styling */
+        .tech-card {
+            text-align: center;
+            background-color: rgba(223, 223, 223, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            width: 20%;
+            border-top: 4px solid var(--df-mint);
+            transition: transform 0.3s ease;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .main-section {
+            /* ...existing code... */
+        }
+
+        .main-section .centered-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+        }
+
+        .title-slide {
+            text-align: center !important;
+        }
+
+        .text-overlay-box {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+            padding: 18px 22px;
+            max-width: 340px;
+            margin: 40px -100px 40px auto;
+            font-size: 0.85em;
+            position: relative;
+            right: 0;
+        }
+
+        @media (max-width: 700px) {
+            .text-overlay-box {
+                padding: 10px 6px;
+                max-width: 95vw;
+                margin: 20px 5vw 20px auto;
+            }
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section class="title-slide dark-section" data-background-color="#1C5350" style="text-align:center;">
+                <div
+                    style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%;">
+                    <h1 style="color: #DFDFDF;">Digital Frontiers</h1>
+                    <p style="font-size: 1.0em; color: #FFC747;">A Data-as-a-Service Platform for the Queen Elizabeth
+                        Olympic Park</p>
+                    <p style="color: #DFDFDF;">UCL CASA - 2025</p>
+                    <p style="font-size: 0.9em; margin-top: 1em; color: #00C399;">Duncan Wilson, Andy
+                        Hudson-Smith, Yaman Kalaji and Nick Turner</p>
+                    <br />
+                    <br />
+
+                    <p style="font-size: 0.7em; margin-top: 1em; color: #d4d4d4;">Funded by LLDC with support from AWS
+                    </p>
+                </div>
+                <aside class="notes">Introduction to Digital Frontiers project</aside>
+            </section>
+
+            <!-- Context -->
+            <section>
+                <!-- Main Section Slide - DARK GREEN -->
+                <section class="main-section" data-background-color="#1C5350">
+                    <div class="centered-content">
+                        <h2 class="section-header">Context</h2>
+                    </div>
+                    <aside class="notes">Setting the context for the Digital Frontiers project</aside>
+                </section>
+
+                <!-- Sub Section - ACCENT COLOR (YELLOW) -->
+                <section class="accent-section" data-background-color="#FFFFFF" data-background="img/Picture1-qeop.jpg"
+                    data-background-opacity="1">
+                    <div class="text-overlay-box">
+                        <h2 style="margin-top:0; font-size:1.1em;">Queen Elizabeth Olympic Park</h2>
+                        <ul style="margin-bottom:0;">
+                            <li style="font-size:0.95em;">London Stadium</li>
+                            <li style="font-size:0.95em;">Aquatic Centre</li>
+                            <li style="font-size:0.95em;">Here East</li>
+                            <li style="font-size:0.95em;">UCL Marshgate</li>
+                            <li style="font-size:0.95em;">UCL One Pool Street</li>
+                            <li style="font-size:0.95em;">ArcelorMittal Orbit</li>
+                            <li style="font-size:0.95em;">Loughborough University</li>
+                            <li style="font-size:0.95em;">London College of Fashion</li>
+                            <li style="font-size:0.95em;">Westfield Stratford City</li>
+                            <li style="font-size:0.95em;">V&A East Museum</li>
+                            <li style="font-size:0.95em;">BBC Music Studios</li>
+                            <li style="font-size:0.95em;">East Village</li>
+                        </ul>
+                    </div>
+                    <aside class="notes">Overview of the Olympic Park area and key locations</aside>
+                </section>
+
+                <!-- Sub Section - GRAY -->
+                <section class="sub-section" data-background-color="#FFFFFF">
+                    <div class="split-layout">
+                        <!-- Left Column -->
+                        <div class="split-text"
+                            style="background-color: rgba(28, 83, 80, 0.9); color: white; border-left: 5px solid #FFC747;">
+                            <h3 style="color: #FFC747;">A living lab… </h3>
+                            <h3 style="color: #FFC747;">a test bed</h3>
+
+                            <p>Data examples:</p>
+                            <ul>
+                                <li>Environmental sensors</li>
+                                <li>Biodiversity records</li>
+                                <li>Buildings power usage & solar energy</li>
+                                <li>TfL data</li>
+                            </ul>
+                        </div>
+                        <!-- Right Column: Images as cards -->
+                        <div
+                            style="display: flex; flex-wrap: wrap; gap: 18px; justify-content: flex-end; align-items: flex-start;">
+                            <div style="display: flex; flex-wrap: wrap; gap: 18px; justify-content: flex-end;">
+                                <div
+                                    style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.10); width: 250px; height: 120px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                    <img src="img/Picture2.jpg" alt="Picture2"
+                                        style="width:100%; height:100%; object-fit:cover;">
+                                </div>
+
+                                <div
+                                    style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.10); width: 200px; height: 120px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                    <img src="img/Picture4.jpg" alt="Picture4"
+                                        style="width:100%; height:100%; object-fit:cover;">
+                                </div>
+                                <div
+                                    style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.10); width: 180px; height: 120px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                    <img src="img/Picture5.png" alt="Picture5"
+                                        style="width:100%; height:100%; object-fit:cover;">
+                                </div>
+                                <div
+                                    style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.10); width: 150px; height: 120px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                    <img src="img/Picture6.png" alt="Picture6"
+                                        style="width:100%; height:100%; object-fit:cover;">
+                                </div>
+                                <div
+                                    style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.10); width: 180px; height: 120px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                    <img src="img/Picture7.png" alt="Picture7"
+                                        style="width:100%; height:100%; object-fit:cover;">
+                                </div>
+
+                                <div
+                                    style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.10); width: 280px; height: 120px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                    <img src="img/Picture8.jpg" alt="Picture9"
+                                        style="width:100%; height:100%; object-fit:cover;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <aside class="notes">The Olympic Park as a living laboratory with various data sources</aside>
+                </section>
+            </section>
+
+            <!-- Why this platform? -->
+            <section>
+                <!-- Main Section Slide - MINT GREEN -->
+                <section class="main-section" data-background-color="#1C5350">
+                    <div class="centered-content">
+                        <h2 class="section-header">Why this platform?</h2>
+                    </div>
+                    <aside class="notes">Explaining the purpose and need for the Digital Frontiers platform</aside>
+                </section>
+
+                <!-- Sub Section - DARK TEAL -->
+                <section class="dark-section" data-background="img/Picture9.jpg" data-background-opacity="1"
+                    data-background-color="#1C5350">
+                    <style>
+                        .question-card-3-2 {
+                            position: fixed;
+                            top: 32px;
+                            left: -195px;
+                            background: rgba(28, 83, 80, 0.7);
+                            border-radius: 14px;
+                            padding: 15px 27px 15px 32px;
+                            color: #fff;
+                            max-width: 1200px;
+                            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+                        }
+
+                        @media (max-width: 700px) {
+                            .question-card-3-2 {
+                                padding: 16px 10px 12px 10px;
+                                max-width: 95vw;
+                                left: 10px;
+                                top: 10px;
+                            }
+                        }
+                    </style>
+                    <div style="position: relative; width: 100%; height: 100%;">
+                        <div class="question-card-3-2">
+                            <ul style="list-style: none; padding: 0; margin: 0;">
+                                <li style="font-size: 1.0em; ">
+                                    What data is there in the Olympic Park and how use it?
+                                </li>
+                                <li style="font-size: 1.0em; margin-top: 18px;">
+                                    How can I contribute my <span style="color: #FFC747;">live</span>
+                                    data to others?
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <aside class="notes">Core questions that Digital Frontiers addresses</aside>
+                </section>
+
+                <!-- Sub Section - GRAY -->
+                <section class="sub-section" data-background-color="#FFFFFF">
+                    <div
+                        style="display: flex; flex-direction: column; justify-content: flex-start; align-items: center; height: 100%;">
+                        <h2 class="section-header" style="margin-bottom: 32px;">Stakeholders</h2>
+                        <img src="img/Picture10.png" alt="Stakeholders Diagram"
+                            style="max-width: 80%; max-height: 70vh; display: block; margin: 0 auto; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.10);">
+                    </div>
+                    <aside class="notes">Stakeholders visualised in a diagram</aside>
+                </section>
+            </section>
+
+            <!-- Platform concept -->
+            <section>
+                <!-- Main Section Slide - MINT GREEN -->
+                <section class="main-section" data-background-color="#1C5350">
+                    <div class="centered-content">
+                        <h2 class="section-header">Platform concept</h2>
+                    </div>
+                    <aside class="notes">Explaining the core concept of the Digital Frontiers platform</aside>
+                </section>
+
+                <!-- Sub Section - GRAY (4.2) -->
+                <section class="sub-section" data-background-color="#FFFFFF">
+                    <div
+                        style="display: flex; flex-direction: column; align-items: flex-start; height: 100%; width: 100%;">
+                        <h3 class="section-header" style="margin-left: 2vw; margin-bottom: 32px;">At the Heart: Datasets
+                            with Metadata</h3>
+                        <div style="flex: 1; width: 100%; display: flex; justify-content: center; align-items: center;">
+                            <img src="img/Picture11.png" alt="Architecture Diagram"
+                                style="max-width: 90%; max-height: 75vh; display: block; margin: 0 auto; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.10);">
+                        </div>
+                    </div>
+                    <aside class="notes">Architecture diagram visual only</aside>
+                </section>
+
+                <!-- Sub Section - GRAY (4.3) -->
+                <!-- (Removed as per instructions) -->
+
+                <!-- Sub Section - GRAY (4.4) -->
+                <section class="sub-section" data-background-color="#FFFFFF">
+                    <div
+                        style="display: flex; flex-direction: row; align-items: flex-start; justify-content: center; gap: 48px; width: 100%; height: 100%;">
+                        <!-- Text Column -->
+                        <div style="flex: 1; min-width: 320px; max-width: 500px; align-self: flex-start;">
+                            <h3 style="margin-top:0;">What this platform can offer?</h3>
+                            <ul style="font-size: 0.9em; margin-top: 24px; margin-bottom: 0; padding-left: 22px;">
+                                <li>Explore datasets visually in the Queen Elizabeth Olympic Park.</li>
+                                <li>Each dataset is Geo-located including sensor locations.</li>
+                                <li>Data consumers can get dataset details</li>
+                                <li>Data providers can add new datasets</li>
+                            </ul>
+                        </div>
+                        <!-- Images Column -->
+                        <div
+                            style="flex: 1; display: flex; flex-direction: column; gap: 24px; align-items: center; justify-content: center;">
+                            <img src="img/Picture12.png" alt="Platform Screenshot 1"
+                                style="max-width: 95%; max-height: 70vh; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.10);">
+                        </div>
+                    </div>
+                    <aside class="notes">Platform features and visual examples</aside>
+                </section>
+            </section>
+
+            <!-- Technical design -->
+            <section>
+                <!-- Main Section Slide - MINT GREEN -->
+                <section class="main-section" data-background-color="#1C5350">
+                    <div class="centered-content">
+                        <h2 class="section-header">Technical design</h2>
+                    </div>
+                    <aside class="notes">Technical architecture and implementation details</aside>
+                </section>
+
+                <!-- Sub Section - ACCENT (YELLOW) -->
+                <section class="accent-section" data-background-color="#FFFFFF">
+                    <h2 style="text-align: center;">Technologies</h2>
+                    <div style="display: flex; justify-content: space-around; margin-top: 40px;">
+                        <div class="tech-card">
+                            <h3 style="font-size: 0.9em;">Frontend</h3>
+                            <p>Deck.gl & React.js</p>
+                        </div>
+                        <div class="tech-card">
+                            <h3 style="font-size: 0.9em;">Backend</h3>
+                            <p>Nest.js (Node.js)</p>
+                        </div>
+                        <div class="tech-card">
+                            <h3 style="font-size: 0.9em;">IoT</h3>
+                            <p>NodeRED & AWS Garnet</p>
+                        </div>
+                        <div class="tech-card">
+                            <h3 style="font-size: 0.9em;">Cloud</h3>
+                            <p>EC2, SES, RDS, S3, AWS Q</p>
+                        </div>
+                    </div>
+                    <aside class="notes">Key technologies used in building Digital Frontiers</aside>
+                </section>
+
+                <!-- Sub Section - GRAY (5.3) -->
+                <section class="sub-section" data-background-color="#FFFFFF">
+                    <div
+                        style="display: flex; flex-direction: column; align-items: flex-start; height: 100%; width: 100%;">
+                        <h2 class="section-header" style="margin-left: 2vw; margin-bottom: 32px;">Architecture –
+                            simplified</h2>
+                        <div style="flex: 1; width: 100%; display: flex; justify-content: center; align-items: center;">
+                            <img src="img/Picture14.png" alt="Architecture Card"
+                                style="max-width: 95vw; max-height: 80vh; display: block; margin: 0 auto; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.10);">
+                        </div>
+                    </div>
+                    <aside class="notes">Architecture visual card</aside>
+                </section>
+
+                <!-- Sub Section - GRAY (5.4) -->
+                <section class="sub-section" data-background-color="#FFFFFF">
+                    <div
+                        style="display: flex; flex-direction: column; align-items: flex-start; height: 100%; width: 100%;">
+                        <h2 class="section-header" style="margin-left: 2vw; margin-bottom: 32px;">Architecture – full
+                        </h2>
+                        <div style="flex: 1; width: 100%; display: flex; justify-content: center; align-items: center;">
+                            <img src="img/Picture15.png" alt="Full Architecture"
+                                style="max-width: 95vw; max-height: 80vh; display: block; margin: 0 auto; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.10);">
+                        </div>
+                    </div>
+                    <aside class="notes">Full architecture visual</aside>
+                </section>
+            </section>
+
+            <!-- Results -->
+            <section>
+                <!-- Main Section Slide - MINT GREEN -->
+                <section class="main-section" data-background-color="#1C5350">
+                    <div class="centered-content">
+                        <h2 class="section-header">Results</h2>
+                    </div>
+                    <aside class="notes">Project outcomes and demonstrations</aside>
+                </section>
+
+                <!-- Sub Section - DARK -->
+                <section class="dark-section" data-background-color="#1C5350">
+                    <h3 style="text-align: center;">Give it a try!</h3>
+                    <p style="color: #00C399; text-align: center; font-size: 1.0em;">digital-frontiers.co.uk</p>
+                    <img class="r-stretch" src="img/platform-preview.jpg" alt="Platform Preview"
+                        style="display: block; margin: 20px auto; width: 75%; border: 3px solid #FFC747; border-radius: 8px;">
+                    <img src="img/Picture16.png" alt="Showcase Extra"
+                        style="display: block; margin: 30px auto 0 auto; max-width: 75%; max-height: 53vh; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.10);">
+                    <div style="text-align: center; margin-top: 20px;">
+                        <a href="https://digital-frontiers.co.uk" target="_blank" class="btn">Visit Platform</a>
+                    </div>
+                    <aside class="notes">Live demonstration of the platform</aside>
+                </section>
+
+                <!-- Sub Section - ACCENT (YELLOW) -->
+                <section class="accent-section" data-background-color="#FFFFFF">
+                    <h3 style="text-align: center;">Data for impact: Showcases</h3>
+                    <img class="r-stretch" src="img/showcases.jpg" alt="Data Showcases"
+                        style="display: block; margin: 30px auto; width: 75%; border: 3px solid #1C5350; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                    <img src="img/Picture17.png" alt="Showcase Extra"
+                        style="display: block; margin: 30px auto 0 auto; max-width: 75%; max-height: 65vh; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.10);">
+                    <p style="text-align: center; font-size: 0.8em; font-style: italic;">Real-world applications using
+                        data from the
+                        platform</p>
+                    <aside class="notes">Examples of impactful data applications</aside>
+                </section>
+            </section>
+
+            <!-- Summary and vision -->
+            <section>
+                <!-- Main Section Slide - MINT GREEN -->
+                <section class="main-section" data-background-color="#1C5350">
+                    <div class="centered-content">
+                        <h2 class="section-header">Summary and vision</h2>
+                    </div>
+                    <aside class="notes">Project summary and future vision</aside>
+                </section>
+
+                <!-- Sub Section - ACCENT (YELLOW) -->
+                <section class="accent-section" data-background="img/Picture18.png" data-background-opacity="1"
+                    data-background-color="#FFFFFF">
+                    <h2 style="text-align: center;">So, what Digital Frontiers is about?</h2>
+                    <ul style="font-size: 1.1em; width: 100%; margin: 30px auto;">
+                        <li style="margin-bottom: 20px;">✅ <span style="font-weight: bold;">Realtime data
+                                contribution</span></li>
+                        <li style="margin-bottom: 20px;">✅ <span style="font-weight: bold;">Showcases: Data in a closed
+                                loop ecosystem</span></li>
+                        <li style="margin-bottom: 20px;">✅ <span style="font-weight: bold;">Governance: aligning
+                                stakeholders across sectors</span></li>
+                        <li style="margin-bottom: 20px;">✅ <span style="font-weight: bold;">Long term vision: Park →
+                                Borough → London → Other cities</span></li>
+                    </ul>
+                    <aside class="notes">Key takeaways about the Digital Frontiers platform</aside>
+                </section>
+            </section>
+
+            <!-- Contact slide -->
+            <section class="dark-section" data-background="img/digital-frontiers-bg.jpg" data-background-opacity="0.7"
+                data-background-color="#1C5350">
+                <div
+                    style="background-color: rgba(28, 83, 80, 0.85); padding: 30px; border-radius: 10px; width: 60%; margin: 0 auto; border-left: 8px solid #00C399;">
+                    <h3 style="color: #FFC747; text-align: center; margin-bottom: 30px;">Thank you for listening</h3>
+                    <p style="color: #DFDFDF; text-align: center; margin-bottom: 10px;">
+
+                    </p>
+                    <p style="color: #DFDFDF; text-align: center; margin-bottom: 20px;">
+                        The Connected Environments lab, UCL CASA
+                    </p>
+                    <p style="text-align: center;">
+                        <a href="https://connected-environments.org/"
+                            style="background-color: #00C399; color: #1C5350; padding: 10px 15px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                            connected-environments.org
+                        </a>
+                    </p>
+                </div>
+                <aside class="notes">Contact information and GitHub repository</aside>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/markdown/markdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+    <script>
+        // More info about initialization & config:
+        // - https://revealjs.com/initialization/
+        // - https://revealjs.com/config/
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide',
+            // Learn about plugins: https://revealjs.com/plugins/
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+        });
+    </script>
+</body>
+
+</html>
