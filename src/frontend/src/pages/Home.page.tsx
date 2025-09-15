@@ -13,6 +13,7 @@ import axiosInstance from '@/utils/axiosInstance';
 import { DatasetCard } from '@/components/DatasetCard';
 import { HomeShowcaseCard } from '@/components/HomeShowcaseCard';
 import { useSettings } from '@/context/SettingsContext';
+import removeMarkdown from 'remove-markdown';
 
 export function HomePage() {
   const PRIMARY_COL_HEIGHT = '600px';
@@ -118,6 +119,15 @@ export function HomePage() {
       lastName: string;
       photoUrl?: string;
     };
+  }
+
+  // Utility to clean up leftover HTML entities and whitespace
+  function cleanDescription(text: string) {
+    let plain = removeMarkdown(text);
+    plain = plain.replace(/&#x[0-9a-fA-F]+;|&nbsp;/g, ' ');
+    plain = plain.replace(/&[a-zA-Z]+;/g, ' ');
+    plain = plain.replace(/\s+/g, ' ').trim();
+    return plain;
   }
 
   useEffect(() => {
@@ -314,9 +324,9 @@ export function HomePage() {
                       {latestShowcases[0].title}
                     </Text>
                     <Text c="#dedede" mt={5}>
-                      {latestShowcases[0].description.length > 300
-                        ? `${latestShowcases[0].description.substring(0, 300)}...`
-                        : latestShowcases[0].description
+                      {cleanDescription(latestShowcases[0].description).length > 300
+                        ? `${cleanDescription(latestShowcases[0].description).substring(0, 300)}...`
+                        : cleanDescription(latestShowcases[0].description)
                       }
                     </Text>
                   </Card>

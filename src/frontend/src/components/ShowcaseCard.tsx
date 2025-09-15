@@ -4,6 +4,7 @@ import { API_BASE_URL } from '@/config';
 import { IconMovie, IconEdit, IconTrash } from '@tabler/icons-react';
 import axiosInstance from '@/utils/axiosInstance';
 import { notifications } from '@mantine/notifications';
+import removeMarkdown from 'remove-markdown';
 
 interface ShowcaseCardProps {
     id: number;
@@ -56,6 +57,22 @@ export function ShowcaseCard({
     // Get teaser image or first image or default
     const teaserImage = sliderImages.find(img => img.isTeaser);
     const displayImage = teaserImage || (sliderImages.length > 0 ? sliderImages[0] : null);
+
+    // Utility to clean up leftover HTML entities and whitespace
+    function cleanDescription(text: string) {
+        // Remove markdown
+        let plain = removeMarkdown(text);
+        // Remove HTML entities like &#x20; and &nbsp;
+        plain = plain.replace(/&#x[0-9a-fA-F]+;|&nbsp;/g, ' ');
+        // Remove other entities
+        plain = plain.replace(/&[a-zA-Z]+;/g, ' ');
+        // Collapse multiple spaces
+        plain = plain.replace(/\s+/g, ' ').trim();
+        return plain;
+    }
+
+    // Strip markdown and clean description for display
+    const plainDescription = cleanDescription(description);
 
     return (
         <>
@@ -159,9 +176,9 @@ export function ShowcaseCard({
                                 whiteSpace: 'normal',
                                 wordBreak: 'break-word',
                             }}>
-                                {description.length > 80
-                                    ? `${description.substring(0, 110)}...`
-                                    : description}
+                                {plainDescription.length > 80
+                                    ? `${plainDescription.substring(0, 110)}...`
+                                    : plainDescription}
                             </Text>
                         </Card.Section>
 
@@ -295,9 +312,9 @@ export function ShowcaseCard({
                             whiteSpace: 'normal',
                             wordBreak: 'break-word',
                         }}>
-                            {description.length > 80
-                                ? `${description.substring(0, 110)}...`
-                                : description}
+                            {plainDescription.length > 80
+                                ? `${plainDescription.substring(0, 110)}...`
+                                : plainDescription}
                         </Text>
                     </Card.Section>
 
