@@ -18,7 +18,7 @@ import {
     Grid,
     Stack,
     Badge,
-    ThemeIcon
+    ThemeIcon,
 } from '@mantine/core';
 import { Carousel } from '@mantine/carousel';
 import axiosInstance from '@/utils/axiosInstance';
@@ -35,6 +35,7 @@ import { loadInBatches } from '@loaders.gl/core';
 import { ShapefileLoader } from '@loaders.gl/shapefile';
 import proj4 from 'proj4';
 import { MapboxOverlay as DeckOverlay, MapboxOverlayProps } from '@deck.gl/mapbox';
+import ReactMarkdown from 'react-markdown';
 
 // Add DeckGLOverlay component for map integration
 function DeckGLOverlay(props: MapboxOverlayProps) {
@@ -337,9 +338,25 @@ export function ShowcasePage() {
                         {showcase.title}
                     </Title>
 
-                    <Text mt="md" style={{ whiteSpace: 'pre-line' }}>
-                        {showcase.description}
-                    </Text>
+                    {/* Render description as Markdown */}
+                    <div style={{ marginTop: '1rem' }}>
+                        <ReactMarkdown
+                            components={{
+                                a: ({ node, ...props }) => (
+                                    <a
+                                        {...props}
+                                        style={{ color: '#6bb8ff' }}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        {props.children}
+                                    </a>
+                                ),
+                            }}
+                        >
+                            {showcase.description}
+                        </ReactMarkdown>
+                    </div>
 
                     {/* Add Map Section when locations exist */}
                     {hasLocations && (

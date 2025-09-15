@@ -23,6 +23,10 @@ import {
 import proj4 from 'proj4';
 import { API_BASE_URL } from '@/config';
 import { AuthContext } from '@/context/AuthContext';
+import { BoldItalicUnderlineToggles, MDXEditor, toolbarPlugin, UndoRedo, CreateLink, linkPlugin, linkDialogPlugin, ListsToggle, listsPlugin, headingsPlugin, BlockTypeSelect } from '@mdxeditor/editor';
+
+import '@mdxeditor/editor/style.css'
+import './AddShowcase.page.css'
 
 // Map initial view - centered on London
 const INITIAL_VIEW_STATE = {
@@ -70,6 +74,7 @@ export function AddShowcase() {
     const [filesToUpload, setFilesToUpload] = useState<File[]>([]);
     const [loading, setLoading] = useState(false);
     const [sliderImages, setSliderImages] = useState<{ fileName: string; isTeaser: boolean }[]>([]);
+    const [mdxValue, setMdxValue] = useState('');
     const navigate = useNavigate();
     const authContext = useContext(AuthContext);
     const isAdmin = authContext?.user?.isAdmin ?? false;
@@ -160,9 +165,8 @@ export function AddShowcase() {
                         })),
                         locations: showcase.locations || []
                     });
-
-                    // Set slider images state
                     setSliderImages(showcase.sliderImages);
+                    setMdxValue(showcase.description);
                 })
                 .catch(error => {
                     console.error('Failed to load showcase:', error);
@@ -344,7 +348,7 @@ export function AddShowcase() {
         // Prepare form data
         const formData = {
             title: form.values.title,
-            description: form.values.description,
+            description: mdxValue, // Use latest editor value
             youtubeLink: form.values.youtubeLink || undefined,
             datasetId: form.values.datasetId ? Number(form.values.datasetId) : undefined,
             sliderImages: sliderImages,
@@ -433,6 +437,13 @@ export function AddShowcase() {
         }
     };
 
+    useEffect(() => {
+        // Sync form value with editor value on edit mode load
+        if (isEditMode && form.values.description) {
+            setMdxValue(form.values.description);
+        }
+    }, [isEditMode, form.values.description]);
+
     if (loadingShowcase) {
         return (
             <Center style={{ height: '80vh' }}>
@@ -456,15 +467,38 @@ export function AddShowcase() {
                     {...form.getInputProps('title')}
                 />
 
-                <Textarea
-                    label="Description"
-                    placeholder="Provide a detailed description of this showcase"
-                    minRows={4}
-                    required
-                    autosize
-                    mb="md"
-                    {...form.getInputProps('description')}
-                />
+                {/* MDXEditor for Description */}
+                <Box mb="md">
+                    <Text fw={500} mb={4}>Description</Text>
+                    <MDXEditor
+                        markdown={mdxValue}
+                        className="dark-theme dark-editor df-style"
+                        onChange={(value) => {
+                            setMdxValue(value ?? '');
+                            form.setFieldValue('description', value ?? '');
+                        }}
+                        plugins={[
+                            toolbarPlugin({
+                                toolbarContents: () => (
+                                    <>
+                                        <UndoRedo />
+                                        <BoldItalicUnderlineToggles options={["Bold", "Italic"]} />
+                                        <CreateLink />
+                                        <ListsToggle options={['bullet', 'number']} />
+                                        <BlockTypeSelect />
+                                    </>
+                                ),
+                            }),
+                            linkPlugin(),
+                            linkDialogPlugin(),
+                            listsPlugin(),
+                            headingsPlugin()
+                        ]}
+                    />
+                    {form.errors.description && (
+                        <Text color="red" size="sm" mt={4}>{form.errors.description}</Text>
+                    )}
+                </Box>
 
                 <TextInput
                     label="YouTube Video Link (optional)"
