@@ -232,6 +232,21 @@ export function ShowcasePage() {
         }),
     ], [mappedLocations, geoJsonData]);
 
+    // Prepare combined images for the carousel
+    const combinedCarouselImages = useMemo(() => {
+        const sliderImages = showcase?.sliderImages || [];
+        // Filter mappedLocations with imageLink and map to a compatible object
+        const locationImages = mappedLocations
+            .filter(loc => !!loc.imageLink)
+            .map((loc, idx) => ({
+                id: `location-${loc.id ?? idx}`,
+                fileName: loc.imageLink,
+                isTeaser: false,
+                _fromLocation: true,
+            }));
+        return [...sliderImages, ...locationImages];
+    }, [showcase?.sliderImages, mappedLocations]);
+
     if (loading) {
         return (
             <Center style={{ height: 'calc(100vh - 200px)' }}>
@@ -280,14 +295,14 @@ export function ShowcasePage() {
 
             <Grid gutter="xl" mt="xl">
                 <Grid.Col span={{ base: 12, md: 8 }}>
-                    {showcase.sliderImages && showcase.sliderImages.length > 0 && (
+                    {combinedCarouselImages.length > 0 && (
                         <Carousel
                             height={400}
                             withIndicators
                             loop
-                            withControls={showcase.sliderImages.length > 1}
+                            withControls={combinedCarouselImages.length > 1}
                         >
-                            {showcase.sliderImages.map((image) => (
+                            {combinedCarouselImages.map((image) => (
                                 <Carousel.Slide key={image.id}>
                                     <Image
                                         src={`${API_BASE_URL}/uploads/${image.fileName}`}
