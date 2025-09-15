@@ -1,7 +1,15 @@
-export const version = 'v1.0'
+export const version = 'v1.1'
 export const changelog = [
     {
-        version: 'v0.6',
+        version: 'v1.1',
+        changes: [
+            "Added Markdown support for showcase descriptions.",
+            "Company is shown by default in the showcase page under 'created by' field.",
+            "The main hero slider in the showcase page now also shows images used in the map section.",
+        ],
+    },
+    {
+        version: 'v1.0',
         changes: [
             "Main release.",
         ],
