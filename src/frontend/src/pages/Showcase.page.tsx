@@ -17,13 +17,14 @@ import {
     AspectRatio,
     Grid,
     Stack,
-    Badge
+    Badge,
+    ThemeIcon
 } from '@mantine/core';
 import { Carousel } from '@mantine/carousel';
 import axiosInstance from '@/utils/axiosInstance';
 import { notifications } from '@mantine/notifications';
 import { API_BASE_URL } from '@/config';
-import { IconExternalLink, IconCalendar, IconDatabase, IconMapPin } from '@tabler/icons-react';
+import { IconExternalLink, IconCalendar, IconDatabase, IconMapPin, IconBuilding } from '@tabler/icons-react';
 // Import map-related dependencies
 import { Map, Popup, useControl } from 'react-map-gl/maplibre';
 import DeckGL from '@deck.gl/react';
@@ -73,6 +74,7 @@ interface ShowcaseItem {
         firstName: string;
         lastName: string;
         photoUrl?: string;
+        company: string;
     };
     dataset?: {
         id: number;
@@ -429,14 +431,13 @@ export function ShowcasePage() {
                             <Title order={4}>About this project</Title>
 
                             <Group>
-                                <Avatar
-                                    src={showcase.user.photoUrl ? `${API_BASE_URL}/uploads/${showcase.user.photoUrl}` : undefined}
-                                    size={50}
-                                    radius="xl"
-                                />
+                                {/* Replace Avatar with company icon */}
+                                <ThemeIcon size={50} radius="xl" color="grey">
+                                    <IconBuilding size={32} />
+                                </ThemeIcon>
                                 <div>
                                     <Text fw={500}>Created by</Text>
-                                    <Text>{`${showcase.user.firstName} ${showcase.user.lastName}`}</Text>
+                                    <Text>{`${showcase.user.company}`}</Text>
                                 </div>
                             </Group>
 
